@@ -42,12 +42,20 @@
             
             background-color: var(--bg-color);
             background-image: url('IMG_0429-1.jpeg');
+            /*
+               Примечание по адаптации фона:
+               background-size: cover - это лучший выбор. Он гарантирует, что фон всегда будет
+               покрывать 100% экрана без пустых полей и искажений пропорций. Это может привести
+               к обрезке краев изображения на разных соотношениях сторон (например, на очень
+               высоких телефонах), но background-position: center сохранит ваш логотип в центре
+               видимости. Альтернатива (background-size: contain) показала бы всё изображение,
+               но создала бы некрасивые черные полосы, разрушая эффект погружения.
+            */
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
             background-repeat: no-repeat;
             
-            /* ИЗМЕНЕНИЕ: Новая структура для управления позиционированием */
             display: flex;
             flex-direction: column;
         }
@@ -59,7 +67,7 @@
             width: 100%;
             box-sizing: border-box;
             
-            /* ИЗМЕНЕНИЕ: Позиционирование кнопок по умолчанию (для ПК и планшетов) */
+            /* Позиционирование кнопок по умолчанию (для ПК и планшетов) */
             align-items: flex-end; 
         }
 
@@ -73,12 +81,12 @@
             align-items: center;
             gap: clamp(1.5rem, 4vw, 2.5rem);
             
-            /* ИЗМЕНЕНИЕ: Отступы для ПК и планшетов */
+            /* Отступы для ПК и планшетов */
             padding: 0 40px;
             margin-bottom: 15vh;
         }
         
-        /* ИЗМЕНЕНИЕ: Полностью новая логика для мобильных устройств */
+        /* Логика для мобильных устройств */
         @media (max-width: 767px) {
             .main-content {
                 align-items: flex-start; /* Кнопки вверху */
@@ -86,8 +94,8 @@
             .container {
                 flex-direction: column;
                 margin-bottom: 0;
-                /* Отступ сверху с учетом "чёлки" */
-                margin-top: calc(10vh + var(--safe-area-top)); 
+                /* ИЗМЕНЕНИЕ: Увеличен отступ сверху, чтобы поднять кнопки выше */
+                margin-top: calc(15vh + var(--safe-area-top)); 
                 padding: 0 20px;
             }
         }
@@ -129,7 +137,6 @@
             color: var(--text-color);
             text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2); 
             
-            /* ИЗМЕНЕНИЕ: Анимация появления */
             opacity: 0;
             transform: translateY(20px);
             animation: buttonAppear 0.8s ease-out forwards, gentle-breathe 6s 5.8s infinite ease-in-out;
@@ -198,7 +205,7 @@
         }
 
         .site-footer {
-            position: relative; /* Не absolute, чтобы быть частью потока */
+            position: relative;
             z-index: 1;
             width: 100%;
             box-sizing: border-box;
@@ -255,7 +262,7 @@
         
         .site-footer .magic-button {
             order: 1;
-            animation: none; /* Убираем анимацию появления у кнопки "Обо мне" */
+            animation: none;
             opacity: 1;
             transform: none;
         }
@@ -313,7 +320,7 @@
             margin: 20px;
             padding: clamp(30px, 5vw, 40px) clamp(25px, 5vw, 50px);
             width: 90%;
-            max-width: 700px; /* Немного увеличена ширина */
+            max-width: 700px;
             text-align: left;
             clip-path: url(#torn-parchment);
             background-color: var(--modal-bg);
@@ -600,9 +607,168 @@
     </footer>
 
     <!-- Modals -->
-    <div class="modal" id="modal-show"><!-- ... content ... --></div>
-    <div class="modal" id="modal-school"><!-- ... content ... --></div>
-    <div class="modal" id="modal-performances"><!-- ... content ... --></div>
+    <div class="modal" id="modal-show">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <div class="modal-header">
+                <h2>Концертные шоу</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Философский театральный спектакль-иллюзия.</p>
+                <div class="modal-divider"></div>
+                <ul class="features-list">
+                    <li>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Формат</span>
+                            <span class="value">Сценическое шоу длительностью 2+ часа.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Атмосфера</span>
+                            <span class="value">Загадка, философия жизни, погружение в тайну.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M20.66 7.34l-1.42 1.42M3.34 17.66l-1.42 1.42M20.66 17.66l-1.42-1.42M3.34 7.34l-1.42-1.42"></path></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Особенности</span>
+                            <span class="value">Уникальные иллюзии, авторская драматургия, вовлечение зрителей.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Для кого</span>
+                            <span class="value">Зрители Ярославля и области, культурные центры, афиши.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="magic-button button-6 small-button">Купить билет</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-school">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <div class="modal-header">
+                <h2>Школа фокусов</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Образовательная программа для детей 7–13 лет.</p>
+                <div class="modal-divider"></div>
+                <ul class="features-list">
+                     <li>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Формат</span>
+                            <span class="value">Регулярные занятия 1 раз в неделю (2 часа).</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"></path></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Миссия</span>
+                            <span class="value">Развитие уверенности, артистизма, памяти и креативного мышления.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17l4.89-4.89a2 2 0 0 1 2.82 0L22 22M15 2l-3.09 3.09a2 2 0 0 0 0 2.82L15 11l7-7-3.09-3.09a2 2 0 0 0-2.82 0L15 2z"></path></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Особенности</span>
+                            <span class="value">Паспорт волшебника, соревнования, батлы и участие в Чемпионате России.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Для кого</span>
+                            <span class="value">Дети и родители, ищущие трамплин в артистическую профессию.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="magic-button button-7 small-button">Записаться</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-performances">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <div class="modal-header">
+                <h2>Частные выступления</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Магия для ваших особых событий.</p>
+                <div class="modal-divider"></div>
+                <ul class="features-list">
+                    <li>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Формат</span>
+                            <span class="value">Выступления на свадьбах, юбилеях, корпоративах, днях рождения.</span>
+                        </div>
+                    </li>
+                     <li>
+                        <div class="feature-icon">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Атмосфера</span>
+                            <span class="value">Живое общение, вовлечение гостей и гарантированный вау-эффект.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Варианты шоу</span>
+                            <span class="value">Close-up магия (вблизи), сценические номера, авторские иллюзии.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">
+                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div class="feature-text">
+                            <span class="label">Для кого</span>
+                            <span class="value">Организаторы, частные клиенты, event-агентства.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="magic-button button-5 small-button">Заказать</a>
+            </div>
+        </div>
+    </div>
+    
     <div class="modal" id="modal-about">
         <div class="modal-content">
             <button class="close-button">&times;</button>
