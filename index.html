@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- ИЗМЕНЕНИЕ: Добавлен viewport-fit=cover для работы с безопасными зонами на устройствах с "чёлкой" -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Дмитрий Костюк - Иллюзионист</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +22,6 @@
             --modal-header-color: var(--text-color);
             --modal-text-color: var(--text-color);
             
-            /* ИЗМЕНЕНИЕ: Добавлены переменные для безопасных зон, которые заполняются браузером */
             --safe-area-top: env(safe-area-inset-top, 0px);
             --safe-area-right: env(safe-area-inset-right, 0px);
             --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -36,58 +34,78 @@
 
         body {
             height: 100%;
+            min-height: 100vh;
             margin: 0;
             padding: 0;
             overflow: hidden;
             font-family: 'Playfair Display', serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
             
-            /* Примечание по фону: background-size: cover - лучший выбор.
-               Он гарантирует, что фон всегда будет покрывать 100% экрана без пустых полей.
-               Это может привести к обрезке краев изображения на разных соотношениях сторон,
-               но background-position: center сохранит ваш логотип в центре видимости.
-               Альтернатива (background-size: contain) показала бы всё изображение, но создала бы
-               некрасивые черные полосы, разрушая эффект погружения.
-            */
             background-color: var(--bg-color);
             background-image: url('IMG_0429-1.jpeg');
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
             background-repeat: no-repeat;
+            
+            /* ИЗМЕНЕНИЕ: Новая структура для управления позиционированием */
+            display: flex;
+            flex-direction: column;
         }
 
-        .container, .site-footer {
-            position: relative;
-            z-index: 1;
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
             width: 100%;
-            box-sizing: border-box; /* Важно для корректной работы padding */
+            box-sizing: border-box;
+            
+            /* ИЗМЕНЕНИЕ: Позиционирование кнопок по умолчанию (для ПК и планшетов) */
+            align-items: flex-end; 
         }
 
         .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            box-sizing: border-box;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* ИЗМЕНЕНИЕ: Плавный, адаптивный отступ между кнопками */
             gap: clamp(1.5rem, 4vw, 2.5rem);
-            padding: 0 20px;
-            padding-bottom: 10vh; 
+            
+            /* ИЗМЕНЕНИЕ: Отступы для ПК и планшетов */
+            padding: 0 40px;
+            margin-bottom: 15vh;
         }
         
-        @media (min-width: 768px) {
+        /* ИЗМЕНЕНИЕ: Полностью новая логика для мобильных устройств */
+        @media (max-width: 767px) {
+            .main-content {
+                align-items: flex-start; /* Кнопки вверху */
+            }
+            .container {
+                flex-direction: column;
+                margin-bottom: 0;
+                /* Отступ сверху с учетом "чёлки" */
+                margin-top: calc(10vh + var(--safe-area-top)); 
+                padding: 0 20px;
+            }
+        }
+         @media (min-width: 768px) and (max-width: 1024px) {
+            .container {
+                flex-direction: row; /* Явное указание для планшетов */
+            }
+        }
+        @media (min-width: 1025px) {
             .container {
                 flex-direction: row;
                 gap: clamp(2rem, 4vw, 4rem);
             }
         }
 
+
         .magic-button {
             position: relative;
-            /* ИЗМЕНЕНИЕ: Адаптивные отступы и размер шрифта */
             padding: clamp(18px, 3vw, 22px) clamp(30px, 5vw, 45px);
             text-decoration: none;
             font-size: clamp(1.1rem, 2.5vw, 1.3rem);
@@ -95,7 +113,6 @@
             cursor: pointer;
             border: none;
             transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), filter 0.4s;
-            
             background-color: #d3d3d3;
             background-image: url('data:image/svg+xml,\
               <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">\
@@ -109,12 +126,26 @@
                 </filter>\
                 <rect width="100%" height="100%" filter="url(%23crumple)"/>\
               </svg>');
-
             color: var(--text-color);
             text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2); 
-
-            animation: gentle-breathe 6s infinite ease-in-out;
+            
+            /* ИЗМЕНЕНИЕ: Анимация появления */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: buttonAppear 0.8s ease-out forwards, gentle-breathe 6s 5.8s infinite ease-in-out;
         }
+        
+        .container > .magic-button:nth-of-type(1) { animation-delay: 5s, 5.8s; }
+        .container > .magic-button:nth-of-type(2) { animation-delay: 5.2s, 6s; }
+        .container > .magic-button:nth-of-type(3) { animation-delay: 5.4s, 6.2s; }
+
+        @keyframes buttonAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
 
         .button-1 { clip-path: url(#torn-edge-1); }
         .button-2 { clip-path: url(#torn-edge-2); }
@@ -155,9 +186,6 @@
             animation-play-state: paused;
         }
         
-        .magic-button:nth-child(2) { animation-delay: 1s; }
-        .magic-button:nth-child(3) { animation-delay: 2s; }
-
         @keyframes gentle-breathe {
             0%, 100% {
                 transform: scale(1) translateY(0);
@@ -170,11 +198,10 @@
         }
 
         .site-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            /* ИЗМЕНЕНИЕ: Добавлены отступы для безопасных зон */
+            position: relative; /* Не absolute, чтобы быть частью потока */
+            z-index: 1;
+            width: 100%;
+            box-sizing: border-box;
             padding: 20px;
             padding-left: calc(20px + var(--safe-area-left));
             padding-right: calc(20px + var(--safe-area-right));
@@ -228,6 +255,9 @@
         
         .site-footer .magic-button {
             order: 1;
+            animation: none; /* Убираем анимацию появления у кнопки "Обо мне" */
+            opacity: 1;
+            transform: none;
         }
         
         @media (min-width: 768px) {
@@ -247,7 +277,6 @@
         .small-button {
             padding: clamp(14px, 2.5vw, 18px) clamp(25px, 4vw, 40px);
             font-size: clamp(1rem, 2vw, 1.2rem);
-            animation: none;
         }
 
         .small-button:hover {
@@ -270,7 +299,6 @@
             transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), visibility 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
             z-index: 1000;
             overflow-y: auto;
-            /* ИЗМЕНЕНИЕ: Отступы для безопасных зон в модальном окне */
             padding-top: var(--safe-area-top);
             padding-bottom: var(--safe-area-bottom);
         }
@@ -282,9 +310,10 @@
 
         .modal-content {
             position: relative;
+            margin: 20px;
             padding: clamp(30px, 5vw, 40px) clamp(25px, 5vw, 50px);
             width: 90%;
-            max-width: 650px;
+            max-width: 700px; /* Немного увеличена ширина */
             text-align: left;
             clip-path: url(#torn-parchment);
             background-color: var(--modal-bg);
@@ -303,7 +332,6 @@
             opacity: 0;
             transform: translateY(40px) scale(0.95);
             transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-            /* ИЗМЕНЕНИЕ: Ограничение высоты и внутренняя прокрутка при необходимости */
             max-height: calc(100vh - 40px - var(--safe-area-top) - var(--safe-area-bottom));
             overflow-y: auto;
             box-sizing: border-box;
@@ -545,12 +573,13 @@
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <a href="#" class="magic-button button-1" data-modal-target="#modal-performances">Частные выступления</a>
-        <a href="#" class="magic-button button-2" data-modal-target="#modal-show">Концертные шоу</a>
-        <a href="#" class="magic-button button-3" data-modal-target="#modal-school">Школа фокусов</a>
-    </div>
+    <main class="main-content">
+        <div class="container">
+            <a href="#" class="magic-button button-1" data-modal-target="#modal-performances">Частные выступления</a>
+            <a href="#" class="magic-button button-2" data-modal-target="#modal-show">Концертные шоу</a>
+            <a href="#" class="magic-button button-3" data-modal-target="#modal-school">Школа фокусов</a>
+        </div>
+    </main>
 
     <footer class="site-footer">
         <p class="copyright-text">© 2025, ИП Костюк. Все права защищены.</p>
@@ -571,10 +600,9 @@
     </footer>
 
     <!-- Modals -->
-    <div class="modal" id="modal-show"><!-- ... content identical to previous versions ... --></div>
-    <div class="modal" id="modal-school"><!-- ... content identical to previous versions ... --></div>
-    <div class="modal" id="modal-performances"><!-- ... content identical to previous versions ... --></div>
-    
+    <div class="modal" id="modal-show"><!-- ... content ... --></div>
+    <div class="modal" id="modal-school"><!-- ... content ... --></div>
+    <div class="modal" id="modal-performances"><!-- ... content ... --></div>
     <div class="modal" id="modal-about">
         <div class="modal-content">
             <button class="close-button">&times;</button>
