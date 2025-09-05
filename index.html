@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дмитрий Костюк - Иллюзионист</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --frame-primary: #C5A352; 
+            --frame-secondary: #A0813E;
+            --glow-color: rgba(197, 163, 82, 0.4);
+            --outline-color: #F5F5F5;
+            --text-color: #1a1a1a;
+            --text-secondary: #222222; 
+            --footer-text-color: rgba(245, 245, 245, 0.5);
+            --modal-label-color: rgba(34, 34, 34, 0.75);
+            --modal-bg: #EAE6D9;
+            --modal-header-color: var(--text-color);
+            --modal-text-color: var(--text-color);
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Playfair Display', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            
+            background-color: var(--bg-color);
+            background-image: url('IMG_0429-1.jpeg');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        .container, .site-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2.5rem;
+            padding-bottom: 10vh; 
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                gap: 4rem;
+            }
+        }
+
+        .magic-button {
+            position: relative;
+            padding: 22px 45px;
+            text-decoration: none;
+            font-size: 1.3rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), filter 0.4s;
+            
+            background-color: #d3d3d3;
+            background-image: url('data:image/svg+xml,\
+              <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">\
+                <filter id="crumple" x="-20%" y="-20%" width="140%" height="140%">\
+                  <feTurbulence baseFrequency="0.02 0.05" numOctaves="3" result="noise"/>\
+                  <feDiffuseLighting in="noise" lighting-color="%23fff" surfaceScale="5">\
+                    <feDistantLight azimuth="235" elevation="60"/>\
+                  </feDiffuseLighting>\
+                  <feComposite operator="in" in2="SourceGraphic"/>\
+                  <feBlend in="SourceGraphic" mode="multiply"/>\
+                </filter>\
+                <rect width="100%" height="100%" filter="url(%23crumple)"/>\
+              </svg>');
+
+            color: var(--text-color);
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2); 
+
+            animation: gentle-breathe 6s infinite ease-in-out;
+        }
+
+        .button-1 { clip-path: url(#torn-edge-1); }
+        .button-2 { clip-path: url(#torn-edge-2); }
+        .button-3 { clip-path: url(#torn-edge-3); }
+        .button-4 { clip-path: url(#torn-edge-4); }
+        .button-5 { clip-path: url(#torn-edge-5); }
+        .button-6 { clip-path: url(#torn-edge-6); }
+        .button-7 { clip-path: url(#torn-edge-7); }
+        
+        .magic-button::before {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--frame-primary), var(--frame-secondary));
+            filter: url(#hammered-gold);
+        }
+        
+        .magic-button::after {
+            content: '';
+            position: absolute;
+            top: -7px; left: -7px; right: -7px; bottom: -7px;
+            z-index: -2;
+            background: var(--outline-color);
+        }
+
+        .button-1::before, .button-1::after { clip-path: url(#torn-edge-1); }
+        .button-2::before, .button-2::after { clip-path: url(#torn-edge-2); }
+        .button-3::before, .button-3::after { clip-path: url(#torn-edge-3); }
+        .button-4::before, .button-4::after { clip-path: url(#torn-edge-4); }
+        .button-5::before, .button-5::after { clip-path: url(#torn-edge-5); }
+        .button-6::before, .button-6::after { clip-path: url(#torn-edge-6); }
+        .button-7::before, .button-7::after { clip-path: url(#torn-edge-7); }
+
+        .magic-button:hover {
+            transform: scale(1.05) translateY(-5px);
+            filter: drop-shadow(0 10px 25px var(--glow-color));
+            animation-play-state: paused;
+        }
+        
+        .magic-button:nth-child(2) { animation-delay: 1s; }
+        .magic-button:nth-child(3) { animation-delay: 2s; }
+
+        @keyframes gentle-breathe {
+            0%, 100% {
+                transform: scale(1) translateY(0);
+                filter: drop-shadow(0 5px 15px transparent);
+            }
+            50% {
+                transform: scale(1.02) translateY(0);
+                filter: drop-shadow(0 8px 20px var(--glow-color));
+            }
+        }
+
+        .site-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            order: 2;
+        }
+        
+        .contact-icons a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--footer-text-color);
+            color: var(--footer-text-color);
+            transition: color 0.4s, transform 0.4s, border-color 0.4s, box-shadow 0.4s;
+        }
+        
+        .contact-icons a:hover {
+            color: var(--frame-primary);
+            border-color: var(--frame-primary);
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        .contact-icons svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .copyright-text {
+            font-family: 'Roboto', sans-serif;
+            color: var(--footer-text-color);
+            font-size: 0.8rem;
+            font-weight: 300;
+            margin: 0;
+            order: 3;
+        }
+        
+        .site-footer .magic-button {
+            order: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .site-footer {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 20px 40px;
+                gap: 15px;
+            }
+            .copyright-text { order: 1; }
+            .contact-icons { order: 2; }
+            .site-footer .magic-button { order: 3; }
+        }
+
+        .small-button {
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            animation: none;
+        }
+
+        .small-button:hover {
+             transform: scale(1.08) translateY(-3px);
+             filter: drop-shadow(0 5px 15px var(--glow-color));
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), visibility 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            position: relative;
+            padding: 40px 50px;
+            width: 90%;
+            max-width: 650px;
+            text-align: left;
+            clip-path: url(#torn-parchment);
+            background-color: var(--modal-bg);
+            background-image: url('data:image/svg+xml,\
+              <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">\
+                <filter id="crumple-light" x="-20%" y="-20%" width="140%" height="140%">\
+                  <feTurbulence baseFrequency="0.02 0.05" numOctaves="3" result="noise"/>\
+                  <feDiffuseLighting in="noise" lighting-color="%23fff" surfaceScale="3">\
+                    <feDistantLight azimuth="235" elevation="60"/>\
+                  </feDiffuseLighting>\
+                  <feComposite operator="in" in2="SourceGraphic"/>\
+                  <feBlend in="SourceGraphic" mode="multiply"/>\
+                </filter>\
+                <rect width="100%" height="100%" filter="url(%23crumple-light)"/>\
+              </svg>');
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        .modal.active .modal-content {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-content::before, .modal-content::after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            clip-path: url(#torn-parchment);
+        }
+
+        .modal-content::before {
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            background: linear-gradient(45deg, var(--frame-primary), var(--frame-secondary));
+            filter: url(#hammered-gold);
+        }
+        
+        .modal-content::after {
+            top: -7px; left: -7px; right: -7px; bottom: -7px;
+            background: var(--outline-color);
+            z-index: -2;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            background: none;
+            border: none;
+            font-size: 2.5rem;
+            color: rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+            z-index: 10;
+        }
+        
+        .close-button:hover {
+            color: #000;
+            transform: rotate(90deg) scale(1.1);
+        }
+        
+        .modal-header h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--modal-header-color);
+            font-size: 2.4rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-shadow: none;
+        }
+
+        .modal-description {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            color: var(--modal-text-color);
+        }
+
+        .modal-divider {
+            height: 2px;
+            width: 80px;
+            background-color: var(--frame-primary);
+            margin: 0 0 30px 0;
+            opacity: 0.5;
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+        
+        .feature-icon {
+            flex-shrink: 0;
+            margin-right: 20px;
+            width: 40px;
+            height: 40px;
+            color: var(--text-color);
+        }
+
+        .feature-text .label {
+            display: block;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--modal-text-color);
+            margin-bottom: 4px;
+        }
+        
+        .feature-text .value {
+            display: block;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--modal-label-color);
+        }
+        
+        .modal-footer {
+            margin-top: 35px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .modal-header, .modal-description, .modal-divider, .features-list li, .modal-footer,
+        .about-me-layout, .about-me-header .subtitle, .quote-container {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .modal.active .modal-header, .modal.active .modal-description, .modal.active .modal-divider, .modal.active .features-list li, .modal.active .modal-footer,
+        .modal.active .about-me-layout, .modal.active .about-me-header .subtitle, .modal.active .quote-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .modal.active .modal-header { transition-delay: 0.2s; }
+        .modal.active .modal-description { transition-delay: 0.3s; }
+        .modal.active .modal-divider { transition-delay: 0.4s; }
+        .modal.active .features-list li:nth-child(1) { transition-delay: 0.5s; }
+        .modal.active .features-list li:nth-child(2) { transition-delay: 0.6s; }
+        .modal.active .features-list li:nth-child(3) { transition-delay: 0.7s; }
+        .modal.active .features-list li:nth-child(4) { transition-delay: 0.8s; }
+        .modal.active .modal-footer { transition-delay: 0.9s; }
+
+        /* --- СТИЛИ ДЛЯ БЛОКА "ОБО МНЕ" --- */
+        .about-me-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        @media (min-width: 768px) {
+            .about-me-layout {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 40px;
+            }
+        }
+
+        .about-me-photo {
+            flex-shrink: 0;
+        }
+        
+        .about-me-photo img {
+            width: 180px;
+            height: auto;
+            border-radius: 8px;
+            border: 3px solid var(--frame-primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        @media (min-width: 768px) {
+            .about-me-photo img {
+                width: 200px;
+            }
+        }
+
+        .about-me-text {
+            text-align: center;
+        }
+        @media (min-width: 768px) {
+             .about-me-text {
+                text-align: left;
+            }
+        }
+
+        .about-me-header {
+            text-align: inherit;
+            margin-bottom: 25px;
+        }
+        .about-me-header h2 {
+            margin-bottom: 5px;
+        }
+        .about-me-header .subtitle {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        .modal-body .modal-divider {
+             margin-left: auto;
+             margin-right: auto;
+        }
+        @media (min-width: 768px) {
+            .modal-body .modal-divider {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+
+        .quote-container {
+            text-align: inherit;
+        }
+        .quote-icon {
+            width: 30px;
+            height: 30px;
+            color: var(--frame-primary);
+            margin: 0 auto 10px;
+            opacity: 0.7;
+        }
+        @media (min-width: 768px) {
+             .quote-icon {
+                margin: 0 0 10px;
+            }
+        }
+
+        .quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--modal-text-color);
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+        
+        .modal.active .about-me-layout { transition-delay: 0.2s; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="#" class="magic-button button-1" data-modal-target="#modal-performances">Частные выступления</a>
+        <a href="#" class="magic-button button-2" data-modal-target="#modal-show">Концертные шоу</a>
+        <a href="#" class="magic-button button-3" data-modal-target="#modal-school">Школа фокусов</a>
+    </div>
+
+    <footer class="site-footer">
+        <p class="copyright-text">© 2025, ИП Костюк. Все права защищены.</p>
+        
+        <div class="contact-icons">
+            <a href="https://t.me/Dmitrokko" target="_blank" aria-label="Telegram" title="Telegram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13L2 9L22 2zM13 22L11 13"/></svg>
+            </a>
+            <a href="tel:+79092763386" aria-label="Позвонить" title="Позвонить">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </a>
+            <a href="https://vk.com/dmitrokko" target="_blank" aria-label="ВКонтакте" title="ВКонтакте">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M15.5 8.5c-1.2 0-2 .7-2.5 1.5V8.5h-2v5.5c0 1 .4 1.5 1.5 1.5.7 0 1.2-.3 1.5-1h.5s.1 1.5 2 1.5c1.5 0 2.5-1 2.5-2.5S17 8.5 15.5 8.5zM13 12.5c0-.8.4-1.5 1-1.5s1 .7 1 1.5-.4 1.5-1 1.5-1-.7-1-1.5zm-4-1c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1z"/></svg>
+            </a>
+        </div>
+        
+        <a href="#" class="magic-button button-4 small-button" data-modal-target="#modal-about">Обо мне</a>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal" id="modal-show"><!-- ... content identical to previous versions ... --></div>
+    <div class="modal" id="modal-school"><!-- ... content identical to previous versions ... --></div>
+    <div class="modal" id="modal-performances"><!-- ... content identical to previous versions ... --></div>
+    
+    <div class="modal" id="modal-about">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <div class="modal-body">
+                <div class="about-me-layout">
+                    <div class="about-me-photo">
+                        <img src="IMG_5067.jpeg" alt="Дмитрий Костюк">
+                    </div>
+                    <div class="about-me-text">
+                        <div class="modal-header about-me-header">
+                            <h2>Дмитрий Костюк</h2>
+                            <p class="subtitle">иллюзионист и создатель KOSTYUK PROJECT</p>
+                        </div>
+                        <div class="modal-divider"></div>
+                        <div class="quote-container">
+                            <div class="quote-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L6 21M18 3l-4 18"/></svg>
+                            </div>
+                            <blockquote class="quote">
+                                «Я — артист-иллюзионист, создатель театрального шоу “Секрет”, автор телевизионных выпусков “Школа волшебства” и основатель образовательных программ для детей. Моя миссия — объединить магию искусства, сцену и обучение, чтобы вдохновлять взрослых и детей».
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <svg width="0" height="0" style="position:absolute;">
+        <defs>
+            <filter id="hammered-gold">
+              <feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" />
+            </filter>
+            
+            <clipPath id="torn-edge-1" clipPathUnits="objectBoundingBox"><path d="M0.01,0.22 C0.01,0.1,0.11,0.02,0.23,0.03 L0.81,0.01 C0.92,0,1,0.08,0.99,0.19 L0.96,0.82 C0.96,0.93,0.89,0.99,0.79,0.99 L0.2,0.95 C0.09,0.94,0.01,0.86,0.02,0.75 L0.06,0.48 C0.07,0.37,0,0.32,0.01,0.22"></path></clipPath>
+            <clipPath id="torn-edge-2" clipPathUnits="objectBoundingBox"><path d="M0.03,0.17 C0.03,0.06,0.12,0,0.22,0.01 L0.75,0.03 C0.86,0.04,0.95,0.1,0.96,0.2 L0.99,0.78 C1,0.89,0.93,0.98,0.82,0.99 L0.21,0.96 C0.1,0.95,0.01,0.88,0.01,0.77 L0.03,0.48 C0.03,0.37,0.03,0.28,0.03,0.17"></path></clipPath>
+            <clipPath id="torn-edge-3" clipPathUnits="objectBoundingBox"><path d="M0.02,0.78 C0.01,0.89,0.08,0.98,0.18,0.99 L0.8,0.97 C0.91,0.96,0.99,0.89,0.99,0.79 L0.97,0.23 C0.96,0.12,0.88,0.03,0.78,0.02 L0.23,0 C0.12,-0.01,0.03,0.06,0.02,0.16 L0,0.46 C-0.01,0.57,0.03,0.67,0.02,0.78"></path></clipPath>
+            <clipPath id="torn-edge-4" clipPathUnits="objectBoundingBox"><path d="M0.03,0.21 C0.03,0.1,0.12,0.03,0.22,0.03 L0.82,0.01 C0.93,0,1,0.09,0.99,0.2 L0.95,0.8 C0.95,0.91,0.87,0.98,0.77,0.98 L0.18,0.95 C0.07,0.94,0,0.87,0.01,0.76 L0.05,0.49 C0.06,0.38,0.03,0.31,0.03,0.21"></path></clipPath>
+            <clipPath id="torn-edge-5" clipPathUnits="objectBoundingBox"><path d="M0.02,0.23 C0.02,0.12,0.11,0.04,0.22,0.05 L0.8,0.01 C0.91,0,0.99,0.08,0.98,0.19 L0.95,0.81 C0.94,0.92,0.87,0.98,0.77,0.98 L0.19,0.94 C0.08,0.93,0.01,0.85,0.02,0.74 L0.06,0.47 C0.07,0.36,0.02,0.33,0.02,0.23"></path></clipPath>
+            <clipPath id="torn-edge-6" clipPathUnits="objectBoundingBox"><path d="M0.04,0.18 C0.04,0.07,0.13,0.01,0.23,0.02 L0.76,0.04 C0.87,0.05,0.96,0.11,0.97,0.21 L1,0.79 C1.01,0.9,0.94,0.99,0.83,1 L0.22,0.97 C0.11,0.96,0.02,0.89,0.02,0.78 L0.04,0.49 C0.04,0.38,0.04,0.29,0.04,0.18"></path></clipPath>
+            <clipPath id="torn-edge-7" clipPathUnits="objectBoundingBox"><path d="M0.03,0.79 C0.02,0.9,0.09,0.99,0.19,1 L0.81,0.98 C0.92,0.97,1,0.9,1,0.8 L0.98,0.24 C0.97,0.13,0.89,0.04,0.79,0.03 L0.24,0.01 C0.13,0,0.04,0.07,0.03,0.17 L0.01,0.47 C-0.00,0.58,0.04,0.68,0.03,0.79"></path></clipPath>
+            
+            <clipPath id="torn-parchment" clipPathUnits="objectBoundingBox">
+                <path d="M0.01,0.05 C0.01,0.02,0.03,0.01,0.06,0.01 L0.94,0.01 C0.97,0.01,0.99,0.02,0.99,0.05 L0.99,0.95 C0.99,0.98,0.97,0.99,0.94,0.99 L0.06,0.99 C0.03,0.99,0.01,0.98,0.01,0.95 L0.02,0.55 C0.02,0.52,0,0.51,0,0.5 C0,0.49,0.02,0.48,0.02,0.45 L0.01,0.05"></path>
+            </clipPath>
+        </defs>
+    </svg>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalTriggers = document.querySelectorAll('[data-modal-target]');
+            const modals = document.querySelectorAll('.modal');
+            const modalCloseButtons = document.querySelectorAll('.close-button');
+
+            const openModal = (modal) => {
+                if (modal == null) return;
+                modal.classList.add('active');
+            };
+
+            const closeModal = (modal) => {
+                if (modal == null) return;
+                modal.classList.remove('active');
+            };
+
+            modalTriggers.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const modal = document.querySelector(button.dataset.modalTarget);
+                    openModal(modal);
+                });
+            });
+
+            modalCloseButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
