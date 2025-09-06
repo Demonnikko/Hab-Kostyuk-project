@@ -2,861 +2,305 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дмитрий Костюк - Иллюзионист</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --bg-color: #0a0a0a;
-            --frame-primary: #C5A352; 
-            --frame-secondary: #A0813E;
-            --glow-color: rgba(197, 163, 82, 0.4);
-            --outline-color: #F5F5F5;
-            --text-color: #1a1a1a;
-            --text-secondary: #222222; 
-            --footer-text-color: rgba(245, 245, 245, 0.5);
-            --modal-label-color: rgba(34, 34, 34, 0.75);
-            --modal-bg: #EAE6D9;
-            --modal-header-color: var(--text-color);
-            --modal-text-color: var(--text-color);
-            
-            --safe-area-top: env(safe-area-inset-top, 0px);
-            --safe-area-right: env(safe-area-inset-right, 0px);
-            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-            --safe-area-left: env(safe-area-inset-left, 0px);
-        }
-
-        html {
-            height: 100%;
-        }
-
+        /* === ВАУ-ЭФФЕКТ: МАГИЧЕСКИЙ КУРСОР === */
         body {
-            height: 100%;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Playfair Display', serif;
-            
-            background-color: var(--bg-color);
-            background-image: url('IMG_0429-1.jpeg');
-            /*
-               Примечание по адаптации фона:
-               background-size: cover - это лучший выбор. Он гарантирует, что фон всегда будет
-               покрывать 100% экрана без пустых полей и искажений пропорций. Это может привести
-               к обрезке краев изображения на разных соотношениях сторон (например, на очень
-               высоких телефонах), но background-position: center сохранит ваш логотип в центре
-               видимости. Альтернатива (background-size: contain) показала бы всё изображение,
-               но создала бы некрасивые черные полосы, разрушая эффект погружения.
-            */
-            background-size: cover;
+            cursor: none; /* Прячем стандартный курсор */
+            font-family: 'Roboto', sans-serif;
+            background-color: #000000;
+            background-image: url('background-logo.jpeg');
             background-position: center center;
-            background-attachment: fixed;
             background-repeat: no-repeat;
-            
-            display: flex;
-            flex-direction: column;
+            background-size: contain;
+            background-attachment: fixed;
         }
-
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            box-sizing: border-box;
-            
-            /* Позиционирование кнопок по умолчанию (для ПК и планшетов) */
-            align-items: flex-end; 
+        #magic-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #c0a062;
+            border-radius: 50%;
+            pointer-events: none; /* Чтобы курсор не мешал кликать по кнопкам */
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+            z-index: 9999;
         }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: clamp(1.5rem, 4vw, 2.5rem);
-            
-            /* Отступы для ПК и планшетов */
-            padding: 0 40px;
-            margin-bottom: 15vh;
+        .trail-particle {
+            position: fixed;
+            background: #c0a062;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: fadeAndScale 0.7s forwards;
         }
-        
-        /* Логика для мобильных устройств */
-        @media (max-width: 767px) {
-            .main-content {
-                align-items: flex-start; /* Кнопки вверху */
-            }
-            .container {
-                flex-direction: column;
-                margin-bottom: 0;
-                /* ИЗМЕНЕНИЕ: Увеличен отступ сверху, чтобы поднять кнопки выше */
-                margin-top: calc(15vh + var(--safe-area-top)); 
-                padding: 0 20px;
+        @keyframes fadeAndScale {
+            to {
+                transform: scale(0);
+                opacity: 0;
             }
         }
-         @media (min-width: 768px) and (max-width: 1024px) {
-            .container {
-                flex-direction: row; /* Явное указание для планшетов */
-            }
-        }
-        @media (min-width: 1025px) {
-            .container {
-                flex-direction: row;
-                gap: clamp(2rem, 4vw, 4rem);
-            }
+        /* При наведении на кликабельные элементы, курсор будет "расширяться" */
+        body:has(button:hover) #magic-cursor {
+             width: 40px;
+             height: 40px;
         }
 
+        h1, h2, h3, .torn-paper-button, .modal-card {
+            font-family: 'Playfair Display', serif;
+        }
 
-        .magic-button {
-            position: relative;
-            padding: clamp(18px, 3vw, 22px) clamp(30px, 5vw, 45px);
-            text-decoration: none;
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
-            letter-spacing: 1.5px;
-            cursor: pointer;
+        /* --- ОСНОВНЫЕ КНОПКИ --- */
+        .torn-paper-button {
+            background: linear-gradient(145deg, #c0a062, #a18041);
+            color: #1a1a1a;
             border: none;
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), filter 0.4s;
-            background-color: #d3d3d3;
-            background-image: url('data:image/svg+xml,\
-              <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">\
-                <filter id="crumple" x="-20%" y="-20%" width="140%" height="140%">\
-                  <feTurbulence baseFrequency="0.02 0.05" numOctaves="3" result="noise"/>\
-                  <feDiffuseLighting in="noise" lighting-color="%23fff" surfaceScale="5">\
-                    <feDistantLight azimuth="235" elevation="60"/>\
-                  </feDiffuseLighting>\
-                  <feComposite operator="in" in2="SourceGraphic"/>\
-                  <feBlend in="SourceGraphic" mode="multiply"/>\
-                </filter>\
-                <rect width="100%" height="100%" filter="url(%23crumple)"/>\
-              </svg>');
-            color: var(--text-color);
-            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2); 
-            
+            padding: 1rem 2rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            cursor: none; /* Убираем курсор и для кнопок */
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+            clip-path: url(#torn-paper-shape);
+        }
+        .torn-paper-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(200, 160, 90, 0.2);
+        }
+
+        /* === СТИЛЬ ДЛЯ ИНВЕРТИРОВАННОЙ КНОПКИ === */
+        .button-inverted {
+            background: #1a1a1a;
+            color: #c0a062;
+            border: 2px solid #a18041;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 0 15px rgba(192, 160, 98, 0.4);
+        }
+        .button-inverted:hover {
+            background: linear-gradient(145deg, #c0a062, #a18041);
+            color: #1a1a1a;
+            border-color: transparent;
+        }
+
+        /* --- АНИМАЦИИ ПОЯВЛЕНИЯ ГЛАВНОГО ЭКРАНА --- */
+        .desktop-button-animation {
             opacity: 0;
             transform: translateY(20px);
-            animation: buttonAppear 0.8s ease-out forwards, gentle-breathe 6s 5.8s infinite ease-in-out;
+            animation: fadeIn 1s ease-out 5s forwards, pulse 2.5s infinite 6s;
+        }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        
+        .delay-1 { animation-delay: 5.0s, 6.0s; }
+        .delay-2 { animation-delay: 5.2s, 6.2s; }
+        .delay-3 { animation-delay: 5.4s, 6.4s; }
+
+        .footer-button {
+            padding: 0.5rem 1.5rem;
+            font-size: 1rem;
+            animation: pulse 2.5s infinite;
         }
         
-        .container > .magic-button:nth-of-type(1) { animation-delay: 5s, 5.8s; }
-        .container > .magic-button:nth-of-type(2) { animation-delay: 5.2s, 6s; }
-        .container > .magic-button:nth-of-type(3) { animation-delay: 5.4s, 6.2s; }
+        /* --- МОБИЛЬНОЕ МЕНЮ --- */
+        #mobile-menu {
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        #mobile-menu.active { transform: translateY(0); }
 
-        @keyframes buttonAppear {
+        /* --- НОВЫЙ СТИЛЬ МОДАЛЬНЫХ ОКОН --- */
+        .modal {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-card {
+            background: linear-gradient(145deg, #c0a062, #a18041);
+            color: #000;
+            font-weight: 700;
+            text-align: center;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.4s ease;
+        }
+        .modal.active .modal-card {
+            transform: scale(1);
+        }
+        .modal-card .modal-close {
+            color: #000;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .modal-card .modal-close:hover { opacity: 1; }
+        
+        /* === СТИЛЬ ДЛЯ НОВЫХ ИКОНОК-КАРТИНОК === */
+        .modal-icon-img {
+            /* Этот фильтр превращает любую картинку в черный силуэт */
+            filter: brightness(0); 
+        }
+
+        /* --- АНИМАЦИИ ВНУТРИ МОДАЛЬНЫХ ОКОН --- */
+        .animated-item {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .modal.active .animated-item {
+            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        .modal.active .delay-1 { animation-delay: 0.2s; }
+        .modal.active .delay-2 { animation-delay: 0.3s; }
+        .modal.active .delay-3 { animation-delay: 0.4s; }
+        .modal.active .delay-4 { animation-delay: 0.5s; }
+        
+        @keyframes slideUp {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
-
-        .button-1 { clip-path: url(#torn-edge-1); }
-        .button-2 { clip-path: url(#torn-edge-2); }
-        .button-3 { clip-path: url(#torn-edge-3); }
-        .button-4 { clip-path: url(#torn-edge-4); }
-        .button-5 { clip-path: url(#torn-edge-5); }
-        .button-6 { clip-path: url(#torn-edge-6); }
-        .button-7 { clip-path: url(#torn-edge-7); }
-        
-        .magic-button::before {
-            content: '';
-            position: absolute;
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
-            z-index: -1;
-            background: linear-gradient(45deg, var(--frame-primary), var(--frame-secondary));
-            filter: url(#hammered-gold);
-        }
-        
-        .magic-button::after {
-            content: '';
-            position: absolute;
-            top: -7px; left: -7px; right: -7px; bottom: -7px;
-            z-index: -2;
-            background: var(--outline-color);
-        }
-
-        .button-1::before, .button-1::after { clip-path: url(#torn-edge-1); }
-        .button-2::before, .button-2::after { clip-path: url(#torn-edge-2); }
-        .button-3::before, .button-3::after { clip-path: url(#torn-edge-3); }
-        .button-4::before, .button-4::after { clip-path: url(#torn-edge-4); }
-        .button-5::before, .button-5::after { clip-path: url(#torn-edge-5); }
-        .button-6::before, .button-6::after { clip-path: url(#torn-edge-6); }
-        .button-7::before, .button-7::after { clip-path: url(#torn-edge-7); }
-
-        .magic-button:hover {
-            transform: scale(1.05) translateY(-5px);
-            filter: drop-shadow(0 10px 25px var(--glow-color));
-            animation-play-state: paused;
-        }
-        
-        @keyframes gentle-breathe {
-            0%, 100% {
-                transform: scale(1) translateY(0);
-                filter: drop-shadow(0 5px 15px transparent);
-            }
-            50% {
-                transform: scale(1.02) translateY(0);
-                filter: drop-shadow(0 8px 20px var(--glow-color));
-            }
-        }
-
-        .site-footer {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            box-sizing: border-box;
-            padding: 20px;
-            padding-left: calc(20px + var(--safe-area-left));
-            padding-right: calc(20px + var(--safe-area-right));
-            padding-bottom: calc(20px + var(--safe-area-bottom));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .contact-icons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            order: 2;
-        }
-        
-        .contact-icons a {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 1px solid var(--footer-text-color);
-            color: var(--footer-text-color);
-            transition: color 0.4s, transform 0.4s, border-color 0.4s, box-shadow 0.4s;
-        }
-        
-        .contact-icons a:hover {
-            color: var(--frame-primary);
-            border-color: var(--frame-primary);
-            transform: scale(1.1) translateY(-3px);
-            box-shadow: 0 0 15px var(--glow-color);
-        }
-        
-        .contact-icons svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .copyright-text {
-            font-family: 'Roboto', sans-serif;
-            color: var(--footer-text-color);
-            font-size: 0.8rem;
-            font-weight: 300;
-            margin: 0;
-            order: 3;
-        }
-        
-        .site-footer .magic-button {
-            order: 1;
-            animation: none;
-            opacity: 1;
-            transform: none;
-        }
-        
-        @media (min-width: 768px) {
-            .site-footer {
-                flex-direction: row;
-                justify-content: space-between;
-                padding-left: calc(40px + var(--safe-area-left));
-                padding-right: calc(40px + var(--safe-area-right));
-                padding-bottom: calc(20px + var(--safe-area-bottom));
-                gap: 15px;
-            }
-            .copyright-text { order: 1; }
-            .contact-icons { order: 2; }
-            .site-footer .magic-button { order: 3; }
-        }
-
-        .small-button {
-            padding: clamp(14px, 2.5vw, 18px) clamp(25px, 4vw, 40px);
-            font-size: clamp(1rem, 2vw, 1.2rem);
-        }
-
-        .small-button:hover {
-             transform: scale(1.08) translateY(-3px);
-             filter: drop-shadow(0 5px 15px var(--glow-color));
-        }
-        
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), visibility 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-            z-index: 1000;
-            overflow-y: auto;
-            padding-top: var(--safe-area-top);
-            padding-bottom: var(--safe-area-bottom);
-        }
-
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            position: relative;
-            margin: 20px;
-            padding: clamp(30px, 5vw, 40px) clamp(25px, 5vw, 50px);
-            width: 90%;
-            max-width: 700px;
-            text-align: left;
-            clip-path: url(#torn-parchment);
-            background-color: var(--modal-bg);
-            background-image: url('data:image/svg+xml,\
-              <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">\
-                <filter id="crumple-light" x="-20%" y="-20%" width="140%" height="140%">\
-                  <feTurbulence baseFrequency="0.02 0.05" numOctaves="3" result="noise"/>\
-                  <feDiffuseLighting in="noise" lighting-color="%23fff" surfaceScale="3">\
-                    <feDistantLight azimuth="235" elevation="60"/>\
-                  </feDiffuseLighting>\
-                  <feComposite operator="in" in2="SourceGraphic"/>\
-                  <feBlend in="SourceGraphic" mode="multiply"/>\
-                </filter>\
-                <rect width="100%" height="100%" filter="url(%23crumple-light)"/>\
-              </svg>');
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-            max-height: calc(100vh - 40px - var(--safe-area-top) - var(--safe-area-bottom));
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-        
-        .modal.active .modal-content {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .modal-content::before, .modal-content::after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            clip-path: url(#torn-parchment);
-        }
-
-        .modal-content::before {
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
-            background: linear-gradient(45deg, var(--frame-primary), var(--frame-secondary));
-            filter: url(#hammered-gold);
-        }
-        
-        .modal-content::after {
-            top: -7px; left: -7px; right: -7px; bottom: -7px;
-            background: var(--outline-color);
-            z-index: -2;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            background: none;
-            border: none;
-            font-size: 2.5rem;
-            color: rgba(0, 0, 0, 0.4);
-            cursor: pointer;
-            transition: color 0.3s, transform 0.3s;
-            z-index: 10;
-        }
-        
-        .close-button:hover {
-            color: #000;
-            transform: rotate(90deg) scale(1.1);
-        }
-        
-        .modal-header h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--modal-header-color);
-            font-size: clamp(1.8rem, 4vw, 2.4rem);
-            margin-top: 0;
-            margin-bottom: 15px;
-            text-shadow: none;
-        }
-
-        .modal-description {
-            font-family: 'Roboto', sans-serif;
-            font-size: clamp(1rem, 2vw, 1.1rem);
-            line-height: 1.7;
-            margin-bottom: 25px;
-            color: var(--modal-text-color);
-        }
-
-        .modal-divider {
-            height: 2px;
-            width: 80px;
-            background-color: var(--frame-primary);
-            margin: 0 0 30px 0;
-            opacity: 0.5;
-        }
-        
-        .features-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .features-list li {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 25px;
-        }
-        
-        .feature-icon {
-            flex-shrink: 0;
-            margin-right: 20px;
-            width: clamp(30px, 5vw, 40px);
-            height: clamp(30px, 5vw, 40px);
-            color: var(--text-color);
-        }
-
-        .feature-text .label {
-            display: block;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            font-size: clamp(0.9rem, 2vw, 1rem);
-            color: var(--modal-text-color);
-            margin-bottom: 4px;
-        }
-        
-        .feature-text .value {
-            display: block;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 400;
-            font-size: clamp(0.9rem, 2vw, 1rem);
-            line-height: 1.6;
-            color: var(--modal-label-color);
-        }
-        
-        .modal-footer {
-            margin-top: 35px;
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .modal-header, .modal-description, .modal-divider, .features-list li, .modal-footer,
-        .about-me-layout, .about-me-header .subtitle, .quote-container {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        
-        .modal.active .modal-header, .modal.active .modal-description, .modal.active .modal-divider, .modal.active .features-list li, .modal.active .modal-footer,
-        .modal.active .about-me-layout, .modal.active .about-me-header .subtitle, .modal.active .quote-container {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .modal.active .modal-header { transition-delay: 0.2s; }
-        .modal.active .modal-description { transition-delay: 0.3s; }
-        .modal.active .modal-divider { transition-delay: 0.4s; }
-        .modal.active .features-list li:nth-child(1) { transition-delay: 0.5s; }
-        .modal.active .features-list li:nth-child(2) { transition-delay: 0.6s; }
-        .modal.active .features-list li:nth-child(3) { transition-delay: 0.7s; }
-        .modal.active .features-list li:nth-child(4) { transition-delay: 0.8s; }
-        .modal.active .modal-footer { transition-delay: 0.9s; }
-
-        .about-me-layout {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-        }
-        
-        @media (min-width: 768px) {
-            .about-me-layout {
-                flex-direction: row;
-                align-items: flex-start;
-                gap: 40px;
-            }
-        }
-
-        .about-me-photo {
-            flex-shrink: 0;
-            width: 180px;
-        }
-        
-        .about-me-photo img {
-            display: block;
-            width: 100%;
-            height: auto;
-            max-width: 100%;
-            border-radius: 8px;
-            border: 3px solid var(--frame-primary);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            object-fit: cover;
-        }
-        
-        @media (min-width: 768px) {
-            .about-me-photo {
-                width: 200px;
-            }
-        }
-
-        .about-me-text {
-            text-align: center;
-        }
-        @media (min-width: 768px) {
-             .about-me-text {
-                text-align: left;
-            }
-        }
-
-        .about-me-header {
-            text-align: inherit;
-            margin-bottom: 25px;
-        }
-        .about-me-header h2 {
-            margin-bottom: 5px;
-        }
-        .about-me-header .subtitle {
-            font-family: 'Roboto', sans-serif;
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            font-weight: 400;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-        .modal-body .modal-divider {
-             margin-left: auto;
-             margin-right: auto;
-        }
-        @media (min-width: 768px) {
-            .modal-body .modal-divider {
-                margin-left: 0;
-                margin-right: 0;
-            }
-        }
-
-        .quote-container {
-            text-align: inherit;
-        }
-        .quote-icon {
-            width: 30px;
-            height: 30px;
-            color: var(--frame-primary);
-            margin: 0 auto 10px;
-            opacity: 0.7;
-        }
-        @media (min-width: 768px) {
-             .quote-icon {
-                margin: 0 0 10px;
-            }
-        }
-
-        .quote {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: clamp(1.1rem, 2vw, 1.2rem);
-            line-height: 1.8;
-            color: var(--modal-text-color);
-            margin: 0;
-            padding: 0;
-            border: 0;
-        }
-        
-        .modal.active .about-me-layout { transition-delay: 0.2s; }
-
     </style>
 </head>
-<body>
-    <main class="main-content">
-        <div class="container">
-            <a href="#" class="magic-button button-1" data-modal-target="#modal-performances">Частные выступления</a>
-            <a href="#" class="magic-button button-2" data-modal-target="#modal-show">Концертные шоу</a>
-            <a href="#" class="magic-button button-3" data-modal-target="#modal-school">Школа фокусов</a>
-        </div>
-    </main>
-
-    <footer class="site-footer">
-        <p class="copyright-text">© 2025, ИП Костюк. Все права защищены.</p>
-        
-        <div class="contact-icons">
-            <a href="https://t.me/Dmitrokko" target="_blank" aria-label="Telegram" title="Telegram">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13L2 9L22 2zM13 22L11 13"/></svg>
-            </a>
-            <a href="tel:+79092763386" aria-label="Позвонить" title="Позвонить">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            </a>
-            <a href="https://vk.com/dmitrokko" target="_blank" aria-label="ВКонтакте" title="ВКонтакте">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M15.5 8.5c-1.2 0-2 .7-2.5 1.5V8.5h-2v5.5c0 1 .4 1.5 1.5 1.5.7 0 1.2-.3 1.5-1h.5s.1 1.5 2 1.5c1.5 0 2.5-1 2.5-2.5S17 8.5 15.5 8.5zM13 12.5c0-.8.4-1.5 1-1.5s1 .7 1 1.5-.4 1.5-1 1.5-1-.7-1-1.5zm-4-1c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1z"/></svg>
-            </a>
-        </div>
-        
-        <a href="#" class="magic-button button-4 small-button" data-modal-target="#modal-about">Обо мне</a>
-    </footer>
-
-    <!-- Modals -->
-    <div class="modal" id="modal-show">
-        <div class="modal-content">
-            <button class="close-button">&times;</button>
-            <div class="modal-header">
-                <h2>Концертные шоу</h2>
-            </div>
-            <div class="modal-body">
-                <p class="modal-description">Философский театральный спектакль-иллюзия.</p>
-                <div class="modal-divider"></div>
-                <ul class="features-list">
-                    <li>
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Формат</span>
-                            <span class="value">Сценическое шоу длительностью 2+ часа.</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Атмосфера</span>
-                            <span class="value">Загадка, философия жизни, погружение в тайну.</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M20.66 7.34l-1.42 1.42M3.34 17.66l-1.42 1.42M20.66 17.66l-1.42-1.42M3.34 7.34l-1.42-1.42"></path></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Особенности</span>
-                            <span class="value">Уникальные иллюзии, авторская драматургия, вовлечение зрителей.</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Для кого</span>
-                            <span class="value">Зрители Ярославля и области, культурные центры, афиши.</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <a href="#" class="magic-button button-6 small-button">Купить билет</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="modal-school">
-        <div class="modal-content">
-            <button class="close-button">&times;</button>
-            <div class="modal-header">
-                <h2>Школа фокусов</h2>
-            </div>
-            <div class="modal-body">
-                <p class="modal-description">Образовательная программа для детей 7–13 лет.</p>
-                <div class="modal-divider"></div>
-                <ul class="features-list">
-                     <li>
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Формат</span>
-                            <span class="value">Регулярные занятия 1 раз в неделю (2 часа).</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"></path></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Миссия</span>
-                            <span class="value">Развитие уверенности, артистизма, памяти и креативного мышления.</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17l4.89-4.89a2 2 0 0 1 2.82 0L22 22M15 2l-3.09 3.09a2 2 0 0 0 0 2.82L15 11l7-7-3.09-3.09a2 2 0 0 0-2.82 0L15 2z"></path></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Особенности</span>
-                            <span class="value">Паспорт волшебника, соревнования, батлы и участие в Чемпионате России.</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Для кого</span>
-                            <span class="value">Дети и родители, ищущие трамплин в артистическую профессию.</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <a href="#" class="magic-button button-7 small-button">Записаться</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="modal-performances">
-        <div class="modal-content">
-            <button class="close-button">&times;</button>
-            <div class="modal-header">
-                <h2>Частные выступления</h2>
-            </div>
-            <div class="modal-body">
-                <p class="modal-description">Магия для ваших особых событий.</p>
-                <div class="modal-divider"></div>
-                <ul class="features-list">
-                    <li>
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Формат</span>
-                            <span class="value">Выступления на свадьбах, юбилеях, корпоративах, днях рождения.</span>
-                        </div>
-                    </li>
-                     <li>
-                        <div class="feature-icon">
-                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Атмосфера</span>
-                            <span class="value">Живое общение, вовлечение гостей и гарантированный вау-эффект.</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Варианты шоу</span>
-                            <span class="value">Close-up магия (вблизи), сценические номера, авторские иллюзии.</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="feature-icon">
-                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        </div>
-                        <div class="feature-text">
-                            <span class="label">Для кого</span>
-                            <span class="value">Организаторы, частные клиенты, event-агентства.</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <a href="#" class="magic-button button-5 small-button">Заказать</a>
-            </div>
-        </div>
-    </div>
+<body class="bg-black text-white flex flex-col min-h-screen">
     
-    <div class="modal" id="modal-about">
-        <div class="modal-content">
-            <button class="close-button">&times;</button>
-            <div class="modal-body">
-                <div class="about-me-layout">
-                    <div class="about-me-photo">
-                        <img src="IMG_5067.jpeg" alt="Дмитрий Костюк">
-                    </div>
-                    <div class="about-me-text">
-                        <div class="modal-header about-me-header">
-                            <h2>Дмитрий Костюк</h2>
-                            <p class="subtitle">иллюзионист и создатель KOSTYUK PROJECT</p>
-                        </div>
-                        <div class="modal-divider"></div>
-                        <div class="quote-container">
-                            <div class="quote-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L6 21M18 3l-4 18"/></svg>
-                            </div>
-                            <blockquote class="quote">
-                                «Я — артист-иллюзионист, создатель театрального шоу “Секрет”, автор телевизионных выпусков “Школа волшебства” и основатель образовательных программ для детей. Моя миссия — объединить магию искусства, сцену и обучение, чтобы вдохновлять взрослых и детей».
-                            </blockquote>
-                        </div>
-                    </div>
+    <div id="magic-cursor"></div>
+
+    <svg style="position:absolute; width:0; height:0;"><defs><clipPath id="torn-paper-shape" clipPathUnits="objectBoundingBox"><path d="M0.01 0.1 C0.05 0.12, 0.03 0.05, 0.1 0.08 L0.2 0.02, 0.25 0.06, 0.3 0.01, 0.4 0.05, 0.5 0, 0.6 0.06, 0.7 0.02, 0.8 0.07, 0.9 0.03 C0.95 0.05, 0.98 0.02, 0.99 0.1 L0.98 0.9 C0.95 0.88, 0.97 0.95, 0.9 0.92 L0.8 0.98, 0.75 0.94, 0.7 0.99, 0.6 0.95, 0.5 1, 0.4 0.94, 0.3 0.98, 0.2 0.93, 0.1 0.97 C0.05 0.95, 0.02 0.98, 0.01 0.9 Z"></path></clipPath></defs></svg>
+    <header class="fixed top-0 right-0 p-4 z-50 md:hidden"><button id="menu-toggle" class="text-white"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button></header>
+    <main class="flex-grow hidden md:flex items-end justify-center pb-16"><div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 p-8"><button class="torn-paper-button desktop-button-animation delay-1" data-modal-target="private-events-modal">Частные выступления</button><button class="torn-paper-button desktop-button-animation delay-2" data-modal-target="concert-show-modal">Концертное шоу</button><button class="torn-paper-button desktop-button-animation delay-3" data-modal-target="magic-school-modal">Школа фокусов</button></div></main>
+    <div class="flex-grow md:hidden"></div>
+    <footer class="w-full p-4 text-gray-400 text-sm flex justify-between items-center"><span>© 2025, ИП Костюк. Все права защищены.</span><button class="torn-paper-button footer-button hidden md:block" data-modal-target="about-me-modal">Обо мне</button></footer>
+    <div id="mobile-menu" class="fixed inset-0 bg-black z-40 flex flex-col items-center justify-center gap-8"><button class="mobile-menu-button torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button><button class="mobile-menu-button torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button><button class="mobile-menu-button torn-paper-button" data-modal-target="magic-school-modal">Школа фокусов</button><button class="mobile-menu-button torn-paper-button" data-modal-target="about-me-modal">Обо мне</button></div>
+    
+    <!-- === ОБНОВЛЕННЫЕ МОДАЛЬНЫЕ ОКНА === -->
+    
+    <div id="private-events-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
+        <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
+            <div class="animated-item">
+                <img src="icon-wow.png" alt="Wow" class="modal-icon-img w-16 h-16 mb-4">
+            </div>
+            <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Частные выступления</h2>
+            <p class="animated-item delay-2 text-lg opacity-80 mb-6">Магия для особых событий</p>
+            <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
+                <p>Магия вживую на свадьбах, корпоративах и днях рождения. Каждый номер вовлекает гостей и превращает праздник в событие, которое невозможно забыть.</p>
+            </div>
+            <button class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Заказать шоу</button>
+            <button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button>
+        </div>
+    </div>
+
+    <div id="concert-show-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
+        <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
+            <div class="animated-item">
+                <img src="icon-masks.png" alt="Театральные маски" class="modal-icon-img w-16 h-16 mb-4">
+            </div>
+            <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Шоу "Секрет"</h2>
+            <p class="animated-item delay-2 text-lg opacity-80 mb-6">Философский спектакль-иллюзия</p>
+            <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
+                <p>Зрители погружаются в мир загадок, где каждый номер скрывает смысл, а финал переворачивает восприятие.</p>
+            </div>
+            <button class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Купить билет</button>
+            <button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button>
+        </div>
+    </div>
+
+    <div id="magic-school-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
+        <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
+             <div class="animated-item">
+                <img src="icon-wand.png" alt="Волшебная палочка" class="modal-icon-img w-16 h-16 mb-4">
+            </div>
+            <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Школа фокусов</h2>
+            <p class="animated-item delay-2 text-lg opacity-80 mb-6">Первая в Ярославле</p>
+            <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
+                <p>Здесь дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене. Каждый проходит путь от первого фокуса до настоящего выступления, а лучшие смогут участвовать в Чемпионате России по фокусам.</p>
+            </div>
+            <button class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Записаться на бесплатный урок</button>
+            <button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button>
+        </div>
+    </div>
+
+    <div id="about-me-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
+        <div class="modal-card p-8 sm:p-12 rounded-lg max-w-4xl w-full">
+            <div class="flex flex-col md:flex-row gap-8 items-center text-left">
+                <div class="w-full md:w-1/3 flex-shrink-0 animated-item">
+                    <img src="photo.jpeg" alt="Дмитрий Костюк" class="rounded-lg object-cover w-full h-full shadow-lg">
+                </div>
+                <div class="w-full md:w-2/3">
+                    <h2 class="animated-item delay-1 text-4xl font-bold mb-1">Дмитрий Костюк</h2>
+                    <p class="animated-item delay-2 text-lg opacity-80 mb-4">Добро пожаловать в Kostyuk Project</p>
+                    <p class="animated-item delay-3 text-base opacity-90">Моя цель — не просто удивлять фокусами, а дарить людям уверенность, эмоции и вдохновение через три уникальных направления.</p>
                 </div>
             </div>
+            <button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button>
         </div>
     </div>
-
-
-    <svg width="0" height="0" style="position:absolute;">
-        <defs>
-            <filter id="hammered-gold">
-              <feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" />
-            </filter>
-            
-            <clipPath id="torn-edge-1" clipPathUnits="objectBoundingBox"><path d="M0.01,0.22 C0.01,0.1,0.11,0.02,0.23,0.03 L0.81,0.01 C0.92,0,1,0.08,0.99,0.19 L0.96,0.82 C0.96,0.93,0.89,0.99,0.79,0.99 L0.2,0.95 C0.09,0.94,0.01,0.86,0.02,0.75 L0.06,0.48 C0.07,0.37,0,0.32,0.01,0.22"></path></clipPath>
-            <clipPath id="torn-edge-2" clipPathUnits="objectBoundingBox"><path d="M0.03,0.17 C0.03,0.06,0.12,0,0.22,0.01 L0.75,0.03 C0.86,0.04,0.95,0.1,0.96,0.2 L0.99,0.78 C1,0.89,0.93,0.98,0.82,0.99 L0.21,0.96 C0.1,0.95,0.01,0.88,0.01,0.77 L0.03,0.48 C0.03,0.37,0.03,0.28,0.03,0.17"></path></clipPath>
-            <clipPath id="torn-edge-3" clipPathUnits="objectBoundingBox"><path d="M0.02,0.78 C0.01,0.89,0.08,0.98,0.18,0.99 L0.8,0.97 C0.91,0.96,0.99,0.89,0.99,0.79 L0.97,0.23 C0.96,0.12,0.88,0.03,0.78,0.02 L0.23,0 C0.12,-0.01,0.03,0.06,0.02,0.16 L0,0.46 C-0.01,0.57,0.03,0.67,0.02,0.78"></path></clipPath>
-            <clipPath id="torn-edge-4" clipPathUnits="objectBoundingBox"><path d="M0.03,0.21 C0.03,0.1,0.12,0.03,0.22,0.03 L0.82,0.01 C0.93,0,1,0.09,0.99,0.2 L0.95,0.8 C0.95,0.91,0.87,0.98,0.77,0.98 L0.18,0.95 C0.07,0.94,0,0.87,0.01,0.76 L0.05,0.49 C0.06,0.38,0.03,0.31,0.03,0.21"></path></clipPath>
-            <clipPath id="torn-edge-5" clipPathUnits="objectBoundingBox"><path d="M0.02,0.23 C0.02,0.12,0.11,0.04,0.22,0.05 L0.8,0.01 C0.91,0,0.99,0.08,0.98,0.19 L0.95,0.81 C0.94,0.92,0.87,0.98,0.77,0.98 L0.19,0.94 C0.08,0.93,0.01,0.85,0.02,0.74 L0.06,0.47 C0.07,0.36,0.02,0.33,0.02,0.23"></path></clipPath>
-            <clipPath id="torn-edge-6" clipPathUnits="objectBoundingBox"><path d="M0.04,0.18 C0.04,0.07,0.13,0.01,0.23,0.02 L0.76,0.04 C0.87,0.05,0.96,0.11,0.97,0.21 L1,0.79 C1.01,0.9,0.94,0.99,0.83,1 L0.22,0.97 C0.11,0.96,0.02,0.89,0.02,0.78 L0.04,0.49 C0.04,0.38,0.04,0.29,0.04,0.18"></path></clipPath>
-            <clipPath id="torn-edge-7" clipPathUnits="objectBoundingBox"><path d="M0.03,0.79 C0.02,0.9,0.09,0.99,0.19,1 L0.81,0.98 C0.92,0.97,1,0.9,1,0.8 L0.98,0.24 C0.97,0.13,0.89,0.04,0.79,0.03 L0.24,0.01 C0.13,0,0.04,0.07,0.03,0.17 L0.01,0.47 C-0.00,0.58,0.04,0.68,0.03,0.79"></path></clipPath>
-            
-            <clipPath id="torn-parchment" clipPathUnits="objectBoundingBox">
-                <path d="M0.01,0.05 C0.01,0.02,0.03,0.01,0.06,0.01 L0.94,0.01 C0.97,0.01,0.99,0.02,0.99,0.05 L0.99,0.95 C0.99,0.98,0.97,0.99,0.94,0.99 L0.06,0.99 C0.03,0.99,0.01,0.98,0.01,0.95 L0.02,0.55 C0.02,0.52,0,0.51,0,0.5 C0,0.49,0.02,0.48,0.02,0.45 L0.01,0.05"></path>
-            </clipPath>
-        </defs>
-    </svg>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const modalTriggers = document.querySelectorAll('[data-modal-target]');
-            const modals = document.querySelectorAll('.modal');
-            const modalCloseButtons = document.querySelectorAll('.close-button');
-
-            const openModal = (modal) => {
-                if (modal == null) return;
-                modal.classList.add('active');
-            };
-
-            const closeModal = (modal) => {
-                if (modal == null) return;
-                modal.classList.remove('active');
-            };
-
-            modalTriggers.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const modal = document.querySelector(button.dataset.modalTarget);
-                    openModal(modal);
+            const modalOpenButtons = document.querySelectorAll('[data-modal-target]');
+            const modalCloseButtons = document.querySelectorAll('.modal-close');
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButtons = document.querySelectorAll('.mobile-menu-button');
+            menuToggle.addEventListener('click', () => { mobileMenu.classList.toggle('active'); });
+            mobileMenuButtons.forEach(button => { button.addEventListener('click', () => { mobileMenu.classList.remove('active'); }); });
+            modalOpenButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modalId = button.dataset.modalTarget;
+                    const modal = document.getElementById(modalId);
+                    if (modal) { modal.classList.add('active'); }
                 });
             });
-
             modalCloseButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const modal = button.closest('.modal');
-                    closeModal(modal);
+                    if (modal) { modal.classList.remove('active'); }
+                });
+            });
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) { modal.classList.remove('active'); }
                 });
             });
 
-            modals.forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        closeModal(modal);
-                    }
-                });
+            // === ВАУ-ЭФФЕКТ: ЛОГИКА КУРСОРА ===
+            const magicCursor = document.getElementById('magic-cursor');
+            let lastX = 0, lastY = 0;
+            let canCreateParticle = true;
+            window.addEventListener('mousemove', e => {
+                magicCursor.style.left = e.clientX + 'px';
+                magicCursor.style.top = e.clientY + 'px';
+                if (canCreateParticle) {
+                    createTrailParticle(e.clientX, e.clientY);
+                    canCreateParticle = false;
+                    setTimeout(() => canCreateParticle = true, 50); // Создаем частицу не чаще чем раз в 50мс
+                }
             });
+
+            function createTrailParticle(x, y) {
+                const particle = document.createElement('div');
+                particle.className = 'trail-particle';
+                const size = Math.random() * 8 + 2; // от 2 до 10px
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.transform = `translate(-50%, -50%) translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`; // Легкий разброс
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 700);
+            }
         });
     </script>
 </body>
