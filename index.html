@@ -16,16 +16,19 @@
             cursor: none;
             font-family: 'Roboto', sans-serif;
             background-color: #000000;
-            background-image: url('background-logo.jpeg');
+            /* Мобильный фон по умолчанию */
+            background-image: url('background-logo-mobile.jpeg');
             background-position: center center;
             background-repeat: no-repeat;
-            background-size: contain;
+            /* Растягиваем фон, чтобы он покрывал весь экран смартфона */
+            background-size: cover;
             background-attachment: fixed;
         }
 
+        /* Для планшетов и десктопов возвращаем старый фон */
         @media (min-width: 768px) {
             body {
-                background-size: cover;
+                background-image: url('background-logo.jpeg');
             }
         }
 
@@ -146,11 +149,10 @@
         
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* Стили для новых иконок в списке */
         .list-icon {
             width: 24px;
             height: 24px;
-            filter: brightness(0); /* Делаем иконку черной */
+            filter: brightness(0);
         }
     </style>
 </head>
@@ -167,7 +169,7 @@
     
     <div id="private-events-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50"><div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center"><div class="animated-item"><img src="icon-wow.png" alt="Wow" class="modal-icon-img w-16 h-16 mb-4"></div><h2 class="animated-item delay-1 text-4xl font-bold mb-2">Частные выступления</h2><p class="animated-item delay-2 text-lg opacity-80 mb-6">Магия для особых событий</p><div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90"><p>Магия вживую на свадьбах, корпоративах и днях рождения. Каждый номер вовлекает гостей и превращает праздник в событие, которое невозможно забыть.</p></div><button class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Заказать шоу</button><button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button></div></div>
     <div id="concert-show-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50"><div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center"><div class="animated-item"><img src="icon-masks.png" alt="Театральные маски" class="modal-icon-img w-16 h-16 mb-4"></div><h2 class="animated-item delay-1 text-4xl font-bold mb-2">Шоу "Секрет"</h2><p class="animated-item delay-2 text-lg opacity-80 mb-6">Философский спектакль-иллюзия</p><div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90"><p>Зрители погружаются в мир загадок, где каждый номер скрывает смысл, а финал переворачивает восприятие.</p></div><button class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Купить билет</button><button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button></div></div>
-    <div id="magic-school-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50"><div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center"><div class="animated-item"><img src="icon-wand.png" alt="Волшебная палочка" class="modal-icon-img w-16 h-16 mb-4"></div><h2 class="animated-item delay-1 text-4xl font-bold mb-2">Школа фокусов</h2><p class="animated-item delay-2 text-lg opacity-80 mb-6">Первая в Ярославле</p<div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90"><p>Здесь дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене. Каждый проходит путь от первого фокуса до настоящего выступления, а лучшие смогут участвовать в Чемпионате России по фокусам.</p></div><button class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Записаться на бесплатный урок</button><button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button></div></div>
+    <div id="magic-school-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50"><div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center"><div class="animated-item"><img src="icon-wand.png" alt="Волшебная палочка" class="modal-icon-img w-16 h-16 mb-4"></div><h2 class="animated-item delay-1 text-4xl font-bold mb-2">Школа фокусов</h2><p class="animated-item delay-2 text-lg opacity-80 mb-6">Первая в Ярославле</p><div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90"><p>Здесь дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене. Каждый проходит путь от первого фокуса до настоящего выступления, а лучшие смогут участвовать в Чемпионате России по фокусам.</p></div><button class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Записаться на бесплатный урок</button><button class="modal-close absolute top-4 right-4 text-3xl font-light">&times;</button></div></div>
     
     <div id="about-me-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
         <div class="modal-card p-8 sm:p-12 rounded-lg max-w-4xl w-full">
@@ -178,7 +180,6 @@
                     <p class="animated-item delay-2 text-lg opacity-80 mb-6">иллюзионист, автор шоу и основатель KOSTYUK PROJECT</p>
                     <div class="animated-item delay-3 text-base opacity-90 space-y-4">
                         <p>Я занимаюсь иллюзионным искусством более 10 лет и создал собственный мир, где магия становится частью жизни. Мои проекты объединены в экосистему KOSTYUK PROJECT, в которую входят:</p>
-                        <!-- ОБНОВЛЕННЫЙ СПИСОК С ИКОНКАМИ -->
                         <ul class="list-none space-y-3 !mt-4">
                             <li class="flex items-start"><img src="list-icon-show.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Шоу"><div class="text-left"><b>Шоу «Секрет»</b> — философский театральный спектакль, где каждый номер раскрывает тайну человеческого восприятия.</div></li>
                             <li class="flex items-start"><img src="list-icon-school.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Школы"><div class="text-left"><b>Школа фокусов</b> — первая в Ярославле образовательная программа, где дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене.</div></li>
