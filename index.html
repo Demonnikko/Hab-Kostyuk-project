@@ -16,16 +16,19 @@
             cursor: none;
             font-family: 'Roboto', sans-serif;
             background-color: #000000;
-            /* Мобильный фон по умолчанию */
+            /* ФОН ДЛЯ СМАРТФОНОВ.
+               Браузер ищет файл с именем 'background-logo-mobile.jpeg'.
+            */
             background-image: url('background-logo-mobile.jpeg');
             background-position: center center;
             background-repeat: no-repeat;
-            /* Растягиваем фон, чтобы он покрывал весь экран смартфона */
             background-size: cover;
             background-attachment: fixed;
         }
 
-        /* Для планшетов и десктопов возвращаем старый фон */
+        /* ФОН ДЛЯ ПЛАНШЕТОВ И КОМПЬЮТЕРОВ.
+           На экранах шире 768px, браузер будет искать 'background-logo.jpeg'.
+        */
         @media (min-width: 768px) {
             body {
                 background-image: url('background-logo.jpeg');
