@@ -19,7 +19,7 @@
     body{
       font-family:'Roboto',sans-serif;
       background:#000;
-      /* фоны для моб/десктоп */
+      /* фон для мобилок */
       background-image:url('background-logo-mobile.jpeg');
       background-position:center center;
       background-repeat:no-repeat;
@@ -30,7 +30,7 @@
       body{ background-image:url('background-logo.jpeg'); }
     }
 
-    /* Общий стиль “рваной” кнопки */
+    /* “рваная” кнопка */
     .torn-paper-button{
       font-family:'Playfair Display',serif;
       background:linear-gradient(145deg,var(--gold),var(--gold2));
@@ -60,7 +60,7 @@
       border-color:transparent;
     }
 
-    /* Плавные подсказки на десктопе */
+    /* подсказки на десктопе */
     .desktop-button-animation{ opacity:0; transform:translateY(20px); animation:fadeIn 1s ease-out 5s forwards, pulse 2.5s infinite 6s; }
     @keyframes fadeIn{ to{opacity:1; transform:translateY(0);} }
     @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.03);} }
@@ -68,9 +68,18 @@
     .delay-2{ animation-delay:5.2s,6.2s; }
     .delay-3{ animation-delay:5.4s,6.4s; }
 
-    /* Мобильное меню (с плавным выездом) */
-    #mobile-menu{ transform:translateY(-100%); transition:transform .5s cubic-bezier(.77,0,.175,1); }
-    #mobile-menu.active{ transform:translateY(0); }
+    /* Мобильное меню — ВАЖНО:
+       когда закрыто → pointer-events:none; чтобы не блокировало клики
+    */
+    #mobile-menu{
+      transform:translateY(-100%);
+      transition:transform .5s cubic-bezier(.77,0,.175,1);
+      pointer-events:none;              /* закрыто — не перехватывает клики */
+    }
+    #mobile-menu.active{
+      transform:translateY(0);
+      pointer-events:auto;              /* открыто — кликабельно */
+    }
 
     /* Модалки */
     .modal{ display:none; opacity:0; transition:opacity .4s ease; }
@@ -101,8 +110,8 @@
     /* Холст с плавающими элементами */
     #bg-ornaments{
       position:fixed; inset:0;
-      z-index:10;              /* ниже меню (z-40) и модалок (z-50), но выше фона body */
-      pointer-events:none;     /* чтобы не блокировал клики */
+      z-index:10;              /* ниже меню (z-40) и модалок (z-50) */
+      pointer-events:none;     /* не блокирует клики */
     }
   </style>
 </head>
@@ -117,7 +126,7 @@
     </defs>
   </svg>
 
-  <!-- Холст с кубиками/палочками/вопросами (виден и под меню, и под модалками) -->
+  <!-- Холст с кубиками/палочками/вопросами -->
   <canvas id="bg-ornaments"></canvas>
 
   <!-- Бургер только на мобилках -->
@@ -139,7 +148,7 @@
     </div>
   </main>
 
-  <!-- Заполнитель, чтобы на мобилке нижний футер не прилипал к верху -->
+  <!-- Заполнитель для мобильной верстки -->
   <div class="flex-grow md:hidden"></div>
 
   <!-- Футер -->
@@ -148,7 +157,7 @@
     <button class="torn-paper-button footer-button hidden md:block" data-modal-target="about-me-modal">Обо мне</button>
   </footer>
 
-  <!-- Мобильное меню (фон полупрозрачный, чтобы видеть узоры) -->
+  <!-- Мобильное меню (полупрозрачное, чтобы был виден фон) -->
   <div id="mobile-menu" class="fixed inset-0 bg-black/85 z-40 flex flex-col items-center justify-center gap-8">
     <button class="mobile-menu-button torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button>
     <button class="mobile-menu-button torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button>
@@ -161,18 +170,14 @@
   <!-- Частные выступления -->
   <div id="private-events-modal" class="modal fixed inset-0 bg-black/80 items-center justify-center p-4 z-50" role="dialog" aria-modal="true">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item">
-        <img src="icon-wow.png" alt="Wow" class="w-16 h-16 mb-4" />
-      </div>
+      <div class="animated-item"><img src="icon-wow.png" alt="Wow" class="w-16 h-16 mb-4"></div>
       <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Частные выступления</h2>
       <p class="animated-item delay-2 text-lg opacity-80 mb-6">Магия для особых событий</p>
       <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
         <p>Магия вживую на свадьбах, корпоративах и днях рождения. Каждый номер вовлекает гостей и превращает праздник в событие, которое невозможно забыть.</p>
       </div>
       <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6"
-         href="https://site76-git-main-demonnikkos-projects.vercel.app" target="_blank" rel="noopener">
-        Заказать шоу
-      </a>
+         href="https://site76-git-main-demonnikkos-projects.vercel.app" target="_blank" rel="noopener">Заказать шоу</a>
       <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
@@ -187,9 +192,7 @@
         <p>Зрители погружаются в мир загадок, где каждый номер скрывает смысл, а финал переворачивает восприятие.</p>
       </div>
       <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6"
-         href="https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2" target="_blank" rel="noopener">
-        Купить билет
-      </a>
+         href="https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2" target="_blank" rel="noopener">Купить билет</a>
       <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
@@ -204,9 +207,7 @@
         <p>Здесь дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене. Каждый проходит путь от первого фокуса до настоящего выступления, а лучшие смогут участвовать в Чемпионате России по фокусам.</p>
       </div>
       <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6"
-         href="https://magic-school-eight.vercel.app" target="_blank" rel="noopener">
-        Записаться на бесплатный урок
-      </a>
+         href="https://magic-school-eight.vercel.app" target="_blank" rel="noopener">Записаться на бесплатный урок</a>
       <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
@@ -262,7 +263,7 @@
       mobileMenu.classList.toggle('active');
     });
 
-    // При клике по пункту меню просто закрываем меню — модалка откроется ниже делегированием
+    // при клике по пункту меню — закрываем меню (модалка откроется дальше тем же кликом)
     document.querySelectorAll('.mobile-menu-button').forEach(btn=>{
       btn.addEventListener('click', ()=> mobileMenu.classList.remove('active'));
     });
@@ -276,7 +277,7 @@
       if (m) m.classList.add('active');
     }
     function closeModal(elem){
-      const m = elem.closest('.modal');
+      const m = elem.closest ? elem.closest('.modal') : elem;
       if(!m) return;
       m.classList.remove('active');
       // На смартфонах после закрытия модалки — автопоказ меню
@@ -324,20 +325,20 @@
 
       function createObjects(){
         objects.length = 0;
-        const total = 18; // количество элементов на экране
+        const total = 18; // количество элементов
         const types = ['die','wand','q'];
         for(let i=0;i<total;i++){
           const t = pick(types);
-          const s = rand(.8,1.2);                // scale
+          const s = rand(.8,1.2);
           objects.push({
             t,
             x: rand(0,W),
             y: rand(0,H),
-            vx: rand(-.08,.08),                  // скорость
+            vx: rand(-.08,.08),
             vy: rand(.04,.12),
             rot: rand(0,Math.PI*2),
             vr: rand(-.003,.003),
-            a: rand(.45,.85),                    // начальная прозрачность
+            a: rand(.45,.85),
             s
           });
         }
@@ -345,18 +346,16 @@
       createObjects();
 
       function drawDie(x,y,size,rot,alpha){
-        const r = size/6;                       // радиус точек
+        const r = size/6;
         ctx.save();
         ctx.translate(x,y);
         ctx.rotate(rot);
-        // тело кубика
-        ctx.fillStyle = '#c0a062'; // золотая бронза
+        ctx.fillStyle = '#c0a062';
         ctx.strokeStyle = '#8b6b32';
         ctx.lineWidth = 1;
         ctx.globalAlpha = alpha;
         ctx.fillRect(-size/2,-size/2,size,size);
         ctx.strokeRect(-size/2,-size/2,size,size);
-        // точки (всегда «пять», смотрится узнаваемо и просто)
         ctx.fillStyle = '#111';
         const p = size/4;
         [[-p,-p],[p,p],[-p,p],[p,-p],[0,0]].forEach(([dx,dy])=>{
@@ -370,10 +369,8 @@
         ctx.translate(x,y);
         ctx.rotate(rot);
         ctx.globalAlpha = alpha;
-        // белая палочка
         ctx.fillStyle = '#fff';
         ctx.fillRect(-len/2,-1.2, len, 2.4);
-        // тёмные наконечники
         ctx.fillStyle = '#111';
         ctx.fillRect(-len/2,-1.6, len*0.15, 3.2);
         ctx.fillRect(len/2 - len*0.15,-1.6, len*0.15, 3.2);
@@ -385,7 +382,7 @@
         ctx.translate(x,y);
         ctx.rotate(rot);
         ctx.globalAlpha = alpha;
-        ctx.fillStyle = '#e02424'; // ярко-красный
+        ctx.fillStyle = '#e02424';
         ctx.font = fs + 'px Playfair Display, serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -396,21 +393,19 @@
       function tick(){
         ctx.clearRect(0,0,W,H);
 
-        // рисуем
         for(const o of objects){
           o.x += o.vx;
           o.y += o.vy;
           o.rot += o.vr;
 
-          // респаун за нижней границей / боками
           if(o.y > H + 20){ o.y = -20; o.x = rand(0,W); }
           if(o.x < -20){ o.x = W + 20; }
           if(o.x > W + 20){ o.x = -20; }
 
-          // размеры уменьшены в 2 раза относительно прежних
-          if(o.t === 'die')      drawDie(o.x, o.y, 9 * o.s,  o.rot, o.a);   // было ~17
-          else if(o.t === 'wand')drawWand(o.x, o.y, 22 * o.s, o.rot, o.a);  // было ~45
-          else                   drawQ(o.x, o.y, 8 * o.s + 4, o.rot, o.a);  // было ~15 (+8)
+          // МЕЛЬЧЕ в 2 раза:
+          if(o.t === 'die')      drawDie(o.x, o.y, 9 * o.s,  o.rot, o.a);
+          else if(o.t === 'wand')drawWand(o.x, o.y, 22 * o.s, o.rot, o.a);
+          else                   drawQ(o.x, o.y, 8 * o.s + 4, o.rot, o.a);
         }
         rafId = requestAnimationFrame(tick);
       }
