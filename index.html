@@ -2,10 +2,12 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- ВАЖНО: укажем базовый путь к проекту на GitHub Pages -->
+  <base href="/Hab-Kostyuk-project/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Дмитрий Костюк — Иллюзионист</title>
 
-  <!-- Tailwind (CDN) -->
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Шрифты -->
@@ -14,102 +16,71 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      /* Цвета и типографика */
-      --gold:#c0a062; --gold2:#a18041;
-      --bg:#000;
-    }
-
-    /* ===== БАЗА / ФОН ===== */
+    :root { --gold:#c0a062; --gold2:#a18041; }
     body{
-      font-family:'Roboto',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:#fff;
-      background:#000; /* по умолчанию просто чёрный фон */
-      /* Мобильный фон (подставьте файл): */
-      background-image: url('bg-mobile-1080x1920.jpg');
+      font-family:'Roboto',sans-serif;
+      background:#000;
+      /* моб. фон */
+      background-image:url('background-mobile.jpeg?v=1');
       background-position:center center;
       background-repeat:no-repeat;
       background-size:cover;
       background-attachment:fixed;
     }
-    /* Планшет/десктоп — другой файл фона */
     @media (min-width:768px){
-      body{
-        background-image: url('bg-desktop-1920x1080.jpg');
-      }
+      /* десктоп/планшет фон */
+      body{ background-image:url('background-desktop.jpeg?v=1'); }
     }
 
-    /* Кнопки «рваная бумага» */
+    h1,h2,h3,.torn-paper-button,.modal-card{font-family:'Playfair Display',serif}
+
+    /* Кнопки "рваная бумага" */
     .torn-paper-button{
-      font-family:'Playfair Display',serif;
-      background: linear-gradient(145deg, var(--gold), var(--gold2));
-      color:#1a1a1a;
-      border:none;
-      padding:1rem 2rem;
-      font-weight:700;
-      font-size:1.125rem;
-      position:relative;
-      transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
-      text-shadow: 1px 1px 3px rgba(0,0,0,.35);
-      clip-path: url(#torn-paper-shape);
+      background:linear-gradient(145deg,var(--gold),var(--gold2));
+      color:#1a1a1a; border:none; padding:1rem 2rem;
+      font-weight:700; font-size:1.125rem; position:relative;
+      transition:.25s; text-shadow:1px 1px 3px rgba(0,0,0,.4);
+      clip-path:url(#torn-paper-shape);
     }
-    .torn-paper-button:hover{ transform: translateY(-1px); box-shadow:0 10px 20px rgba(200,160,90,.2); }
+    .torn-paper-button:hover{ transform:scale(1.03); box-shadow:0 10px 20px rgba(200,160,90,.2); }
+    .button-inverted{ background:#111; color:var(--gold); border:2px solid var(--gold2); }
+    .button-inverted:hover{ background:linear-gradient(145deg,var(--gold),var(--gold2)); color:#111; border-color:transparent; }
 
-    .button-inverted{
-      background:#1a1a1a; color:var(--gold);
-      border:2px solid var(--gold2);
-      text-shadow:0 2px 4px rgba(0,0,0,.5), 0 0 15px rgba(192,160,98,.35);
+    /* Плавное выпадение мобильного меню */
+    #mobile-menu{
+      transform:translateY(-100%);
+      transition:transform .5s cubic-bezier(0.77,0,0.175,1);
     }
-    .button-inverted:hover{
-      background: linear-gradient(145deg, var(--gold), var(--gold2));
-      color:#111; border-color:transparent;
-    }
+    #mobile-menu.active{ transform:translateY(0); }
 
-    /* Лёгкое появление главных кнопок на десктопе */
-    .desktop-button-animation{ opacity:0; transform:translateY(18px); animation:fadeIn .8s ease-out .4s forwards; }
-    .desktop-button-animation.delay-2{ animation-delay:.55s; }
-    .desktop-button-animation.delay-3{ animation-delay:.7s; }
-    @keyframes fadeIn{ to{ opacity:1; transform:none; } }
-
-    /* ===== МОДАЛКИ ===== */
+    /* Модалки */
     .modal{ display:none; opacity:0; transition:opacity .35s ease; }
     .modal.active{ display:flex; opacity:1; }
-
     .modal-card{
-      background: linear-gradient(145deg, var(--gold), var(--gold2));
-      color:#000; font-weight:700; text-align:center;
-      position:relative; transform:scale(.98);
-      transition: transform .35s ease;
+      background:linear-gradient(145deg,var(--gold),var(--gold2));
+      color:#000; font-weight:700; text-align:center; position:relative;
+      transform:scale(.98); transition:transform .35s ease;
       max-height:85vh; overflow-y:auto; -webkit-overflow-scrolling:touch;
     }
     .modal.active .modal-card{ transform:scale(1); }
     .modal-card .modal-close{ color:#000; opacity:.7; transition:opacity .2s; }
     .modal-card .modal-close:hover{ opacity:1; }
 
-    /* Контентная анимация внутри модалки */
-    .animated-item{ opacity:0; transform: translateY(16px); }
-    .modal.active .animated-item{ animation: slideUp .5s cubic-bezier(.23,1,.32,1) forwards; }
-    .modal.active .delay-1{ animation-delay:.08s; }
-    .modal.active .delay-2{ animation-delay:.16s; }
-    .modal.active .delay-3{ animation-delay:.24s; }
-    .modal.active .delay-4{ animation-delay:.32s; }
-    .modal.active .delay-5{ animation-delay:.40s; }
-    @keyframes slideUp{ to{ opacity:1; transform:none; } }
+    .animated-item{opacity:0; transform:translateY(20px)}
+    .modal.active .animated-item{ animation:slideUp .6s cubic-bezier(.23,1,.32,1) forwards }
+    .modal.active .delay-1{animation-delay:.2s}
+    .modal.active .delay-2{animation-delay:.3s}
+    .modal.active .delay-3{animation-delay:.4s}
+    .modal.active .delay-4{animation-delay:.5s}
+    @keyframes slideUp{to{opacity:1; transform:translateY(0)}}
 
-    .modal-icon-img{ filter:brightness(0); }
-    .list-icon{ width:24px; height:24px; filter:brightness(0); }
-
-    /* ===== МОБ. МЕНЮ ===== */
-    #mobile-menu{
-      transform: translateY(-100%);
-      transition: transform .45s cubic-bezier(.77,0,.175,1);
-    }
-    #mobile-menu.active{ transform: translateY(0); }
+    .modal-icon-img, .list-icon{ filter:brightness(0) } /* тёмные пиктограммы на золотом фоне */
+    .list-icon{ width:24px; height:24px }
   </style>
 </head>
 <body class="bg-black text-white flex flex-col min-h-screen">
 
-  <!-- clipPath для «рваной» кнопки -->
+  <!-- clipPath для "рваной" формы -->
   <svg style="position:absolute; width:0; height:0;">
     <defs>
       <clipPath id="torn-paper-shape" clipPathUnits="objectBoundingBox">
@@ -118,110 +89,86 @@
     </defs>
   </svg>
 
-  <!-- Бургер — только на мобилках -->
+  <!-- Мобильный бургер -->
   <header class="fixed top-0 right-0 p-4 z-50 md:hidden">
-    <button id="menu-toggle" class="text-white" aria-label="Открыть меню">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16m-7 6h7"/>
+    <button id="menu-toggle" class="text-white" aria-label="Меню">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
       </svg>
     </button>
   </header>
 
-  <!-- Главный экран: ДЕСКТОП/ПЛАНШЕТ -->
+  <!-- Десктопная сцена: три кнопки -->
   <main class="flex-grow hidden md:flex items-end justify-center pb-12">
     <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 p-8">
-      <button class="torn-paper-button desktop-button-animation" data-modal-target="private-events-modal">Частные выступления</button>
-      <button class="torn-paper-button desktop-button-animation delay-2" data-modal-target="concert-show-modal">Концертное шоу</button>
-      <button class="torn-paper-button desktop-button-animation delay-3" data-modal-target="magic-school-modal">Школа фокусов</button>
+      <button class="torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button>
+      <button class="torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button>
+      <button class="torn-paper-button" data-modal-target="magic-school-modal">Школа фокусов</button>
     </div>
   </main>
 
-  <!-- Пустой растягивающий див для мобилок (чтобы футер не прилипал) -->
+  <!-- Пустой заполнитель на мобилке -->
   <div class="flex-grow md:hidden"></div>
 
   <!-- Футер -->
   <footer class="w-full p-4 text-gray-400 text-sm flex justify-between items-center">
     <span>© 2025, ИП Костюк. Все права защищены.</span>
-    <button class="torn-paper-button button-inverted footer-button hidden md:block" data-modal-target="about-me-modal">Обо мне</button>
+    <button class="torn-paper-button button-inverted hidden md:block" data-modal-target="about-me-modal">Обо мне</button>
   </footer>
 
-  <!-- МОБИЛЬНОЕ МЕНЮ -->
-  <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-40 flex flex-col items-center justify-center gap-8 px-6 text-center">
-    <button class="mobile-menu-button torn-paper-button w-full max-w-[320px]" data-modal-target="private-events-modal">Частные выступления</button>
-    <button class="mobile-menu-button torn-paper-button w-full max-w-[320px]" data-modal-target="concert-show-modal">Концертное шоу</button>
-    <button class="mobile-menu-button torn-paper-button w-full max-w-[320px]" data-modal-target="magic-school-modal">Школа фокусов</button>
-    <button class="mobile-menu-button torn-paper-button w-full max-w-[320px]" data-modal-target="about-me-modal">Обо мне</button>
+  <!-- Мобильное меню -->
+  <div id="mobile-menu" class="fixed inset-0 bg-black z-40 flex flex-col items-center justify-center gap-8">
+    <button class="mobile-menu-button torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button>
+    <button class="mobile-menu-button torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button>
+    <button class="mobile-menu-button torn-paper-button" data-modal-target="magic-school-modal">Школа фокусов</button>
+    <button class="mobile-menu-button torn-paper-button" data-modal-target="about-me-modal">Обо мне</button>
   </div>
 
-  <!-- ===== МОДАЛКИ ===== -->
-
-  <!-- Частные выступления -->
-  <div id="private-events-modal" class="modal fixed inset-0 bg-black/85 items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-label="Частные выступления">
+  <!-- Модалки -->
+  <div id="private-events-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item">
-        <img src="icon-wow.png" alt="Wow" class="modal-icon-img w-16 h-16 mb-4">
-      </div>
+      <div class="animated-item"><img src="icon-wow.png?v=1" alt="Wow" class="modal-icon-img w-16 h-16 mb-4"></div>
       <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Частные выступления</h2>
       <p class="animated-item delay-2 text-lg opacity-80 mb-6">Магия для особых событий</p>
       <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
         <p>Магия вживую на свадьбах, корпоративах и днях рождения. Каждый номер вовлекает гостей и превращает праздник в событие, которое невозможно забыть.</p>
       </div>
-
-      <!-- Переход на сайт частных заказов -->
-      <a href="https://site76-git-main-demonnikkos-projects.vercel.app" target="_blank" rel="noopener"
-         class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Заказать шоу</a>
-
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
+      <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6" href="https://site76-git-main-demonnikkos-projects.vercel.app" target="_blank" rel="noopener">Заказать шоу</a>
+      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
 
-  <!-- Концертное шоу -->
-  <div id="concert-show-modal" class="modal fixed inset-0 bg-black/85 items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-label="Концертное шоу">
+  <div id="concert-show-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item">
-        <img src="icon-masks.png" alt="Театральные маски" class="modal-icon-img w-16 h-16 mb-4">
-      </div>
+      <div class="animated-item"><img src="icon-masks.png?v=1" alt="Театральные маски" class="modal-icon-img w-16 h-16 mb-4"></div>
       <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Шоу «Секрет»</h2>
       <p class="animated-item delay-2 text-lg opacity-80 mb-6">Философский спектакль-иллюзия</p>
       <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
         <p>Зрители погружаются в мир загадок, где каждый номер скрывает смысл, а финал переворачивает восприятие.</p>
       </div>
-
-      <!-- Переход на покупку билетов -->
-      <a href="https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2" target="_blank" rel="noopener"
-         class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Купить билет</a>
-
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
+      <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6" href="https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2" target="_blank" rel="noopener">Купить билет</a>
+      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
 
-  <!-- Школа фокусов -->
-  <div id="magic-school-modal" class="modal fixed inset-0 bg-black/85 items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-label="Школа фокусов">
+  <div id="magic-school-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item">
-        <img src="icon-wand.png" alt="Волшебная палочка" class="modal-icon-img w-16 h-16 mb-4">
-      </div>
+      <div class="animated-item"><img src="icon-wand.png?v=1" alt="Волшебная палочка" class="modal-icon-img w-16 h-16 mb-4"></div>
       <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Школа фокусов</h2>
       <p class="animated-item delay-2 text-lg opacity-80 mb-6">Первая в Ярославле</p>
       <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
         <p>Здесь дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене. Каждый проходит путь от первого фокуса до настоящего выступления, а лучшие смогут участвовать в Чемпионате России по фокусам.</p>
       </div>
-
-      <!-- Переход на сайт школы -->
-      <a href="https://magic-school-eight.vercel.app" target="_blank" rel="noopener"
-         class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6">Записаться на бесплатный урок</a>
-
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
+      <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6" href="https://magic-school-eight.vercel.app" target="_blank" rel="noopener">Записаться на бесплатный урок</a>
+      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
 
-  <!-- Обо мне -->
-  <div id="about-me-modal" class="modal fixed inset-0 bg-black/85 items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-label="Обо мне">
+  <div id="about-me-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-4xl w-full">
       <div class="flex flex-col md:flex-row gap-8 items-center text-left">
         <div class="w-full md:w-1/3 flex-shrink-0 animated-item">
-          <img src="photo.jpeg" alt="Дмитрий Костюк" class="rounded-lg object-cover w-full h-full shadow-lg">
+          <img src="photo.jpeg?v=1" alt="Дмитрий Костюк" class="rounded-lg object-cover w-full h-full shadow-lg">
         </div>
         <div class="w-full md:w-2/3">
           <h2 class="animated-item delay-1 text-4xl font-bold mb-1">Дмитрий Костюк</h2>
@@ -230,15 +177,15 @@
             <p>Я занимаюсь иллюзионным искусством более 10 лет и создал собственный мир, где магия становится частью жизни. Мои проекты объединены в экосистему KOSTYUK PROJECT, в которую входят:</p>
             <ul class="list-none space-y-3 !mt-4">
               <li class="flex items-start">
-                <img src="list-icon-show.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Шоу">
+                <img src="list-icon-show.png?v=1" class="list-icon mr-3 flex-shrink-0" alt="Иконка Шоу">
                 <div class="text-left"><b>Шоу «Секрет»</b> — философский театральный спектакль, где каждый номер раскрывает тайну человеческого восприятия.</div>
               </li>
               <li class="flex items-start">
-                <img src="list-icon-school.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Школы">
+                <img src="list-icon-school.png?v=1" class="list-icon mr-3 flex-shrink-0" alt="Иконка Школы">
                 <div class="text-left"><b>Школа фокусов</b> — первая в Ярославле образовательная программа, где дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене.</div>
               </li>
               <li class="flex items-start">
-                <img src="list-icon-private.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Частных выступлений">
+                <img src="list-icon-private.png?v=1" class="list-icon mr-3 flex-shrink-0" alt="Иконка Частных выступлений">
                 <div class="text-left"><b>Частные выступления</b> — магия для особых событий: свадьбы, корпоративы, юбилеи, дни рождения.</div>
               </li>
             </ul>
@@ -247,13 +194,10 @@
           </div>
         </div>
       </div>
-
-      <!-- На мобильных: кнопка для возврата в меню -->
       <div class="w-full text-center mt-8 md:hidden animated-item delay-4">
         <button id="open-main-menu-from-about" class="torn-paper-button button-inverted text-xl px-8">Меню</button>
       </div>
-
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
+      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
 
@@ -261,76 +205,69 @@
     document.addEventListener('DOMContentLoaded', () => {
       const modalOpenButtons = document.querySelectorAll('[data-modal-target]');
       const modalCloseButtons = document.querySelectorAll('.modal-close');
+      const menuToggle = document.getElementById('menu-toggle');
       const mobileMenu = document.getElementById('mobile-menu');
       const mobileMenuButtons = document.querySelectorAll('.mobile-menu-button');
-      const menuToggle = document.getElementById('menu-toggle');
 
-      // Открытие/закрытие мобильного меню бургером
+      // Бургер
       menuToggle?.addEventListener('click', () => {
         mobileMenu.classList.toggle('active');
       });
 
-      // Открытие модалки из любой кнопки с data-modal-target
-      modalOpenButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.modalTarget;
-          const modal = document.getElementById(id);
-          if (!modal) return;
-          // Закрываем меню, если открыто (на мобилках)
-          mobileMenu.classList.remove('active');
-          // Открываем модалку
-          modal.classList.add('active');
-        });
+      // Открыть модалку по кнопке
+      modalOpenButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const modalId = button.dataset.modalTarget;
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.classList.add('active');
+            // на мобильном при открытии модалки — спрятать меню
+            if (window.innerWidth < 768) mobileMenu.classList.remove('active');
+          }
+        }, {passive:true});
       });
 
-      // Кнопки в мобильном меню сначала закрывают меню, затем открывают модалку
-      mobileMenuButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.modalTarget;
-          const modal = document.getElementById(id);
-          mobileMenu.classList.remove('active');
-          setTimeout(() => modal?.classList.add('active'), 50);
-        });
-      });
-
-      // Закрытие модалки по крестику
-      modalCloseButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const modal = btn.closest('.modal');
+      // Закрыть модалку
+      modalCloseButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const modal = button.closest('.modal');
           if (!modal) return;
           modal.classList.remove('active');
-
-          // На смартфонах после закрытия — открываем меню автоматически
-          if (window.innerWidth < 768) {
-            setTimeout(() => mobileMenu.classList.add('active'), 120);
-          }
+          // Автовозврат в меню на смартфонах
+          if (window.innerWidth < 768) mobileMenu.classList.add('active');
         });
       });
 
-      // Клик по фону модалки — закрыть
+      // Клик по фону модалки закрывает её
       document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', (e) => {
           if (e.target === modal) {
             modal.classList.remove('active');
-            if (window.innerWidth < 768) {
-              setTimeout(() => mobileMenu.classList.add('active'), 120);
-            }
+            if (window.innerWidth < 768) mobileMenu.classList.add('active');
           }
         });
       });
 
-      // На смартфонах при первом входе — показываем «Обо мне»
+      // Кнопки из меню закрывают меню
+      mobileMenuButtons.forEach(btn => {
+        btn.addEventListener('click', () => mobileMenu.classList.remove('active'));
+      });
+
+      // На телефонах — показывать About сразу
       const aboutModal = document.getElementById('about-me-modal');
+      const openMainMenuBtn = document.getElementById('open-main-menu-from-about');
       if (window.innerWidth < 768 && aboutModal) {
         aboutModal.classList.add('active');
       }
-
-      // Кнопка «Меню» внутри «Обо мне»
-      const openMainMenuBtn = document.getElementById('open-main-menu-from-about');
+      // Из About обратно в меню
       openMainMenuBtn?.addEventListener('click', () => {
         aboutModal?.classList.remove('active');
-        mobileMenu.classList.add('active');
+        mobileMenu?.classList.add('active');
       });
+
+      // Жёсткое обновление фоновых изображений при первом визите (поможет против кэша)
+      const bg = new Image(); bg.src = 'background-mobile.jpeg?v=1';
+      const bg2 = new Image(); bg2.src = 'background-desktop.jpeg?v=1';
     });
   </script>
 </body>
