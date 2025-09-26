@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Дмитрий Костюк — Иллюзионист</title>
 
+  <!-- PWA / иконки -->
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="manifest" href="site.webmanifest">
+
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -14,10 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --gold:#c0a062;
-      --gold2:#a18041;
-    }
+    :root{ --gold:#c0a062; --gold2:#a18041; }
     body{
       font-family:'Roboto',sans-serif;
       background:#000;
@@ -33,7 +37,7 @@
       body{ background-image:url('background-desktop.jpeg'); }
     }
 
-    /* Кнопка "рваная бумага" — через SVG clipPath (работает в Safari) */
+    /* Кнопка "рваная бумага" — через SVG clipPath (совместимо с Safari) */
     .torn-paper-button{
       background:linear-gradient(145deg,var(--gold),var(--gold2));
       color:#1a1a1a;
@@ -66,21 +70,12 @@
     .modal.active{ display:flex; opacity:1; }
     .modal-card{
       background:linear-gradient(145deg,var(--gold),var(--gold2));
-      color:#000;
-      font-weight:700;
-      text-align:center;
-      position:relative;
-      transform:scale(.96);
-      transition:transform .35s ease;
-      max-height:85vh;
-      overflow-y:auto;
-      -webkit-overflow-scrolling:touch;
-      border-radius:12px;
+      color:#000; font-weight:700; text-align:center; position:relative;
+      transform:scale(.96); transition:transform .35s ease;
+      max-height:85vh; overflow-y:auto; -webkit-overflow-scrolling:touch; border-radius:12px;
     }
     .modal.active .modal-card{ transform:scale(1); }
-    .modal-card .modal-close{
-      color:#000; opacity:.7; transition:opacity .2s;
-    }
+    .modal-card .modal-close{ color:#000; opacity:.7; transition:opacity .2s; }
     .modal-card .modal-close:hover{ opacity:1; }
 
     /* Иконки-списки в "Обо мне" */
@@ -95,6 +90,22 @@
     .modal.active .delay-4{ animation-delay:.30s }
     .modal.active .delay-5{ animation-delay:.36s }
     @keyframes slideUp{ to{ opacity:1; transform:translateY(0) } }
+
+    /* Плавающая кнопка "Поделиться" (FAB) */
+    .share-fab{
+      position:fixed; right:14px; bottom:14px; z-index:60;
+      padding:.9rem 1.2rem; font-size:1rem;
+      box-shadow:0 10px 26px rgba(192,160,98,.28);
+    }
+
+    /* Тост (уведомление при копировании ссылки) */
+    .toast{
+      position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+      background:#111; color:#fff; border:1px solid #2c2c2c; border-radius:10px;
+      padding:.6rem 1rem; font-size:.95rem; opacity:0; pointer-events:none;
+      transition:opacity .25s ease, transform .25s ease; z-index:70;
+    }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
   </style>
 </head>
 <body class="bg-black text-white flex flex-col min-h-screen">
@@ -130,16 +141,30 @@
   <!-- Футер -->
   <footer class="w-full p-4 text-gray-300 text-sm flex justify-between items-center">
     <span>© 2025, ИП Костюк. Все права защищены.</span>
-    <button class="torn-paper-button hidden md:block" data-modal-target="about-me-modal">Обо мне</button>
+    <div class="hidden md:flex items-center gap-3">
+      <button class="torn-paper-button" data-modal-target="about-me-modal">Обо мне</button>
+      <!-- Кнопка «Поделиться» (десктоп) -->
+      <button id="share-desktop" class="torn-paper-button" aria-label="Поделиться сайтом">Поделиться</button>
+    </div>
   </footer>
 
-  <!-- Мобильное меню (полупрозрачное) -->
+  <!-- Мобильное меню -->
   <div id="mobile-menu" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 flex flex-col items-center justify-center gap-8">
     <button class="mobile-menu-button torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button>
     <button class="mobile-menu-button torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button>
     <button class="mobile-menu-button torn-paper-button" data-modal-target="magic-school-modal">Школа фокусов</button>
     <button class="mobile-menu-button torn-paper-button" data-modal-target="about-me-modal">Обо мне</button>
+    <!-- Кнопка «Поделиться» (мобильное меню) -->
+    <button id="share-mobile" class="torn-paper-button">Поделиться сайтом</button>
   </div>
+
+  <!-- Плавающая FAB «Поделиться» (видна всегда) -->
+  <button id="share-fab" class="torn-paper-button share-fab" aria-label="Поделиться">
+    Поделиться
+  </button>
+
+  <!-- Тост -->
+  <div id="toast" class="toast">Ссылка скопирована</div>
 
   <!-- ===== МОДАЛКИ ===== -->
 
@@ -216,17 +241,39 @@
           </div>
         </div>
       </div>
-
-      <!-- Кнопка "Меню" только на мобилке -->
       <div class="w-full text-center mt-8 md:hidden animated-item delay-4">
         <button id="open-main-menu-from-about" class="torn-paper-button text-xl px-8">Меню</button>
       </div>
-
       <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
     </div>
   </div>
 
   <script>
+    // Универсальная функция шаринга
+    async function shareSite(){
+      const shareData = {
+        title: 'KOSTYUK PROJECT — Иллюзионист Дмитрий Костюк',
+        text: 'Магическое шоу, частные выступления, школа фокусов.',
+        url: location.href
+      };
+      try{
+        if(navigator.share){
+          await navigator.share(shareData);
+        }else{
+          await navigator.clipboard.writeText(location.href);
+          showToast('Ссылка скопирована');
+        }
+      }catch(e){
+        // если пользователь отменил — ничего
+      }
+    }
+    function showToast(text){
+      const t=document.getElementById('toast');
+      t.textContent=text||'Готово';
+      t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'),1500);
+    }
+
     document.addEventListener('DOMContentLoaded', ()=>{
       const menuToggle = document.getElementById('menu-toggle');
       const mobileMenu = document.getElementById('mobile-menu');
@@ -234,6 +281,11 @@
       const modalCloseButtons = document.querySelectorAll('.modal-close');
       const aboutModal = document.getElementById('about-me-modal');
       const openMainMenuBtn = document.getElementById('open-main-menu-from-about');
+
+      // Кнопки "Поделиться"
+      document.getElementById('share-fab').addEventListener('click', shareSite);
+      document.getElementById('share-mobile').addEventListener('click', shareSite);
+      document.getElementById('share-desktop').addEventListener('click', shareSite);
 
       // Открытие/закрытие мобильного меню
       menuToggle?.addEventListener('click', ()=>{
@@ -250,9 +302,7 @@
         btn.addEventListener('click', ()=>{
           const id = btn.dataset.modalTarget;
           const modal = document.getElementById(id);
-          if(modal){
-            modal.classList.add('active');
-          }
+          if(modal){ modal.classList.add('active'); }
         });
       });
 
@@ -262,10 +312,7 @@
           const modal = btn.closest('.modal');
           if(modal){
             modal.classList.remove('active');
-            // На смартфонах после закрытия — открыть меню
-            if(window.innerWidth < 768){
-              mobileMenu.classList.add('active');
-            }
+            if(window.innerWidth < 768){ mobileMenu.classList.add('active'); }
           }
         });
       });
@@ -275,9 +322,7 @@
         modal.addEventListener('click', (e)=>{
           if(e.target === modal){
             modal.classList.remove('active');
-            if(window.innerWidth < 768){
-              mobileMenu.classList.add('active');
-            }
+            if(window.innerWidth < 768){ mobileMenu.classList.add('active'); }
           }
         });
       });
