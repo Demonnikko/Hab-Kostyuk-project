@@ -14,179 +14,98 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    :root {
+    :root{
       --gold:#c0a062;
       --gold-deep:#a18041;
       --red:#ff2b2b;
-      --mobile-break: 768px;
     }
 
-    body {
-      cursor: none;
-      font-family: 'Roboto', sans-serif;
-      background-color: #000000;
-      /* фон для смартфонов */
-      background-image: url('background-logo-mobile.jpeg');
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
+    body{
+      cursor:none;
+      font-family:'Roboto',sans-serif;
+      background:#000 url('background-logo-mobile.jpeg') center/cover fixed no-repeat;
     }
-    @media (min-width: 768px) {
-      body {
-        /* фон для планшетов/десктопов */
-        background-image: url('background-logo.jpeg');
-      }
+    @media (min-width:768px){
+      body{ background-image:url('background-logo.jpeg'); }
     }
 
-    /* курсор */
-    #magic-cursor {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      transition: width 0.2s, height 0.2s;
-      z-index: 9999;
+    /* кастом-курсор */
+    #magic-cursor{
+      position:fixed; width:20px; height:20px; border:2px solid var(--gold); border-radius:50%;
+      pointer-events:none; transform:translate(-50%,-50%); transition:width .2s,height .2s; z-index:9999;
     }
-    .trail-particle {
-      position: fixed;
-      background: var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
-      animation: fadeAndScale 0.7s forwards;
-    }
-    @keyframes fadeAndScale { to { transform: scale(0); opacity: 0; } }
-    body:has(button:hover) #magic-cursor { width: 40px; height: 40px; }
+    .trail-particle{ position:fixed; background:var(--gold); border-radius:50%; pointer-events:none; z-index:9998; animation:fadeAndScale .7s forwards }
+    @keyframes fadeAndScale{ to{ transform:scale(0); opacity:0 } }
+    body:has(button:hover) #magic-cursor{ width:40px; height:40px }
 
-    h1, h2, h3, .torn-paper-button, .modal-card { font-family: 'Playfair Display', serif; }
+    h1,h2,h3,.torn-paper-button,.modal-card{ font-family:'Playfair Display',serif }
 
-    .torn-paper-button {
-      background: linear-gradient(145deg, var(--gold), var(--gold-deep));
-      color: #1a1a1a;
-      border: none;
-      padding: 1rem 2rem;
-      font-weight: 700;
-      font-size: 1.25rem;
-      cursor: none;
-      position: relative;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-      clip-path: url(#torn-paper-shape);
+    .torn-paper-button{
+      background:linear-gradient(145deg,var(--gold),var(--gold-deep));
+      color:#1a1a1a; border:none; padding:1rem 2rem; font-weight:700; font-size:1.25rem; cursor:none;
+      transition:transform .3s, box-shadow .3s, background .3s, color .3s;
+      text-shadow:1px 1px 3px rgba(0,0,0,.4);
+      clip-path:url(#torn-paper-shape);
     }
-    .torn-paper-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 20px rgba(200, 160, 90, 0.2);
-    }
+    .torn-paper-button:hover{ transform:scale(1.05); box-shadow:0 10px 20px rgba(200,160,90,.2) }
 
-    .button-inverted {
-      background: #1a1a1a;
-      color: var(--gold);
-      border: 2px solid var(--gold-deep);
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 0 15px rgba(192, 160, 98, 0.4);
+    .button-inverted{
+      background:#1a1a1a; color:var(--gold); border:2px solid var(--gold-deep);
+      text-shadow:0 2px 4px rgba(0,0,0,.5), 0 0 15px rgba(192,160,98,.4);
     }
-    .button-inverted:hover {
-      background: linear-gradient(145deg, var(--gold), var(--gold-deep));
-      color: #1a1a1a;
-      border-color: transparent;
+    .button-inverted:hover{ background:linear-gradient(145deg,var(--gold),var(--gold-deep)); color:#1a1a1a; border-color:transparent }
+
+    .desktop-button-animation{ opacity:0; transform:translateY(20px); animation:fadeIn 1s ease-out 5s forwards, pulse 2.5s infinite 6s }
+    @keyframes fadeIn{ to{ opacity:1; transform:translateY(0) } }
+    @keyframes pulse{ 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.03) } }
+    .delay-1{ animation-delay:5.0s,6.0s } .delay-2{ animation-delay:5.2s,6.2s } .delay-3{ animation-delay:5.4s,6.4s }
+
+    .footer-button{ padding:.5rem 1.5rem; font-size:1rem; animation:pulse 2.5s infinite }
+
+    /* Мобильное меню: чтобы не перекрывать клики, когда скрыто */
+    #mobile-menu{
+      position:fixed; inset:0; z-index:40;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2rem;
+      transform:translateY(-100%); opacity:0;
+      transition:transform .5s cubic-bezier(.77,0,.175,1), opacity .5s ease;
+      background:rgba(0,0,0,.92);       /* просвечивает фон-анимацию */
+      pointer-events:none;               /* ВАЖНО: не ловит тапы, когда скрыт */
     }
+    #mobile-menu.active{ transform:translateY(0); opacity:1; pointer-events:auto }
 
-    .desktop-button-animation {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 1s ease-out 5s forwards, pulse 2.5s infinite 6s;
+    /* Модалки */
+    .modal{ display:none; opacity:0; transition:opacity .4s ease }
+    .modal.active{ display:flex; opacity:1 }
+    .modal-card{
+      background:linear-gradient(145deg,var(--gold),var(--gold-deep));
+      color:#000; font-weight:700; text-align:center; position:relative;
+      transform:scale(.95); transition:transform .4s ease; max-height:85vh; overflow-y:auto; -webkit-overflow-scrolling:touch;
     }
-    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-    .delay-1 { animation-delay: 5.0s, 6.0s; }
-    .delay-2 { animation-delay: 5.2s, 6.2s; }
-    .delay-3 { animation-delay: 5.4s, 6.4s; }
+    .modal.active .modal-card{ transform:scale(1) }
+    .modal-card .modal-close{ color:#000; opacity:.7; transition:opacity .3s }
+    .modal-card .modal-close:hover{ opacity:1 }
+    .modal-icon-img{ filter:brightness(0) }
+    .animated-item{ opacity:0; transform:translateY(20px) }
+    .modal.active .animated-item{ animation:slideUp .6s cubic-bezier(.23,1,.32,1) forwards }
+    .modal.active .delay-1{ animation-delay:.2s } .delay-2{ animation-delay:.3s } .delay-3{ animation-delay:.4s } .delay-4{ animation-delay:.5s } .delay-5{ animation-delay:.6s }
+    @keyframes slideUp{ to{ opacity:1; transform:translateY(0) } }
+    .list-icon{ width:24px; height:24px; filter:brightness(0) }
 
-    .footer-button {
-      padding: 0.5rem 1.5rem;
-      font-size: 1rem;
-      animation: pulse 2.5s infinite;
-    }
-
-    /* мобильное меню: slide + fade */
-    #mobile-menu {
-      transform: translateY(-100%);
-      opacity: 0;
-      transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1),
-                  opacity 0.5s ease;
-      /* важное изменение: полупрозрачный фон, чтобы было видно анимацию под ним */
-      background: rgba(0,0,0,.92);
-    }
-    #mobile-menu.active {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    /* модалки */
-    .modal {
-      display: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .modal.active { display: flex; opacity: 1; }
-
-    .modal-card {
-      background: linear-gradient(145deg, var(--gold), var(--gold-deep));
-      color: #000;
-      font-weight: 700;
-      text-align: center;
-      position: relative;
-      transform: scale(0.95);
-      transition: transform 0.4s ease;
-      max-height: 85vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .modal.active .modal-card { transform: scale(1); }
-    .modal-card .modal-close {
-      color: #000;
-      opacity: 0.7;
-      transition: opacity 0.3s;
-    }
-    .modal-card .modal-close:hover { opacity: 1; }
-
-    .modal-icon-img { filter: brightness(0); }
-
-    .animated-item { opacity: 0; transform: translateY(20px); }
-    .modal.active .animated-item { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-    .modal.active .delay-1 { animation-delay: 0.2s; }
-    .modal.active .delay-2 { animation-delay: 0.3s; }
-    .modal.active .delay-3 { animation-delay: 0.4s; }
-    .modal.active .delay-4 { animation-delay: 0.5s; }
-    .modal.active .delay-5 { animation-delay: 0.6s; }
-    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-
-    .list-icon { width: 24px; height: 24px; filter: brightness(0); }
-
-    /* холст с орнаментами (мобильная анимация) */
+    /* Холст с орнаментами (мобилка) */
     #bg-ornaments{
-      position: fixed;
-      inset: 0;
-      z-index: 30; /* ниже модалок (z-50) и ниже меню-контента (z-40), но видно через полупрозрачный фон меню */
-      pointer-events: none;
-      display: none;
+      position:fixed; inset:0; z-index:30; pointer-events:none; display:none;
     }
-    @media (max-width: 767.98px){ #bg-ornaments{ display:block; } }
+    @media (max-width:767.98px){ #bg-ornaments{ display:block } }
   </style>
 </head>
 <body class="bg-black text-white flex flex-col min-h-screen">
-
-  <!-- курсор -->
   <div id="magic-cursor"></div>
 
-  <!-- холст для анимации -->
+  <!-- фон-анимация -->
   <canvas id="bg-ornaments"></canvas>
 
-  <!-- клип-путь для рваной кнопки -->
-  <svg style="position:absolute; width:0; height:0;">
+  <!-- clipPath для рваных кнопок -->
+  <svg style="position:absolute;width:0;height:0">
     <defs>
       <clipPath id="torn-paper-shape" clipPathUnits="objectBoundingBox">
         <path d="M0.01 0.1 C0.05 0.12, 0.03 0.05, 0.1 0.08 L0.2 0.02, 0.25 0.06, 0.3 0.01, 0.4 0.05, 0.5 0, 0.6 0.06, 0.7 0.02, 0.8 0.07, 0.9 0.03 C0.95 0.05, 0.98 0.02, 0.99 0.1 L0.98 0.9 C0.95 0.88, 0.97 0.95, 0.9 0.92 L0.8 0.98, 0.75 0.94, 0.7 0.99, 0.6 0.95, 0.5 1, 0.4 0.94, 0.3 0.98, 0.2 0.93, 0.1 0.97 C0.05 0.95, 0.02 0.98, 0.01 0.9 Z"/>
@@ -194,17 +113,16 @@
     </defs>
   </svg>
 
-  <!-- бургер (мобилка) -->
+  <!-- бургер (мобильный) -->
   <header class="fixed top-0 right-0 p-4 z-50 md:hidden">
     <button id="menu-toggle" class="text-white" aria-label="Открыть меню">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16m-7 6h7"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
       </svg>
     </button>
   </header>
 
-  <!-- десктоп главная -->
+  <!-- десктоп-экран -->
   <main class="flex-grow hidden md:flex items-end justify-center pb-12">
     <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 p-8">
       <button class="torn-paper-button desktop-button-animation delay-1" data-modal-target="private-events-modal">Частные выступления</button>
@@ -213,17 +131,15 @@
     </div>
   </main>
 
-  <!-- заполнитель для мобилок -->
   <div class="flex-grow md:hidden"></div>
 
-  <!-- футер -->
   <footer class="w-full p-4 text-gray-400 text-sm flex justify-between items-center">
     <span>© 2025, ИП Костюк. Все права защищены.</span>
     <button class="torn-paper-button footer-button hidden md:block" data-modal-target="about-me-modal">Обо мне</button>
   </footer>
 
-  <!-- мобильное меню (фон теперь полупрозрачный через CSS вверху) -->
-  <div id="mobile-menu" class="fixed inset-0 z-40 flex flex-col items-center justify-center gap-8">
+  <!-- мобильное меню -->
+  <div id="mobile-menu">
     <button class="mobile-menu-button torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button>
     <button class="mobile-menu-button torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button>
     <button class="mobile-menu-button torn-paper-button" data-modal-target="magic-school-modal">Школа фокусов</button>
@@ -235,18 +151,14 @@
   <!-- Частные выступления -->
   <div id="private-events-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item">
-        <img src="icon-wow.png" alt="Wow" class="modal-icon-img w-16 h-16 mb-4">
-      </div>
+      <div class="animated-item"><img src="icon-wow.png" alt="Wow" class="modal-icon-img w-16 h-16 mb-4"></div>
       <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Частные выступления</h2>
       <p class="animated-item delay-2 text-lg opacity-80 mb-6">Магия для особых событий</p>
       <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
         <p>Магия вживую на свадьбах, корпоративах и днях рождения. Каждый номер вовлекает гостей и превращает праздник в событие, которое невозможно забыть.</p>
       </div>
       <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6"
-         href="https://site76-git-main-demonnikkos-projects.vercel.app" target="_blank" rel="noopener">
-        Заказать шоу
-      </a>
+         href="https://site76-git-main-demonnikkos-projects.vercel.app" target="_blank" rel="noopener">Заказать шоу</a>
       <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
@@ -254,18 +166,14 @@
   <!-- Концертное шоу -->
   <div id="concert-show-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item">
-        <img src="icon-masks.png" alt="Театральные маски" class="modal-icon-img w-16 h-16 mb-4">
-      </div>
+      <div class="animated-item"><img src="icon-masks.png" alt="Театральные маски" class="modal-icon-img w-16 h-16 mb-4"></div>
       <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Шоу «Секрет»</h2>
       <p class="animated-item delay-2 text-lg opacity-80 mb-6">Философский спектакль-иллюзия</p>
       <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
         <p>Зрители погружаются в мир загадок, где каждый номер скрывает смысл, а финал переворачивает восприятие.</p>
       </div>
       <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6"
-         href="https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2" target="_blank" rel="noopener">
-        Купить билет
-      </a>
+         href="https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2" target="_blank" rel="noopener">Купить билет</a>
       <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
@@ -273,18 +181,14 @@
   <!-- Школа фокусов -->
   <div id="magic-school-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item">
-        <img src="icon-wand.png" alt="Волшебная палочка" class="modal-icon-img w-16 h-16 mb-4">
-      </div>
+      <div class="animated-item"><img src="icon-wand.png" alt="Волшебная палочка" class="modal-icon-img w-16 h-16 mb-4"></div>
       <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Школа фокусов</h2>
       <p class="animated-item delay-2 text-lg opacity-80 mb-6">Первая в Ярославле</p>
       <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
         <p>Здесь дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене. Каждый проходит путь от первого фокуса до настоящего выступления, а лучшие смогут участвовать в Чемпионате России по фокусам.</p>
       </div>
       <a class="animated-item delay-4 torn-paper-button button-inverted mt-8 text-xl px-6"
-         href="https://magic-school-eight.vercel.app" target="_blank" rel="noopener">
-        Записаться на бесплатный урок
-      </a>
+         href="https://magic-school-eight.vercel.app" target="_blank" rel="noopener">Записаться на бесплатный урок</a>
       <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">&times;</button>
     </div>
   </div>
@@ -302,18 +206,9 @@
           <div class="animated-item delay-3 text-base opacity-90 space-y-4">
             <p>Я занимаюсь иллюзионным искусством более 10 лет и создал собственный мир, где магия становится частью жизни. Мои проекты объединены в экосистему KOSTYUK PROJECT, в которую входят:</p>
             <ul class="list-none space-y-3 !mt-4">
-              <li class="flex items-start">
-                <img src="list-icon-show.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Шоу">
-                <div class="text-left"><b>Шоу «Секрет»</b> — философский театральный спектакль, где каждый номер раскрывает тайну человеческого восприятия.</div>
-              </li>
-              <li class="flex items-start">
-                <img src="list-icon-school.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Школы">
-                <div class="text-left"><b>Школа фокусов</b> — первая в Ярославле образовательная программа, где дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене.</div>
-              </li>
-              <li class="flex items-start">
-                <img src="list-icon-private.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Частных выступлений">
-                <div class="text-left"><b>Частные выступления</b> — магия для особых событий: свадьбы, корпоративы, юбилеи, дни рождения.</div>
-              </li>
+              <li class="flex items-start"><img src="list-icon-show.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Шоу"><div class="text-left"><b>Шоу «Секрет»</b> — философский театральный спектакль, где каждый номер раскрывает тайну человеческого восприятия.</div></li>
+              <li class="flex items-start"><img src="list-icon-school.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Школы"><div class="text-left"><b>Школа фокусов</b> — первая в Ярославле образовательная программа, где дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене.</div></li>
+              <li class="flex items-start"><img src="list-icon-private.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка Частных выступлений"><div class="text-left"><b>Частные выступления</b> — магия для особых событий: свадьбы, корпоративы, юбилеи, дни рождения.</div></li>
             </ul>
             <p>Каждое направление решает свою задачу, но все они связаны одной идеей: магия — это не только иллюзия, это способ вдохновлять людей, раскрывать их внутренний потенциал и дарить незабываемые эмоции.</p>
             <p>Моя миссия — делать так, чтобы каждый зритель и ученик чувствовал себя частью чуда.</p>
@@ -328,188 +223,182 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const modalOpenButtons = document.querySelectorAll('[data-modal-target]');
-      const modalCloseButtons = document.querySelectorAll('.modal-close');
-      const mobileMenu = document.getElementById('mobile-menu');
-      const menuToggle = document.getElementById('menu-toggle');
-      const mobileMenuButtons = document.querySelectorAll('.mobile-menu-button');
-      const aboutModal = document.getElementById('about-me-modal');
-      const openMainMenuBtn = document.getElementById('open-main-menu-from-about');
+  document.addEventListener('DOMContentLoaded', () => {
+    const modalOpenButtons = document.querySelectorAll('[data-modal-target]');
+    const modalCloseButtons = document.querySelectorAll('.modal-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenuButtons = document.querySelectorAll('.mobile-menu-button');
+    const aboutModal = document.getElementById('about-me-modal');
 
-      /* ===== холст-анимация на мобилках ===== */
-      const canvas = document.getElementById('bg-ornaments');
-      const ctx = canvas.getContext('2d');
-      let W = 0, H = 0, objects = [], rafId;
+    /* ===== холст-анимация на мобилках (без roundRect) ===== */
+    const canvas = document.getElementById('bg-ornaments');
+    const ctx = canvas.getContext('2d');
+    let W=0,H=0, objs=[], rafId;
 
-      function isMobile() { return window.innerWidth < 768; }
-      function resizeCanvas() {
-        if (!isMobile()) {
-          cancelAnimationFrame(rafId);
-          canvas.width = 0; canvas.height = 0;
-          return;
+    const isMobile = () => window.innerWidth < 768;
+
+    function resizeCanvas(){
+      if(!isMobile()){ cancelAnimationFrame(rafId); canvas.width=0; canvas.height=0; return; }
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      W = canvas.width  = Math.floor(window.innerWidth  * dpr);
+      H = canvas.height = Math.floor(window.innerHeight * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function createObjects(){
+      objs.length=0;
+      const total=18, types=['die','wand','q'];
+      for(let i=0;i<total;i++){
+        const t=types[i%types.length];
+        objs.push({type:t,x:rand(0,window.innerWidth),y:rand(0,window.innerHeight),
+                   vx:rand(-.15,.15),vy:rand(.05,.18),rot:rand(0,Math.PI*2),vr:rand(-.002,.002),
+                   s:rand(.8,1.2),a:rand(.6,.95)});
+      }
+    }
+
+    function roundedRectPath(cx, cy, w, h, r){
+      const x=cx, y=cy;
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.lineTo(x+w-r, y);
+      ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+      ctx.lineTo(x+w, y+h-r);
+      ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+      ctx.lineTo(x+r, y+h);
+      ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+      ctx.lineTo(x, y+r);
+      ctx.quadraticCurveTo(x, y, x+r, y);
+      ctx.closePath();
+    }
+
+    function drawDie(x,y,size,rot,a){
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.globalAlpha=a;
+      const s=size, r=8;
+      const grd=ctx.createLinearGradient(-s/2,-s/2,s/2,s/2);
+      grd.addColorStop(0,'#b0893e'); grd.addColorStop(1,'#c9a25a');
+      ctx.fillStyle=grd; ctx.strokeStyle='#2b2b2b'; ctx.lineWidth=2;
+
+      roundedRectPath(-s/2,-s/2,s,s,r);
+      ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle='#000';
+      const p=s/6, dot=s/14;
+      [[-p,-p],[p,-p],[-p,0],[p,0],[-p,p],[p,p]].forEach(([dx,dy])=>{
+        ctx.beginPath(); ctx.arc(dx,dy,dot,0,Math.PI*2); ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    function drawWand(x,y,len,rot,a){
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.globalAlpha=a;
+      const L=len, R=5;
+      ctx.fillStyle='#fff'; ctx.strokeStyle='#111'; ctx.lineWidth=1.2;
+      roundedRectPath(-L/2,-R,L,R*2,R);
+      ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle='#111';
+      roundedRectPath(-L/2,-R, L*0.15, R*2, R); ctx.fill();
+      roundedRectPath(L/2 - L*0.15, -R, L*0.15, R*2, R); ctx.fill();
+      ctx.restore();
+    }
+
+    function drawQ(x,y,size,rot,a){
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.globalAlpha=a;
+      ctx.fillStyle='#ff2b2b';
+      ctx.font=`bold ${size}px Playfair Display, serif`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('?',0,0);
+      ctx.restore();
+    }
+
+    function tick(){
+      try{
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        const vw=window.innerWidth, vh=window.innerHeight;
+        for(const o of objs){
+          o.x+=o.vx; o.y+=o.vy; o.rot+=o.vr;
+          if(o.x<-40) o.x=vw+40; if(o.x>vw+40) o.x=-40;
+          if(o.y>vh+40){ o.y=-40; o.x=rand(0,vw); }
+          if(o.type==='die')  drawDie(o.x,o.y,34*o.s,o.rot,o.a);
+          if(o.type==='wand') drawWand(o.x,o.y,90*o.s,o.rot,o.a);
+          if(o.type==='q')    drawQ(o.x,o.y,30*o.s+16,o.rot,o.a);
         }
-        W = canvas.width = window.innerWidth * devicePixelRatio;
-        H = canvas.height = window.innerHeight * devicePixelRatio;
-        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      }catch(e){
+        // если что-то пойдёт не так — просто прекращаем анимацию, остальной сайт работает
+        cancelAnimationFrame(rafId); return;
       }
-      function rand(min, max) { return Math.random() * (max - min) + min; }
-      function createObjects() {
-        objects = [];
-        const total = 18;
-        const types = ['die', 'wand', 'q'];
-        for (let i = 0; i < total; i++) {
-          const type = types[i % types.length];
-          objects.push({
-            type,
-            x: rand(0, window.innerWidth),
-            y: rand(0, window.innerHeight),
-            vx: rand(-0.15, 0.15),
-            vy: rand(0.05, 0.18),
-            rot: rand(0, Math.PI * 2),
-            vr: rand(-0.002, 0.002),
-            scale: rand(0.8, 1.2),
-            alpha: rand(0.6, 0.95)
-          });
-        }
-      }
-      function drawDie(x, y, size, rot, alpha) {
-        ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.globalAlpha = alpha;
-        const s = size;
-        const grd = ctx.createLinearGradient(-s/2, -s/2, s/2, s/2);
-        grd.addColorStop(0, '#b0893e'); grd.addColorStop(1, '#c9a25a');
-        ctx.fillStyle = grd; ctx.strokeStyle = '#2b2b2b'; ctx.lineWidth = 2;
-        ctx.beginPath(); const r = 8;
-        ctx.moveTo(-s/2 + r, -s/2);
-        ctx.arcTo(s/2, -s/2, s/2, s/2, r);
-        ctx.arcTo(s/2, s/2, -s/2, s/2, r);
-        ctx.arcTo(-s/2, s/2, -s/2, -s/2, r);
-        ctx.arcTo(-s/2, -s/2,  s/2, -s/2, r);
-        ctx.closePath(); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#000';
-        const p = s/6, rSpot = s/14;
-        [[-p,-p],[p,-p],[-p,0],[p,0],[-p,p],[p,p]].forEach(([sx,sy])=>{
-          ctx.beginPath(); ctx.arc(sx, sy, rSpot, 0, Math.PI*2); ctx.fill();
-        });
-        ctx.restore();
-      }
-      function drawWand(x, y, len, rot, alpha) {
-        ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.globalAlpha = alpha;
-        const L = len, R = 5;
-        ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2;
-        ctx.beginPath(); ctx.roundRect(-L/2, -R, L, R*2, R); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#111';
-        ctx.beginPath(); ctx.roundRect(-L/2, -R, L*0.15, R*2, R); ctx.fill();
-        ctx.beginPath(); ctx.roundRect(L/2 - L*0.15, -R, L*0.15, R*2, R); ctx.fill();
-        ctx.restore();
-      }
-      function drawQ(x, y, size, rot, alpha) {
-        ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.globalAlpha = alpha;
-        ctx.fillStyle = '#ff2b2b';
-        ctx.font = `bold ${size}px Playfair Display, serif`;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('?', 0, 0);
-        ctx.restore();
-      }
-      function step() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const vw = window.innerWidth, vh = window.innerHeight;
-        for (const o of objects) {
-          o.x += o.vx; o.y += o.vy; o.rot += o.vr;
-          if (o.x < -40) o.x = vw + 40;
-          if (o.x > vw + 40) o.x = -40;
-          if (o.y > vh + 40) { o.y = -40; o.x = rand(0, vw); }
-          if (o.type === 'die')  drawDie(o.x, o.y, 34*o.scale, o.rot, o.alpha);
-          if (o.type === 'wand') drawWand(o.x, o.y, 90*o.scale, o.rot, o.alpha);
-          if (o.type === 'q')    drawQ(o.x, o.y, 30*o.scale + 16, o.rot, o.alpha);
-        }
-        rafId = requestAnimationFrame(step);
-      }
-      function initCanvas() {
-        if (!isMobile()) return;
-        resizeCanvas(); createObjects();
-        cancelAnimationFrame(rafId); step();
-      }
-      window.addEventListener('resize', () => {
-        if (isMobile()) { resizeCanvas(); } else { cancelAnimationFrame(rafId); canvas.width = 0; canvas.height = 0; }
+      rafId=requestAnimationFrame(tick);
+    }
+
+    function initCanvas(){
+      if(!isMobile()) return;
+      resizeCanvas(); createObjects(); cancelAnimationFrame(rafId); tick();
+    }
+
+    window.addEventListener('resize', ()=>{ if(isMobile()){ resizeCanvas(); } else { cancelAnimationFrame(rafId); canvas.width=0; canvas.height=0; } });
+
+    /* меню */
+    menuToggle.addEventListener('click', ()=>{ mobileMenu.classList.toggle('active'); });
+    document.querySelectorAll('.mobile-menu-button').forEach(b=> b.addEventListener('click', ()=> mobileMenu.classList.remove('active')));
+
+    /* открыть модалки */
+    modalOpenButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const m=document.getElementById(btn.dataset.modalTarget);
+        if(m){ m.classList.add('active'); if(isMobile()) mobileMenu.classList.remove('active'); }
       });
-
-      /* меню: открытие/закрытие */
-      menuToggle.addEventListener('click', () => { mobileMenu.classList.toggle('active'); });
-      mobileMenuButtons.forEach(btn => { btn.addEventListener('click', () => mobileMenu.classList.remove('active')); });
-
-      /* модалки: открыть */
-      modalOpenButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const modal = document.getElementById(btn.dataset.modalTarget);
-          if (modal) {
-            modal.classList.add('active');
-            if (isMobile()) mobileMenu.classList.remove('active');
-          }
-        });
-      });
-      /* модалки: закрыть (и снова открыть меню на мобилке) */
-      modalCloseButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const modal = btn.closest('.modal');
-          if (modal) {
-            modal.classList.remove('active');
-            if (isMobile()) mobileMenu.classList.add('active');
-          }
-        });
-      });
-      document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', e => {
-          if (e.target === modal) {
-            modal.classList.remove('active');
-            if (isMobile()) mobileMenu.classList.add('active');
-          }
-        });
-      });
-
-      /* при заходе со смартфона показать «Обо мне» */
-      const aboutModal = document.getElementById('about-me-modal');
-      if (isMobile() && aboutModal) aboutModal.classList.add('active');
-
-      /* кнопка «Меню» внутри «Обо мне» (мобилка) */
-      const openMainMenuBtn = document.getElementById('open-main-menu-from-about');
-      if (openMainMenuBtn) {
-        openMainMenuBtn.addEventListener('click', () => {
-          if (aboutModal) aboutModal.classList.remove('active');
-          if (mobileMenu) mobileMenu.classList.add('active');
-        });
-      }
-
-      /* курсор + шлейф */
-      const magicCursor = document.getElementById('magic-cursor');
-      let throttle = false;
-      if (window.matchMedia('(pointer: fine)').matches) {
-        window.addEventListener('mousemove', e => {
-          magicCursor.style.left = e.clientX + 'px';
-          magicCursor.style.top = e.clientY + 'px';
-          if (!throttle) {
-            createTrailParticle(e.clientX, e.clientY);
-            throttle = true;
-            setTimeout(() => { throttle = false; }, 50);
-          }
-        });
-      } else {
-        magicCursor.style.display = 'none';
-      }
-      function createTrailParticle(x, y) {
-        const p = document.createElement('div');
-        p.className = 'trail-particle';
-        const size = Math.random() * 8 + 2;
-        p.style.width = size + 'px'; p.style.height = size + 'px';
-        p.style.left = x + 'px'; p.style.top = y + 'px';
-        p.style.transform = `translate(-50%, -50%) translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 700);
-      }
-
-      /* запуск холста (мобилки) */
-      initCanvas();
     });
+
+    /* закрыть модалки (и сразу открыть меню на мобилке) */
+    modalCloseButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const m=btn.closest('.modal'); if(m){ m.classList.remove('active'); if(isMobile()) mobileMenu.classList.add('active'); }
+      });
+    });
+    document.querySelectorAll('.modal').forEach(m=>{
+      m.addEventListener('click', e=>{
+        if(e.target===m){ m.classList.remove('active'); if(isMobile()) mobileMenu.classList.add('active'); }
+      });
+    });
+
+    /* при заходе со смартфона — показать «Обо мне» */
+    if(isMobile() && aboutModal) aboutModal.classList.add('active');
+
+    /* кнопка «Меню» внутри «Обо мне» (мобилка) */
+    const openMainMenuBtn = document.getElementById('open-main-menu-from-about');
+    if(openMainMenuBtn){
+      openMainMenuBtn.addEventListener('click', ()=>{
+        if(aboutModal) aboutModal.classList.remove('active');
+        if(mobileMenu) mobileMenu.classList.add('active');
+      });
+    }
+
+    /* курсор + шлейф (на десктопах) */
+    const magicCursor=document.getElementById('magic-cursor');
+    let throttle=false;
+    if(window.matchMedia('(pointer:fine)').matches){
+      window.addEventListener('mousemove', e=>{
+        magicCursor.style.left=e.clientX+'px';
+        magicCursor.style.top =e.clientY+'px';
+        if(!throttle){
+          const p=document.createElement('div'); p.className='trail-particle';
+          const sz=Math.random()*8+2;
+          p.style.width=sz+'px'; p.style.height=sz+'px';
+          p.style.left=e.clientX+'px'; p.style.top=e.clientY+'px';
+          p.style.transform=`translate(-50%,-50%) translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
+          document.body.appendChild(p); setTimeout(()=>p.remove(),700);
+          throttle=true; setTimeout(()=>throttle=false,50);
+        }
+      });
+    } else {
+      magicCursor.style.display='none';
+    }
+
+    /* запуск фона */
+    initCanvas();
+  });
   </script>
 </body>
 </html>
