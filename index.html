@@ -1,324 +1,723 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Дмитрий Костюк — Иллюзионист</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KOSTYUK PROJECT</title>
+    <meta name="description" content="Иллюзионист Дмитрий Костюк. Экосистема магических проектов.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
 
-  <!-- PWA / icons (положите файлы при желании) -->
-  <meta name="theme-color" content="#000000">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-  <link rel="manifest" href="site.webmanifest">
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Шрифты -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root{ --gold:#c0a062; --gold2:#a18041; }
-    body{
-      font-family:'Roboto',sans-serif;
-      background:#000;
-      /* фон для смартфонов */
-      background-image:url('background-mobile.jpeg');
-      background-position:center center;
-      background-repeat:no-repeat;
-      background-size:cover;
-      background-attachment:fixed;
-    }
-    /* фон для планшетов/десктопов */
-    @media (min-width:768px){
-      body{ background-image:url('background-desktop.jpeg'); }
-    }
-
-    h1,h2,h3,.torn-paper-button,.modal-card{ font-family:'Playfair Display',serif; }
-
-    .torn-paper-button{
-      background:linear-gradient(145deg,var(--gold),var(--gold2));
-      color:#1a1a1a;
-      border:none;
-      padding:1rem 2rem;
-      font-weight:700;
-      font-size:1.25rem;
-      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
-      text-shadow:1px 1px 3px rgba(0,0,0,.4);
-      cursor:pointer;
-      -webkit-clip-path:url(#torn-paper-shape);
-              clip-path:url(#torn-paper-shape);
-    }
-    .torn-paper-button:hover{
-      transform:translateY(-2px);
-      box-shadow:0 10px 20px rgba(192,160,98,.2);
-      filter:brightness(1.04);
-    }
-
-    /* Мобильное меню — плавное появление */
-    #mobile-menu{ transform:translateY(-100%); transition:transform .5s cubic-bezier(0.77,0,0.175,1);}
-    #mobile-menu.active{ transform:translateY(0); }
-
-    /* Модалки */
-    .modal{ display:none; opacity:0; transition:opacity .35s ease; }
-    .modal.active{ display:flex; opacity:1; }
-    .modal-card{
-      background:linear-gradient(145deg,var(--gold),var(--gold2));
-      color:#000; font-weight:700; text-align:center; position:relative;
-      transform:scale(.96); transition:transform .35s ease;
-      max-height:85vh; overflow-y:auto; -webkit-overflow-scrolling:touch; border-radius:12px;
-    }
-    .modal.active .modal-card{ transform:scale(1); }
-    .modal-card .modal-close{ color:#000; opacity:.7; transition:opacity .2s; }
-    .modal-card .modal-close:hover{ opacity:1; }
-
-    .list-icon{ width:24px; height:24px; filter:brightness(0); }
-    .animated-item{ opacity:0; transform:translateY(14px); }
-    .modal.active .animated-item{ animation:slideUp .5s cubic-bezier(.23,1,.32,1) forwards; }
-    .modal.active .delay-1{ animation-delay:.12s }
-    .modal.active .delay-2{ animation-delay:.18s }
-    .modal.active .delay-3{ animation-delay:.24s }
-    .modal.active .delay-4{ animation-delay:.30s }
-    .modal.active .delay-5{ animation-delay:.36s }
-    @keyframes slideUp{ to{ opacity:1; transform:translateY(0) } }
-
-    /* Toast */
-    .toast{
-      position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
-      background:#111; color:#fff; border:1px solid #2c2c2c; border-radius:10px;
-      padding:.6rem 1rem; font-size:.95rem; opacity:0; pointer-events:none;
-      transition:opacity .25s ease, transform .25s ease; z-index:70;
-    }
-    .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
-  </style>
-</head>
-<body class="bg-black text-white flex flex-col min-h-screen">
-
-  <!-- «рваная» форма кнопок -->
-  <svg style="position:absolute; width:0; height:0;" aria-hidden="true">
-    <defs>
-      <clipPath id="torn-paper-shape" clipPathUnits="objectBoundingBox">
-        <path d="M0.01 0.1 C0.05 0.12, 0.03 0.05, 0.1 0.08 L0.2 0.02, 0.25 0.06, 0.3 0.01, 0.4 0.05, 0.5 0, 0.6 0.06, 0.7 0.02, 0.8 0.07, 0.9 0.03 C0.95 0.05, 0.98 0.02, 0.99 0.1 L0.98 0.9 C0.95 0.88, 0.97 0.95, 0.9 0.92 L0.8 0.98, 0.75 0.94, 0.7 0.99, 0.6 0.95, 0.5 1, 0.4 0.94, 0.3 0.98, 0.2 0.93, 0.1 0.97 C0.05 0.95, 0.02 0.98, 0.01 0.9 Z"/>
-      </clipPath>
-    </defs>
-  </svg>
-
-  <!-- Бургер (только мобайл) -->
-  <header class="fixed top-0 right-0 p-4 z-50 md:hidden">
-    <button id="menu-toggle" class="text-white" aria-label="Открыть меню">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-      </svg>
-    </button>
-  </header>
-
-  <!-- Десктопные кнопки снизу -->
-  <main class="flex-grow hidden md:flex items-end justify-center pb-12">
-    <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 p-8">
-      <button class="torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button>
-      <button class="torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button>
-      <button class="torn-paper-button" data-modal-target="magic-school-modal">Школа фокусов</button>
-    </div>
-  </main>
-
-  <!-- Заполнитель высоты на мобайле -->
-  <div class="flex-grow md:hidden"></div>
-
-  <!-- Футер -->
-  <footer class="w-full p-4 text-gray-300 text-sm flex justify-between items-center">
-    <span>© 2025, ИП Костюк. Все права защищены.</span>
-    <div class="hidden md:flex items-center gap-3">
-      <button class="torn-paper-button" data-modal-target="about-me-modal">Обо мне</button>
-    </div>
-  </footer>
-
-  <!-- МОБИЛЬНОЕ МЕНЮ -->
-  <div id="mobile-menu" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 flex flex-col items-center justify-center gap-8">
-    <button class="mobile-menu-button torn-paper-button" data-modal-target="private-events-modal">Частные выступления</button>
-    <button class="mobile-menu-button torn-paper-button" data-modal-target="concert-show-modal">Концертное шоу</button>
-    <button class="mobile-menu-button torn-paper-button" data-modal-target="magic-school-modal">Школа фокусов</button>
-    <button class="mobile-menu-button torn-paper-button" data-modal-target="about-me-modal">Обо мне</button>
-    <button id="share-mobile" class="torn-paper-button">Поделиться сайтом</button>
-  </div>
-
-  <!-- Toast -->
-  <div id="toast" class="toast">Ссылка скопирована</div>
-
-  <!-- ===== МОДАЛКИ ===== -->
-
-  <!-- Частные выступления -->
-  <div id="private-events-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
-    <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item"><img src="icon-wow.png" alt="Wow" class="w-16 h-16 mb-4" /></div>
-      <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Частные выступления</h2>
-      <p class="animated-item delay-2 text-lg opacity-80 mb-6">Магия для особых событий</p>
-      <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
-        <p>Магия вживую на свадьбах, корпоративах и днях рождения. Каждый номер вовлекает гостей и превращает праздник в событие, которое невозможно забыть.</p>
-      </div>
-      <a href="https://demonnikko.github.io/Site76/" target="_blank" rel="noopener" class="animated-item delay-4 torn-paper-button mt-8 text-xl px-6">Заказать шоу</a>
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
-    </div>
-  </div>
-
-  <!-- Концерт -->
-  <div id="concert-show-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
-    <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item"><img src="icon-masks.png" alt="Театральные маски" class="w-16 h-16 mb-4" /></div>
-      <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Шоу «Секрет»</h2>
-      <p class="animated-item delay-2 text-lg opacity-80 mb-6">Философский спектакль-иллюзия</p>
-      <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
-        <p>Зрители погружаются в мир загадок, где каждый номер скрывает смысл, а финал переворачивает восприятие.</p>
-      </div>
-      <a href="https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2" target="_blank" rel="noopener" class="animated-item delay-4 torn-paper-button mt-8 text-xl px-6">Купить билет</a>
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
-    </div>
-  </div>
-
-  <!-- Школа фокусов -->
-  <div id="magic-school-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
-    <div class="modal-card p-8 sm:p-12 rounded-lg max-w-2xl w-full flex flex-col items-center">
-      <div class="animated-item"><img src="icon-wand.png" alt="Волшебная палочка" class="w-16 h-16 mb-4" /></div>
-      <h2 class="animated-item delay-1 text-4xl font-bold mb-2">Школа фокусов</h2>
-      <p class="animated-item delay-2 text-lg opacity-80 mb-6">Первая в Ярославле</p>
-      <div class="animated-item delay-3 text-center max-w-md w-full text-base opacity-90">
-        <p>Здесь дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене. Каждый проходит путь от первого фокуса до настоящего выступления, а лучшие смогут участвовать в Чемпионате России по фокусам.</p>
-      </div>
-      <a href="https://demonnikko.github.io/Magic-School/" target="_blank" rel="noopener" class="animated-item delay-4 torn-paper-button mt-8 text-xl px-6">Записаться на бесплатный урок</a>
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
-    </div>
-  </div>
-
-  <!-- Обо мне -->
-  <div id="about-me-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50">
-    <div class="modal-card p-8 sm:p-12 rounded-lg max-w-4xl w-full">
-      <div class="flex flex-col md:flex-row gap-8 items-center text-left">
-        <div class="w-full md:w-1/3 flex-shrink-0 animated-item">
-          <img src="photo.jpeg" alt="Дмитрий Костюк" class="rounded-lg object-cover w-full h-full shadow-lg">
-        </div>
-        <div class="w-full md:w-2/3">
-          <h2 class="animated-item delay-1 text-4xl font-bold mb-1">Дмитрий Костюк</h2>
-          <p class="animated-item delay-2 text-lg opacity-80 mb-6">иллюзионист, автор шоу и основатель KOSTYUK PROJECT</p>
-          <div class="animated-item delay-3 text-base opacity-90 space-y-4">
-            <p>Я занимаюсь иллюзионным искусством более 10 лет и создал собственный мир, где магия становится частью жизни. Мои проекты объединены в экосистему KOSTYUK PROJECT, в которую входят:</p>
-            <ul class="list-none space-y-3 !mt-4">
-              <li class="flex items-start">
-                <img src="list-icon-show.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка шоу">
-                <div class="text-left"><b>Шоу «Секрет»</b> — философский театральный спектакль, где каждый номер раскрывает тайну человеческого восприятия.</div>
-              </li>
-              <li class="flex items-start">
-                <img src="list-icon-school.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка школы">
-                <div class="text-left"><b>Школа фокусов</b> — первая в Ярославле образовательная программа, где дети учатся не просто трюкам, а уверенности, артистизму и работе на сцене.</div>
-              </li>
-              <li class="flex items-start">
-                <img src="list-icon-private.png" class="list-icon mr-3 flex-shrink-0" alt="Иконка частных выступлений">
-                <div class="text-left"><b>Частные выступления</b> — магия для особых событий: свадьбы, корпоративы, юбилеи, дни рождения.</div>
-              </li>
-            </ul>
-            <p>Каждое направление решает свою задачу, но все они связаны одной идеей: магия — это не только иллюзия, это способ вдохновлять людей, раскрывать их внутренний потенциал и дарить незабываемые эмоции.</p>
-            <p>Моя миссия — делать так, чтобы каждый зритель и ученик чувствовал себя частью чуда.</p>
-          </div>
-        </div>
-      </div>
-      <div class="w-full text-center mt-8 md:hidden animated-item delay-4">
-        <button id="open-main-menu-from-about" class="torn-paper-button text-xl px-8">Меню</button>
-      </div>
-      <button class="modal-close absolute top-4 right-4 text-3xl font-light" aria-label="Закрыть">×</button>
-    </div>
-  </div>
-
-  <script>
-    // Поделиться сайтом
-    async function shareSite(){
-      const shareData={
-        title:'KOSTYUK PROJECT — Иллюзионист Дмитрий Костюк',
-        text:'Магическое шоу, частные выступления, школа фокусов.',
-        url:location.href
-      };
-      try{
-        if(navigator.share){ await navigator.share(shareData); }
-        else{
-          await navigator.clipboard.writeText(location.href);
-          showToast('Ссылка скопирована');
+    <style>
+        :root {
+            --gold-light: #F3E5AB;
+            --gold-main: #C6A664;
+            --gold-dark: #8A6E36;
+            --bg-black: #050505;
         }
-      }catch(e){}
-    }
-    function showToast(text){
-      const t=document.getElementById('toast');
-      t.textContent=text||'Готово';
-      t.classList.add('show');
-      setTimeout(()=>t.classList.remove('show'),1500);
-    }
 
-    document.addEventListener('DOMContentLoaded',()=>{
-      const menuToggle=document.getElementById('menu-toggle');
-      const mobileMenu=document.getElementById('mobile-menu');
-      const modalOpenButtons=document.querySelectorAll('[data-modal-target]');
-      const modalCloseButtons=document.querySelectorAll('.modal-close');
-      const aboutModal=document.getElementById('about-me-modal');
-      const openMainMenuBtn=document.getElementById('open-main-menu-from-about');
-      const shareBtn=document.getElementById('share-mobile');
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--bg-black);
+            color: #Eaeaea;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-      // старт: на мобайле показываем модалку "Обо мне"
-      if (window.innerWidth < 768 && aboutModal) {
-        aboutModal.classList.add('active');
-      }
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        
+        /* --- ФОН --- */
+        .bg-texture {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5980?auto=format&fit=crop&q=80');
+            background-size: cover; background-position: center;
+            opacity: 0.15; z-index: -2; pointer-events: none;
+            filter: grayscale(100%) contrast(120%);
+        }
+        .spotlight {
+            position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
+            width: 120vw; height: 100vh;
+            background: radial-gradient(circle at 50% 20%, rgba(198, 166, 100, 0.08) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none; z-index: -1;
+        }
 
-      // бургер
-      menuToggle.addEventListener('click',()=> mobileMenu.classList.toggle('active'));
+        /* --- SPA --- */
+        .page-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            background: transparent;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            z-index: 10; padding-bottom: 80px; 
+        }
+        #home-page { z-index: 10; }
+        .inner-page { transform: translateX(100%); z-index: 20; background: #080808; }
+        .inner-page.active { transform: translateX(0); }
 
-      // кнопка "Поделиться" в меню
-      shareBtn.addEventListener('click', shareSite);
+        /* --- UI --- */
+        .app-card {
+            position: relative;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            transition: all 0.2s;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .app-card:active { transform: scale(0.98); border-color: var(--gold-main); }
+        .tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 8px; border-radius: 6px; }
+        .tag-gold { background: rgba(198, 166, 100, 0.15); color: var(--gold-main); border: 1px solid rgba(198, 166, 100, 0.3); }
+        .tag-purple { background: rgba(180, 100, 255, 0.15); color: #d8aaff; border: 1px solid rgba(180, 100, 255, 0.3); }
+        .tag-blue { background: rgba(100, 180, 255, 0.15); color: #8ecfff; border: 1px solid rgba(100, 180, 255, 0.3); }
 
-      // клик по пунктам меню — закрыть меню и открыть модалку
-      document.querySelectorAll('.mobile-menu-button').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          mobileMenu.classList.remove('active');
-          const id=btn.dataset.modalTarget;
-          const m=document.getElementById(id);
-          if(m) m.classList.add('active');
+        .sticky-header {
+            position: sticky; top: 0; z-index: 30;
+            background: rgba(5,5,5,0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- INPUTS --- */
+        .form-input, .form-select {
+            width: 100%; padding: 12px; border-radius: 12px;
+            background: #15171e; border: 1.5px solid #2f3138;
+            color: #fff; font-size: 15px; outline: none; transition: 0.2s; appearance: none;
+        }
+        .form-input:focus, .form-select:focus { border-color: var(--gold-main); }
+        .input-error { border-color: #ef4444 !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+            background: var(--gold-main); margin-top: -6px; cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #333; border-radius: 2px; }
+
+        /* --- GAME --- */
+        .gameWrap { display: flex; justify-content: center; gap: 10px; perspective: 1000px; margin-bottom: 20px; }
+        .card-game { width: 80px; height: 110px; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
+        .card-game.flipped { transform: rotateY(180deg); }
+        .face, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .back { background: linear-gradient(135deg, #C6A664, #8A6E36); border: 2px solid white; }
+        .face { background: white; transform: rotateY(180deg); font-size: 24px; color: black; font-weight: bold; }
+
+        /* --- STORIES --- */
+        .story-ring {
+            padding: 3px; border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            cursor: pointer; position: relative;
+        }
+        .story-ring img { border: 2px solid #000; border-radius: 50%; width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- MARQUEE --- */
+        .marquee-container { overflow: hidden; white-space: nowrap; position: relative; width: 100%; }
+        .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- FAQ SCROLL --- */
+        .faq-scroll { max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .faq-scroll::-webkit-scrollbar { width: 4px; }
+        .faq-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+        /* --- TOAST --- */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1a1a1a; border: 1px solid #333; color: #fff;
+            padding: 12px 24px; border-radius: 12px; z-index: 200;
+            opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 10px; font-size: 14px; pointer-events: none; width: max-content;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast svg { color: var(--gold-main); width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* --- ANIMATION --- */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        .curtain { position: fixed; top: 0; width: 50%; height: 100%; background: #050505; z-index: 100; transition: transform 1s ease; }
+        .curtain-left { left: 0; border-right: 1px solid #222; }
+        .curtain-right { right: 0; border-left: 1px solid #222; }
+        .curtains-open .curtain-left { transform: translateX(-100%); }
+        .curtains-open .curtain-right { transform: translateX(100%); }
+        .curtain-logo { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 101; transition: opacity 0.5s; pointer-events: none;}
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- ИНТРО -->
+    <div id="intro-overlay">
+        <div class="curtain curtain-left"></div>
+        <div class="curtain curtain-right"></div>
+        <div id="curtain-logo" class="curtain-logo flex flex-col items-center">
+            <div class="w-16 h-16 border border-[#C6A664] rounded-full flex items-center justify-center mb-4 bg-black">
+                <span class="text-3xl font-serif text-[#C6A664]">K</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="toast-msg">Сообщение</span>
+    </div>
+
+    <div class="bg-texture"></div>
+    <div class="spotlight"></div>
+
+    <!-- ================== ГЛАВНЫЙ ЭКРАН ================== -->
+    <div id="home-page" class="page-container px-5 pt-8">
+        <header class="text-center mb-8 animate-fade-in">
+            <h1 class="text-3xl font-serif font-bold tracking-wide text-white mb-2">
+                KOSTYUK <span class="text-[#C6A664]">PROJECT</span>
+            </h1>
+            <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">
+                Экосистема проектов
+            </p>
+        </header>
+
+        <div class="flex flex-col gap-4 max-w-md mx-auto">
+            <!-- ДВЕРЬ 1 -->
+            <button onclick="goToPage('page-private')" class="app-card w-full text-left p-6 group">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="tag tag-gold">Премиум</span>
+                    <svg class="w-5 h-5 text-gray-500 group-active:text-[#C6A664]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <h2 class="text-2xl font-serif text-white mb-1">Частные события</h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Свадьбы • Юбилеи • Корпоративы</p>
+                <div class="h-px w-8 bg-[#C6A664] mb-3 opacity-50"></div>
+                <p class="text-sm text-gray-400">Калькулятор цены, видео-отзывы и быстрая бронь даты.</p>
+            </button>
+
+            <!-- ДВЕРЬ 2 -->
+            <button onclick="goToPage('page-concert')" class="app-card w-full text-left p-6 group">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="tag tag-purple">Афиша</span>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <h2 class="text-2xl font-serif text-white mb-1">Шоу «Секрет»</h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Театр • Свидание • Впечатления</p>
+                <div class="h-px w-8 bg-[#d8aaff] mb-3 opacity-50"></div>
+                <p class="text-sm text-gray-400">Выбрать лучшие места и посмотреть трейлер.</p>
+            </button>
+
+            <!-- ДВЕРЬ 3 -->
+            <button onclick="goToPage('page-school')" class="app-card w-full text-left p-6 group">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="tag tag-blue">Дети 7–13 лет</span>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <h2 class="text-2xl font-serif text-white mb-1">Школа Волшебства</h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Развитие • Уверенность</p>
+                <div class="h-px w-8 bg-[#8ecfff] mb-3 opacity-50"></div>
+                <p class="text-sm text-gray-400">Превращаем стеснительность в артистизм. Запись на урок.</p>
+            </button>
+        </div>
+
+        <div class="mt-10 text-center px-4">
+             <button onclick="openContact()" class="w-full py-4 rounded-xl border border-[#333] bg-[#0f0f0f] text-gray-400 text-sm font-medium flex items-center justify-center gap-2 active:bg-[#1a1a1a]">
+                <span>Написать лично Дмитрию</span>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ================== Вкладка 1: ЧАСТНЫЕ СОБЫТИЯ ================== -->
+    <div id="page-private" class="page-container inner-page">
+        <div class="sticky-header flex items-center p-4 justify-between">
+            <div class="flex items-center">
+                <button onclick="goBack()" class="p-2 -ml-2 text-gray-400 active:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <h3 class="text-lg font-serif font-bold text-white ml-2">Частные события</h3>
+            </div>
+        </div>
+
+        <div class="p-5 max-w-md mx-auto space-y-8">
+            
+            <!-- Интро -->
+            <div class="text-center">
+                <div class="w-24 h-24 mx-auto rounded-full border-2 border-[#C6A664] overflow-hidden mb-3">
+                    <img src="images/portrait.jpg" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80'" class="w-full h-full object-cover">
+                </div>
+                <h1 class="text-3xl font-serif text-white mb-1">Дмитрий Костюк</h1>
+                <p class="text-xs text-[#C6A664] uppercase font-bold tracking-widest mb-4">Создаю события, о которых говорят</p>
+                <!-- Бегущая строка -->
+                <div class="marquee-container bg-white/5 py-2 border-y border-white/5 mb-4">
+                    <div class="marquee-content text-xs text-gray-400 font-bold uppercase tracking-widest space-x-8">
+                        <span>СБЕРБАНК</span> <span>ГАЗПРОМ</span> <span>РЖД</span> <span>ТЕНЗОР</span> <span>РОСТЕЛЕКОМ</span> <span>ЛУКОЙЛ</span>
+                        <span>СБЕРБАНК</span> <span>ГАЗПРОМ</span> <span>РЖД</span> <span>ТЕНЗОР</span> <span>РОСТЕЛЕКОМ</span> <span>ЛУКОЙЛ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stories -->
+            <div>
+                <h4 class="text-white text-sm font-bold mb-3 pl-1">Галерея и Отзывы</h4>
+                <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar px-1 justify-center">
+                    <div class="flex flex-col items-center gap-1" onclick="openStory('reviews')">
+                        <div class="story-ring w-[72px] h-[72px]"><img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80"></div>
+                        <span class="text-[10px] text-gray-300">Отзывы</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1" onclick="openLightbox('gallery')">
+                        <div class="story-ring w-[72px] h-[72px]"><img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80"></div>
+                        <span class="text-[10px] text-gray-300">Галерея</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1" onclick="openStory('moments')">
+                        <div class="story-ring w-[72px] h-[72px]"><img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80"></div>
+                        <span class="text-[10px] text-gray-300">Эмоции</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="openPromo('private')" class="w-full py-4 bg-gradient-to-r from-[#C6A664] to-[#8A6E36] text-black font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                Смотреть промо-видео
+            </button>
+
+            <!-- Слайдер форматов -->
+            <div>
+                <h2 class="text-xl font-serif text-white mb-4">Форматы</h2>
+                <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x">
+                    <div class="min-w-[85%] bg-[#15171e] border border-white/10 rounded-2xl p-5 snap-center">
+                        <h3 class="text-lg text-[#F3E5AB] font-serif mb-1">Частные события</h3>
+                        <div class="text-sm text-gray-400 mb-3">от 18 500 ₽</div>
+                        <ul class="text-sm text-gray-300 list-disc list-inside mb-4 space-y-1">
+                            <li>20–40 минут</li>
+                            <li>Персонализация под событие</li>
+                            <li>Интерактив со зрителями</li>
+                        </ul>
+                    </div>
+                    <div class="min-w-[85%] bg-[#15171e] border border-white/10 rounded-2xl p-5 snap-center">
+                        <h3 class="text-lg text-[#F3E5AB] font-serif mb-1">Микромагия</h3>
+                        <div class="text-sm text-gray-400 mb-3">от 13 000 ₽</div>
+                        <ul class="text-sm text-gray-300 list-disc list-inside mb-4 space-y-1">
+                            <li>30–180 минут, welcome</li>
+                            <li>Фокусы в руках гостей</li>
+                            <li>Идеально для банкетов</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Калькулятор (ПОЛНЫЙ) -->
+            <div id="calc" class="bg-[#15171e] border border-white/10 rounded-2xl p-5 shadow-2xl scroll-mt-20">
+                <h2 class="text-xl font-serif text-white mb-4 text-center">Узнать стоимость</h2>
+                <form id="calcForm" class="space-y-3" onsubmit="return false;">
+                    <select id="calc-area" class="form-select text-gray-300"><option value="" disabled selected>Выберите область</option></select>
+                    <select id="calc-city" class="form-select text-gray-300" disabled><option value="" disabled selected>Выберите город</option></select>
+                    <input type="date" id="calc-date" class="form-input text-gray-300">
+                    <select id="calc-guests" class="form-select text-gray-300">
+                        <option value="" disabled selected>Кол-во гостей</option>
+                        <option value="0">до 50 гостей (0₽)</option>
+                        <option value="5000">51–100 гостей (+5000₽)</option>
+                        <option value="10000">101–200 гостей (+10000₽)</option>
+                        <option value="custom">свыше 200 гостей</option>
+                    </select>
+                    <div id="guest-slider-block" class="hidden flex-col gap-2 p-2 bg-black/20 rounded-lg">
+                        <label class="text-sm text-gray-400 text-center">Точное кол-во: <span id="guest-count" class="text-[#C6A664] font-bold">250</span></label>
+                        <input type="range" id="guest-range" min="201" max="500" value="250" class="w-full accent-[#C6A664]">
+                    </div>
+                    <select id="calc-cat" class="form-select text-gray-300"><option value="" disabled selected>Тип мероприятия</option></select>
+                    <select id="calc-svc" class="form-select text-gray-300" disabled><option value="" disabled selected>Программа</option></select>
+                    <div id="calc-desc" class="text-xs text-gray-500 text-center min-h-[20px] px-2 leading-tight"></div>
+                    <button onclick="calculatePrice()" class="w-full py-3 bg-white/10 border border-white/20 rounded-xl text-white font-bold hover:bg-[#C6A664] hover:text-black transition-colors mt-2">Рассчитать</button>
+                </form>
+                <div id="calc-result" class="hidden text-center mt-6 border-t border-white/10 pt-4 scroll-mt-40">
+                    <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Предварительный итог</p>
+                    <div id="total-price" class="text-3xl font-serif text-[#C6A664] font-bold"></div>
+                    <div id="price-breakdown" class="text-xs text-gray-400 mt-2 mb-4 bg-black/30 p-2 rounded leading-relaxed text-left pl-2"></div>
+                    <div class="flex flex-col gap-3">
+                        <button id="game-btn" onclick="openGame()" class="w-full py-3 border border-[#C6A664] text-[#C6A664] rounded-lg text-sm font-bold animate-pulse">🎲 Испытать удачу (Скидка)</button>
+                        <button onclick="bookViaTelegram()" class="w-full py-3 bg-[#C6A664] text-black rounded-lg text-sm font-bold shadow-[0_4px_14px_rgba(198,166,100,0.4)]">Забронировать (Telegram)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ГАЛЕРЕЯ МЕЙСОНРИ -->
+            <div>
+                <h2 class="text-xl font-serif text-white mb-4">Галерея</h2>
+                <div class="columns-2 gap-2 space-y-2">
+                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80" class="w-full rounded-lg break-inside-avoid opacity-90 hover:opacity-100 transition cursor-pointer" onclick="openLightbox(this.src)">
+                    <img src="https://images.unsplash.com/photo-1543584756-8f40a802e14f?auto=format&fit=crop&q=80" class="w-full rounded-lg break-inside-avoid opacity-90 hover:opacity-100 transition cursor-pointer" onclick="openLightbox(this.src)">
+                    <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80" class="w-full rounded-lg break-inside-avoid opacity-90 hover:opacity-100 transition cursor-pointer" onclick="openLightbox(this.src)">
+                    <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80" class="w-full rounded-lg break-inside-avoid opacity-90 hover:opacity-100 transition cursor-pointer" onclick="openLightbox(this.src)">
+                    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80" class="w-full rounded-lg break-inside-avoid opacity-90 hover:opacity-100 transition cursor-pointer" onclick="openLightbox(this.src)">
+                    <img src="https://images.unsplash.com/photo-1596525737525-45d351631551?auto=format&fit=crop&q=80" class="w-full rounded-lg break-inside-avoid opacity-90 hover:opacity-100 transition cursor-pointer" onclick="openLightbox(this.src)">
+                </div>
+            </div>
+
+            <!-- FAQ ПОЛНЫЙ -->
+            <div>
+                <h2 class="text-xl font-serif text-white mb-4">Частые вопросы</h2>
+                <div class="faq-scroll rounded-xl border border-white/5 bg-[#15171e]/50">
+                    <div id="faq-list" class="space-y-1 p-2"></div>
+                </div>
+            </div>
+
+            <div class="h-20"></div>
+        </div>
+    </div>
+
+    <!-- ================== Вкладка 2: АФИША (3 ШОУ) ================== -->
+    <div id="page-concert" class="page-container inner-page">
+        <div class="sticky-header flex items-center p-4">
+            <button onclick="goBack()" class="p-2 text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+            <h3 class="text-lg font-serif font-bold text-white ml-2">Афиша</h3>
+        </div>
+        <div class="p-5 max-w-md mx-auto space-y-8">
+            
+            <!-- 1. Матвей -->
+            <div class="bg-[#15171e] rounded-2xl p-4 border border-white/10 shadow-lg">
+                <div class="flex gap-4 mb-4">
+                    <div class="w-[35%] aspect-[2/3] bg-blue-900/20 rounded-lg relative border border-white/10"><span class="absolute top-1 left-1 bg-white text-black text-[9px] font-bold px-1 rounded">6+</span><span class="absolute center text-4xl">🐰</span></div>
+                    <div class="flex-grow bg-black rounded-lg border border-white/10 relative cursor-pointer" onclick="openPromo('matvey')"><p class="absolute bottom-1 right-2 text-[9px] text-gray-400">Трейлер</p></div>
+                </div>
+                <h3 class="text-xl font-serif text-white">Спасти Матвея</h3>
+                <p class="text-sm text-gray-300 mb-4">Интерактивный квест.</p>
+                <button onclick="openLink('https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk')" class="w-full py-3 bg-[#222] border border-[#444] text-white text-center rounded-xl font-bold hover:bg-[#333] transition">Купить билеты</button>
+            </div>
+
+            <!-- 2. Секрет -->
+            <div class="bg-[#15171e] rounded-2xl p-4 border border-[#d8aaff]/30 shadow-lg relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-[#d8aaff] text-black text-[9px] font-bold px-3 py-1 rounded-bl-lg z-10">ХИТ</div>
+                <div class="flex gap-4 mb-4">
+                    <div class="w-[35%] aspect-[2/3] bg-purple-900/20 rounded-lg relative border border-white/10"><span class="absolute top-1 left-1 bg-[#d8aaff] text-black text-[9px] font-bold px-1 rounded">12+</span><span class="absolute center text-4xl">🎭</span></div>
+                    <div class="flex-grow bg-black rounded-lg border border-white/10 relative cursor-pointer" onclick="openPromo('secret')"><p class="absolute bottom-1 right-2 text-[9px] text-gray-400">Трейлер</p></div>
+                </div>
+                <h3 class="text-xl font-serif text-white">Шоу «Секрет»</h3>
+                <p class="text-sm text-gray-300 mb-4">Философский спектакль.</p>
+                <button onclick="openLink('https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2')" class="w-full py-3 bg-[#d8aaff] text-black text-center rounded-xl font-bold hover:brightness-110 transition shadow-lg shadow-purple-900/20">Выбрать лучшие места</button>
+            </div>
+
+            <!-- 3. Хулиган -->
+            <div class="bg-[#15171e] rounded-2xl p-4 border border-red-900/40 shadow-lg">
+                <div class="flex gap-4 mb-4">
+                    <div class="w-[35%] aspect-[2/3] bg-red-900/20 rounded-lg relative border border-white/10"><span class="absolute top-1 left-1 bg-red-600 text-white text-[9px] font-bold px-1.5 rounded">18+</span><span class="absolute center text-4xl">🔥</span></div>
+                    <div class="flex-grow bg-black rounded-lg border border-white/10 relative cursor-pointer" onclick="openPromo('huli')"><p class="absolute bottom-1 right-2 text-[9px] text-gray-400">Промо</p></div>
+                </div>
+                <h3 class="text-xl font-serif text-white">Хулиgan</h3>
+                <p class="text-sm text-gray-300 mb-4">Магический стендап.</p>
+                <button onclick="openLink('https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk')" class="block w-full py-3 bg-[#222] border border-[#444] text-white text-center rounded-xl font-bold hover:bg-[#333] transition">Смотреть расписание</button>
+            </div>
+            <div class="h-20"></div>
+        </div>
+    </div>
+
+    <!-- ================== Вкладка 3: ШКОЛА (ПОЛНАЯ) ================== -->
+    <div id="page-school" class="page-container inner-page">
+        <div class="sticky-header flex items-center p-4">
+            <button onclick="goBack()" class="p-2 text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+            <h3 class="text-lg font-serif font-bold text-white ml-2">Школа Волшебства</h3>
+        </div>
+
+        <div class="p-5 max-w-md mx-auto space-y-8">
+            <!-- Hero -->
+            <div class="text-center">
+                <h1 class="text-3xl font-cormorant text-[#C6A664] mb-2 leading-tight">ABRACADABRA</h1>
+                <p class="text-sm text-gray-300 mb-4 leading-relaxed">Мы не просто учим трюкам. Мы превращаем застенчивость в уверенность.</p>
+                <div class="flex justify-center gap-2 mb-4 text-[10px] text-gray-400">
+                    <span class="bg-white/10 px-2 py-1 rounded border border-white/10">👥 Группы до 10 детей</span>
+                    <span class="bg-white/10 px-2 py-1 rounded border border-white/10">🎙️ Сцена и речь</span>
+                </div>
+                <div class="bg-[#15171e] border border-[#C6A664]/30 rounded-xl p-3 flex justify-between items-center max-w-[300px] mx-auto">
+                    <span class="text-xs text-[#C6A664] font-bold animate-pulse">Осталось 7 мест</span>
+                    <div class="flex gap-2 font-mono text-sm font-bold text-white" id="school-timer"><div class="bg-black px-2 py-1 rounded">03 дн</div><div class="bg-black px-2 py-1 rounded">12:00:00</div></div>
+                </div>
+            </div>
+
+            <!-- Об авторе -->
+            <div class="flex items-center gap-4 bg-[#15171e] p-4 rounded-xl border border-white/10">
+                <div class="w-16 h-16 rounded-full border border-[#C6A664] overflow-hidden flex-shrink-0">
+                    <img src="images/portrait.jpg" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white">Дмитрий Костюк</h3>
+                    <p class="text-xs text-gray-400 mt-1">Основатель школы, иллюзионист, автор шоу «Секрет». Участник ТВ-проектов.</p>
+                </div>
+            </div>
+
+            <!-- Почему мы -->
+            <div>
+                <h2 class="text-xl font-cormorant text-white mb-4 text-center">Почему не футбол?</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🧠 Харизма</h3><p class="text-xs text-gray-400 leading-tight">Навык держать паузу и управлять вниманием.</p></div>
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🎤 Сцена</h3><p class="text-xs text-gray-400 leading-tight">Ребенок перестает бояться публики.</p></div>
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🎯 Игра</h3><p class="text-xs text-gray-400 leading-tight">Очки, ачивки и AR-дневник без скуки.</p></div>
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🎩 Шоу</h3><p class="text-xs text-gray-400 leading-tight">Мини-выступление каждый месяц.</p></div>
+                </div>
+            </div>
+
+            <!-- Программа -->
+            <div class="bg-[#15171e] border border-white/10 rounded-2xl p-5">
+                <h2 class="text-xl font-cormorant text-white mb-4 text-center">Программа</h2>
+                <ul class="space-y-4 text-sm text-gray-300">
+                    <li class="flex gap-3"><span class="text-[#C6A664] text-lg">🗓️</span> <div><b>1 занятие в неделю</b><br><span class="text-xs text-gray-500">2 часа</span></div></li>
+                    <li class="flex gap-3"><span class="text-[#C6A664] text-lg">🎁</span> <div><b>Приз-реквизит</b><br><span class="text-xs text-gray-500">В конце месяца</span></div></li>
+                </ul>
+            </div>
+
+            <!-- Тарифы -->
+            <div class="space-y-4" id="school-prices">
+                <div class="bg-gradient-to-b from-[#15171e] to-black border border-white/10 rounded-2xl p-5 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-[#C6A664] text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">-25%</div>
+                    <h3 class="text-lg font-bold text-white mb-1">Месяц</h3>
+                    <div class="flex items-baseline gap-2 mb-2"><span class="text-3xl font-bold text-[#C6A664]">2 990 ₽</span><span class="text-sm text-gray-500 line-through">3 990 ₽</span></div>
+                    <button onclick="scrollToForm()" class="w-full py-3 border border-[#C6A664] text-[#C6A664] rounded-xl font-bold text-sm hover:bg-[#C6A664] hover:text-black transition">Выбрать тариф</button>
+                </div>
+                <div class="bg-gradient-to-b from-[#1c202b] to-[#0f1116] border border-[#C6A664]/50 rounded-2xl p-5 relative overflow-hidden shadow-lg shadow-[#C6A664]/10">
+                    <div class="absolute top-0 right-0 bg-[#C6A664] text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">ВЫГОДНО</div>
+                    <h3 class="text-lg font-bold text-white mb-1">Полгода</h3>
+                    <div class="flex items-baseline gap-2 mb-2"><span class="text-3xl font-bold text-[#C6A664]">14 950 ₽</span><span class="text-sm text-gray-500 line-through">18 690 ₽</span></div>
+                    <button onclick="scrollToForm()" class="w-full py-3 bg-[#C6A664] text-black rounded-xl font-bold text-sm shadow-md">Оформить абонемент</button>
+                </div>
+            </div>
+
+            <!-- Форма школы -->
+            <div id="school-form" class="bg-[#15171e] border border-white/10 rounded-2xl p-6 scroll-mt-24 shadow-2xl">
+                <h2 class="text-xl font-cormorant text-white mb-2 text-center">Забронировать место</h2>
+                <p class="text-xs text-gray-400 text-center mb-6">Пробный урок — бесплатно.</p>
+                <form class="space-y-4" onsubmit="return false;">
+                    <input id="s-parent" class="form-input text-gray-300" placeholder="Имя родителя">
+                    <input id="s-phone" class="form-input text-gray-300" placeholder="Телефон (+7...)" type="tel">
+                    <input id="s-age" class="form-input text-gray-300" placeholder="Возраст ребенка (7-13)" type="number">
+                    <button onclick="submitSchoolForm()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform mt-2 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        Отправить в Telegram
+                    </button>
+                </form>
+            </div>
+
+            <!-- FAQ ШКОЛЫ -->
+            <div>
+                <h2 class="text-xl font-cormorant text-white mb-4 text-center">Вопросы родителей</h2>
+                <div class="space-y-2">
+                    <details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden group"><summary class="p-4 font-bold text-[#8ecfff] cursor-pointer text-sm bg-[#15171e]">Если ребенок стеснительный?</summary><div class="p-4 pt-2 text-xs text-gray-300 border-t border-white/5 bg-[#0a0a0a]">Именно для таких детей мы и запускали школу.</div></details>
+                    <details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden group"><summary class="p-4 font-bold text-[#8ecfff] cursor-pointer text-sm bg-[#15171e]">Если не понравится?</summary><div class="p-4 pt-2 text-xs text-gray-300 border-t border-white/5 bg-[#0a0a0a]">Есть бесплатный пробный урок.</div></details>
+                </div>
+            </div>
+            <div class="h-20"></div>
+        </div>
+    </div>
+
+    <!-- === МОДАЛКИ (ОБЩИЕ) === -->
+    <div id="modal-story" class="fixed inset-0 bg-black z-[120] hidden flex justify-center items-center"><button onclick="closeModal('modal-story')" class="absolute top-4 right-4 text-white text-3xl z-50">✕</button><iframe id="story-video" class="w-full h-full max-w-md border-0" src=""></iframe></div>
+    <div id="modal-promo" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center p-4"><div class="w-full max-w-4xl aspect-video bg-black rounded-xl border border-white/20 relative"><button onclick="closeModal('modal-promo')" class="absolute top-2 right-2 text-white text-2xl z-10">✕</button><iframe id="promo-video-frame" class="w-full h-full border-0"></iframe></div></div>
+    <div id="modal-game" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center p-4"><div class="bg-[#111] w-full max-w-sm rounded-2xl border border-[#C6A664]/30 p-6 text-center relative"><button onclick="closeModal('modal-game')" class="absolute top-2 right-2 text-gray-500">✕</button><h2 class="text-xl font-serif text-[#C6A664]">Угадай карту</h2><div class="gameWrap mt-4"><div class="card-game" onclick="playGame(this, 0)"><div class="face text-black">A♠</div><div class="back"></div></div><div class="card-game" onclick="playGame(this, 1)"><div class="face text-red-600">K♥</div><div class="back"></div></div><div class="card-game" onclick="playGame(this, 2)"><div class="face text-black">J♣</div><div class="back"></div></div></div><p id="game-msg" class="text-gray-400 mt-4 h-6 text-sm font-bold"></p></div></div>
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[130] hidden flex items-center justify-center p-2" onclick="closeModal('lightbox')"><img id="lightbox-img" class="max-w-full max-h-full rounded shadow-2xl"></div>
+
+    <script>
+        // === ДАННЫЕ (ПОЛНЫЕ) ===
+        const TravelData={"Вологодская":{fee:9000,cities:{"Вологда":9000,"Череповец":15000,"Сокол":12000}},"Владимирская":{fee:10000,cities:{"Владимир":10000,"Ковров":10000,"Муром":17000,"Александров":10000,"Гусь-Хрустальный":13500}},"Ивановская":{fee:5000,cities:{"Иваново":2000,"Кинешма":3500,"Шуя":3000,"Тейково":2500,"Кохма":2500,"Вичуга":3000,"Фурманов":2500,"Родники":3000,"Приволжск":2000,"Южа":4000}},"Костромская":{fee:3000,cities:{"Кострома":2000,"Шарья":6000,"Нерехта":2000,"Буй":3000,"Волгореченск":2000,"Мантурово":5500,"Галич":3500}},"Ярославская":{fee:1000,cities:{"Ярославль":0,"Рыбинск":2000,"Тутаев":2000,"Переславль-Залесский":2000,"Углич":2000,"Ростов":2000,"Гаврилов-Ям":2000,"Данилов":2000,"Пошехонье":4000,"Мышкин":2000,"Любим":2000}}};
+        const ServiceData={
+            kids:{name:"Детские шоу",items:{"Детское шоу (30 мин)":{p:11250,d:"Веселая магия"},"Детское шоу (40 мин)":{p:13750,d:"Расширенная"},"Индив. детское шоу":{p:21250,d:"30 мин + фокус имениннику (11-й ребенок +1000₽)"}}},
+            std:{name:"Взрослые шоу",items:{"Шоу (20 мин)":{p:17500,d:"Сет из 3-4 трюков"},"Шоу (30 мин)":{p:23750,d:"Универсальный"}}},
+            close:{name:"Микромагия",items:{"Микромагия (30 мин)":{p:13000,d:"Фокусы в руках"},"Микромагия (1 ч)":{p:20000,d:"Обход гостей"}}},
+            spec:{name:"Спец-проекты",items:{"Свадебное шоу":{p:26250,d:"Романтичный блок"},"Корпоратив":{p:26250,d:"Юмор"}}}
+        };
+        const FAQData=[
+            {q:"За сколько бронировать?",a:"Обычно за 2-3 недели."},
+            {q:"Размер задатка?",a:"50% от суммы."},
+            {q:"Всё включено?",a:"Да, цена под ключ."},
+            {q:"Длительность?",a:"От 20 мин до 3 часов."},
+            {q:"Персонализация?",a:"Да, сделаем трюк под вас."},
+            {q:"Нужна сцена?",a:"Чаще нет, обсуждаемо."},
+            {q:"Звук?",a:"С ведущим - все готово. Без - нужна колонка."},
+            {q:"Подготовка?",a:"30-60 минут."},
+            {q:"Выезд?",a:"Да, работаю по РФ."},
+            {q:"Оплата?",a:"Безнал, СБП, нал, чек."},
+            {q:"Возраст детей?",a:"8+. Для младших - адаптация."},
+            {q:"Фото/видео?",a:"Приветствуется."},
+            {q:"Оформление?",a:"Работаю по договору (ИП)."},
+            {q:"Открытый воздух?",a:"Летом в безветрие."},
+            {q:"Безопасность?",a:"Только сертифицированный реквизит."},
+            {q:"Бренд?",a:"Интегрируем лого компании."},
+            {q:"Перенос?",a:"Возможен при наличии слота."},
+            {q:"Аудитория?",a:"От 10 до 500+ чел."},
+            {q:"Мастер-классы?",a:"Да, 60 мин обучение."}
+        ];
+        
+        let AppState = { discount: 0 };
+
+        // === INIT ===
+        window.addEventListener('load', () => {
+            initCalc(); initFAQ(); checkGameAvailability(); initSchoolTimer();
+            // Устанавливаем минимальную дату (сегодня)
+            document.getElementById('calc-date').min = new Date().toISOString().split('T')[0];
+            setTimeout(() => { document.body.classList.add('curtains-open'); document.getElementById('curtain-logo').style.opacity='0'; setTimeout(()=>document.getElementById('intro-overlay').style.display='none',1000); }, 600);
         });
-      });
 
-      // открытие модалок (десктоп/общий случай)
-      modalOpenButtons.forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          const id=btn.dataset.modalTarget;
-          const m=document.getElementById(id);
-          if(m) m.classList.add('active');
-        });
-      });
+        // === NAV ===
+        function goToPage(id) { document.getElementById(id).classList.add('active'); document.getElementById('home-page').style.opacity='0'; }
+        function goBack() { document.querySelectorAll('.inner-page').forEach(p=>p.classList.remove('active')); document.getElementById('home-page').style.opacity='1'; }
+        function openLink(url) { const a=document.createElement('a'); a.href=url; a.target='_blank'; a.click(); }
+        function openContact(msg='Hi!') { openLink(`https://t.me/demonnikko?text=${encodeURIComponent(msg)}`); }
+        function showToast(msg) { const t=document.getElementById('toast'); t.querySelector('span').textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
-      // закрытие модалки (крестик)
-      modalCloseButtons.forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          const m=btn.closest('.modal');
-          if(m) m.classList.remove('active');
-          // на мобайле после закрытия модалки снова показываем меню
-          if (window.innerWidth < 768) mobileMenu.classList.add('active');
-        });
-      });
+        // === MODALS ===
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); if(id==='modal-story') document.getElementById('story-video').src=''; if(id==='modal-promo') document.getElementById('promo-video-frame').src=''; }
+        function openPromo(t) { document.getElementById('modal-promo').classList.remove('hidden'); document.getElementById('promo-video-frame').src="https://rutube.ru/play/embed/a692a6ad3b922abc4cfad5be5898431b"; }
+        function openGame() { document.getElementById('modal-game').classList.remove('hidden'); }
+        function openLightbox(src) { document.getElementById('lightbox-img').src=src; document.getElementById('lightbox').classList.remove('hidden'); }
+        function openStory(t) { document.getElementById('modal-story').classList.remove('hidden'); document.getElementById('story-video').src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1&controls=0&loop=1"; }
 
-      // клик по фону модалки
-      document.querySelectorAll('.modal').forEach(m=>{
-        m.addEventListener('click',(e)=>{
-          if(e.target===m){
-            m.classList.remove('active');
-            if (window.innerWidth < 768) mobileMenu.classList.add('active');
-          }
-        });
-      });
+        // === CALC LOGIC (ADVANCED) ===
+        function hol(d) { 
+            if(!d)return 1; const dt=new Date(d), m=dt.getMonth()+1, day=dt.getDate(); 
+            // Новый год (x2)
+            if((m===12&&day===31)||(m===1&&(day===1||day===2))) return 2; 
+            // Предновогодние (x1.5)
+            if(m===12&&day>=8&&day<=30) return 1.5; 
+            return 1; 
+        }
+        function roadHol(d) {
+            if(!d)return 1; const dt=new Date(d), m=dt.getMonth()+1, day=dt.getDate();
+            // Новый год (x2)
+            if((m===12&&day===31)||(m===1&&(day===1||day===2))) return 2;
+            // Предновогодние (x1.5)
+            if(m===12&&day>=8&&day<=30) return 1.5;
+            // 23 Фев и 8 Марта (x1.5)
+            if(m===2&&(day===22||day===23)) return 1.5;
+            if(m===3&&(day===7||day===8)) return 1.5;
+            return 1;
+        }
+        
+        function initCalc() {
+            const area=document.getElementById('calc-area'), cat=document.getElementById('calc-cat');
+            Object.keys(TravelData).forEach(k=>area.add(new Option(k,k)));
+            Object.keys(ServiceData).forEach(k=>cat.add(new Option(ServiceData[k].name,k)));
+            area.onchange=()=>{ 
+                const c=document.getElementById('calc-city'); c.disabled=false; c.innerHTML='<option disabled selected>Город</option>';
+                Object.keys(TravelData[area.value].cities).forEach(k=>c.add(new Option(k,k))); 
+            };
+            cat.onchange=()=>{ 
+                const s=document.getElementById('calc-svc'); s.disabled=false; s.innerHTML='<option disabled selected>Программа</option>';
+                Object.keys(ServiceData[cat.value].items).forEach(k=>s.add(new Option(k,k))); 
+            };
+            document.getElementById('calc-svc').onchange=(e)=>document.getElementById('calc-desc').innerText=ServiceData[document.getElementById('calc-cat').value].items[e.target.value].d;
+            document.getElementById('calc-guests').onchange=(e)=>document.getElementById('guest-slider-block').style.display=e.target.value==='custom'?'flex':'none';
+            document.getElementById('guest-range').oninput=(e)=>document.getElementById('guest-count').innerText=e.target.value;
+        }
+        
+        function calculatePrice() {
+            const a=document.getElementById('calc-area').value, c=document.getElementById('calc-city').value,
+                  ct=document.getElementById('calc-cat').value, s=document.getElementById('calc-svc').value, g=document.getElementById('calc-guests').value,
+                  d=document.getElementById('calc-date').value;
+            if(!a||!c||!ct||!s||!d){ showToast('Заполните все поля!'); return; }
+            
+            // 1. Базовая цена услуги
+            let base=ServiceData[ct].items[s].p; 
+            if(a==='Ярославская'&&c==='Ярославль') base+=1000;
+            
+            // 2. Дорога
+            const roadBase=TravelData[a].cities[c];
+            // Наценка на дорогу в праздники
+            const rCoef = roadHol(d);
+            const roadExtra = Math.round(roadBase * (rCoef - 1));
+            
+            // 3. Гости
+            let gst=0; 
+            if(g==='custom') gst=(document.getElementById('guest-range').value-200)*80; 
+            else gst=parseInt(g);
+            if(g==='5000') gst=5000;
+            if(g==='10000') gst=10000;
+            
+            // 4. Промежуточная сумма
+            const subTotal = base + roadBase + roadExtra + gst;
+            
+            // 5. Праздничная наценка на всё
+            const hCoef = hol(d);
+            const holUp = Math.round(subTotal * (hCoef - 1));
+            
+            // 6. Итого до скидки
+            let tot = subTotal + holUp;
+            
+            // 7. Скидка
+            if(AppState.discount>0) tot=Math.round(tot*(100-AppState.discount)/100);
+            
+            document.getElementById('total-price').innerText=tot.toLocaleString()+' ₽';
+            
+            let breakdown = `Услуга: ${base} | Дорога: ${roadBase}`;
+            if(roadExtra > 0) breakdown += ` (+${roadExtra} праздн.)`;
+            breakdown += ` | Гости: ${gst}`;
+            if(holUp > 0) breakdown += ` | Праздник (x${hCoef})`;
+            if(AppState.discount > 0) breakdown += ` | Скидка -${AppState.discount}%`;
+            
+            document.getElementById('price-breakdown').innerText = breakdown;
+            
+            const r=document.getElementById('calc-result'); r.classList.remove('hidden'); r.classList.add('fade-in-up');
+            setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'center'}),100);
+        }
+        
+        function bookViaTelegram() {
+            const p=document.getElementById('total-price').innerText; if(!p) return;
+            const a=document.getElementById('calc-area').value, c=document.getElementById('calc-city').value, d=document.getElementById('calc-date').value, s=document.getElementById('calc-svc').value;
+            openContact(`Заявка на дату ${d}.\nГород: ${c} (${a})\nУслуга: ${s}\nРасчетная цена: ${p}`);
+        }
 
-      // кнопка "Меню" внутри "Обо мне" (мобайл)
-      if(openMainMenuBtn){
-        openMainMenuBtn.addEventListener('click',()=>{
-          aboutModal.classList.remove('active');
-          mobileMenu.classList.add('active');
-        });
-      }
-    });
-  </script>
+        // === FAQ ===
+        function initFAQ() {
+            document.getElementById('faq-list').innerHTML=FAQData.map(i=>`<details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden"><summary class="p-4 font-bold text-[#C6A664] cursor-pointer text-sm">${i.q}</summary><div class="p-4 pt-0 text-xs text-gray-300 border-t border-white/5">${i.a}</div></details>`).join('');
+        }
+
+        // === GAME ===
+        function checkGameAvailability() {
+            try {
+                const lp=localStorage.getItem('lastPlayed'), td=new Date().toDateString();
+                if(lp===td) {
+                    const w=localStorage.getItem('won')==='true';
+                    const b=document.getElementById('game-btn');
+                    if(w) { AppState.discount=10; b.innerText="✅ Скидка активна"; } 
+                    else { b.innerText="⏳ Попытка использована"; }
+                    b.disabled=true; b.classList.remove('animate-pulse'); b.classList.add('opacity-50');
+                }
+            } catch(e){}
+        }
+        function playGame(el, i) {
+            try {
+                const lp=localStorage.getItem('lastPlayed'), td=new Date().toDateString();
+                if(lp===td) return;
+                const winIdx=Math.floor(Math.random()*3), isWin=(i===winIdx);
+                const faces=document.querySelectorAll('.face');
+                faces[0].innerText=(0===winIdx)?"A♠":"K♥"; faces[1].innerText=(1===winIdx)?"A♠":"J♣"; faces[2].innerText=(2===winIdx)?"A♠":"Q♦";
+                el.classList.add('flipped');
+                localStorage.setItem('lastPlayed',td); localStorage.setItem('won',isWin);
+                setTimeout(()=>{
+                    if(isWin) { document.getElementById('game-msg').innerText='🔥 СКИДКА 10%!'; document.getElementById('game-msg').className='text-green-400 font-bold'; AppState.discount=10; if(!document.getElementById('calc-result').classList.contains('hidden')) calculatePrice(); }
+                    else { document.getElementById('game-msg').innerText='😢 Увы, мимо.'; document.getElementById('game-msg').className='text-red-400 font-bold'; }
+                    checkGameAvailability(); setTimeout(()=>closeModal('modal-game'),2000);
+                },800);
+            } catch(e){}
+        }
+
+        // === SCHOOL LOGIC ===
+        function initSchoolTimer() {
+            const d=3*24*60*60*1000 + Date.now();
+            setInterval(()=>{
+                const diff=d-Date.now();
+                if(diff<=0) return;
+                const days=Math.floor(diff/86400000);
+                const h=Math.floor((diff%86400000)/3600000);
+                const m=Math.floor((diff%3600000)/60000);
+                document.getElementById('school-timer').innerHTML=`<div class="bg-black px-2 py-1 rounded">0${days} дн</div><div class="bg-black px-2 py-1 rounded">${h}:${m}</div>`;
+            }, 60000);
+        }
+        function scrollToForm() { document.getElementById('school-form').scrollIntoView({behavior:'smooth'}); }
+        function submitSchoolForm() {
+            const p=document.getElementById('s-parent').value, ph=document.getElementById('s-phone').value, a=document.getElementById('s-age').value;
+            if(!p||!ph||!a){ showToast('Заполните все поля'); return; }
+            openContact(`Заявка в Школу!\nРодитель: ${p}\nТел: ${ph}\nВозраст: ${a}`);
+        }
+    </script>
 </body>
 </html>
