@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KOSTYUK PROJECT</title>
+    <meta name="description" content="Иллюзионист Дмитрий Костюк. Экосистема магических проектов.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold-light: #F3E5AB;
+            --gold-main: #C6A664;
+            --gold-dark: #8A6E36;
+            --bg-black: #050505;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--bg-black);
+            color: #Eaeaea;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        
+        /* --- ФОН --- */
+        .bg-texture {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            /* ЗАМЕНИТЕ ЭТУ КАРТИНКУ НА СВОЮ ФОНОВУЮ ТЕКСТУРУ */
+            background-image: url('images/bg-texture.jpg'); 
+            background-size: cover; background-position: center;
+            opacity: 0.15; z-index: -2; pointer-events: none;
+            filter: grayscale(100%) contrast(120%);
+        }
+        .spotlight {
+            position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
+            width: 120vw; height: 100vh;
+            background: radial-gradient(circle at 50% 20%, rgba(198, 166, 100, 0.08) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none; z-index: -1;
+        }
+
+        /* --- SPA НАВИГАЦИЯ --- */
+        .page-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            background: transparent;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            z-index: 10; padding-bottom: 80px; 
+        }
+        #home-page { z-index: 10; }
+        .inner-page { transform: translateX(100%); z-index: 20; background: #080808; }
+        .inner-page.active { transform: translateX(0); }
+
+        /* --- UI --- */
+        .app-card {
+            position: relative;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            transition: all 0.2s;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .app-card:active { transform: scale(0.98); border-color: var(--gold-main); }
+        .tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 8px; border-radius: 6px; }
+        .tag-gold { background: rgba(198, 166, 100, 0.15); color: var(--gold-main); border: 1px solid rgba(198, 166, 100, 0.3); }
+        .tag-purple { background: rgba(180, 100, 255, 0.15); color: #d8aaff; border: 1px solid rgba(180, 100, 255, 0.3); }
+        .tag-blue { background: rgba(100, 180, 255, 0.15); color: #8ecfff; border: 1px solid rgba(100, 180, 255, 0.3); }
+
+        .sticky-header {
+            position: sticky; top: 0; z-index: 30;
+            background: rgba(5,5,5,0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- INPUTS --- */
+        .form-input, .form-select {
+            width: 100%; padding: 12px; border-radius: 12px;
+            background: #15171e; border: 1.5px solid #2f3138;
+            color: #fff; font-size: 15px; outline: none; transition: 0.2s; appearance: none;
+        }
+        .form-input:focus, .form-select:focus { border-color: var(--gold-main); }
+        .input-error { border-color: #ef4444 !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+            background: var(--gold-main); margin-top: -6px; cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #333; border-radius: 2px; }
+
+        /* --- GAME --- */
+        .gameWrap { display: flex; justify-content: center; gap: 10px; perspective: 1000px; margin-bottom: 20px; }
+        .card-game { width: 80px; height: 110px; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
+        .card-game.flipped { transform: rotateY(180deg); }
+        .face, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .back { background: linear-gradient(135deg, #C6A664, #8A6E36); border: 2px solid white; }
+        .face { background: white; transform: rotateY(180deg); font-size: 24px; color: black; font-weight: bold; }
+
+        /* --- STORIES --- */
+        .story-ring {
+            padding: 3px; border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            cursor: pointer; position: relative;
+        }
+        .story-ring img { border: 2px solid #000; border-radius: 50%; width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- MARQUEE --- */
+        .marquee-container { overflow: hidden; white-space: nowrap; position: relative; width: 100%; }
+        .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- FAQ SCROLL --- */
+        .faq-scroll { max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .faq-scroll::-webkit-scrollbar { width: 4px; }
+        .faq-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+        /* --- TOAST --- */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1a1a1a; border: 1px solid #333; color: #fff;
+            padding: 12px 24px; border-radius: 12px; z-index: 200;
+            opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 10px; font-size: 14px; pointer-events: none; width: max-content;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast svg { color: var(--gold-main); width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* --- ANIMATION --- */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .curtain { position: fixed; top: 0; width: 50%; height: 100%; background: #050505; z-index: 100; transition: transform 1s ease; }
+        .curtain-left { left: 0; border-right: 1px solid #222; }
+        .curtain-right { right: 0; border-left: 1px solid #222; }
+        .curtains-open .curtain-left { transform: translateX(-100%); }
+        .curtains-open .curtain-right { transform: translateX(100%); }
+        .curtain-logo { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 101; transition: opacity 0.5s; pointer-events: none;}
+
+        /* FAB Button */
+        .fab-btn {
+            position: fixed; right: 20px; bottom: 90px; width: 50px; height: 50px;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 40; cursor: pointer; transition: all 0.3s;
+            opacity: 0; pointer-events: none;
+        }
+        .fab-btn.visible { opacity: 1; pointer-events: auto; }
+        .fab-btn:active { transform: scale(0.9); background: var(--gold-main); color: black; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- ИНТРО -->
+    <div id="intro-overlay">
+        <div class="curtain curtain-left"></div>
+        <div class="curtain curtain-right"></div>
+        <div id="curtain-logo" class="curtain-logo flex flex-col items-center">
+            <div class="w-16 h-16 border border-[#C6A664] rounded-full flex items-center justify-center mb-4 bg-black">
+                <span class="text-3xl font-serif text-[#C6A664]">K</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="toast-msg">Сообщение</span>
+    </div>
+
+    <!-- FAB -->
+    <button id="fab-up" class="fab-btn" onclick="scrollToTop()">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+    <div class="bg-texture"></div>
+    <div class="spotlight"></div>
+
+    <!-- ================== ГЛАВНЫЙ ЭКРАН ================== -->
+    <div id="home-page" class="page-container px-5 pt-8">
+        <header class="text-center mb-8 animate-fade-in">
+            <h1 class="text-3xl font-serif font-bold tracking-wide text-white mb-2">
+                KOSTYUK <span class="text-[#C6A664]">PROJECT</span>
+            </h1>
+            <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">
+                Экосистема проектов
+            </p>
+        </header>
+
+        <div class="flex flex-col gap-4 max-w-md mx-auto">
+            <!-- ДВЕРЬ 1 -->
+            <button onclick="goToPage('page-private')" class="app-card w-full text-left p-6 group">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="tag tag-gold">Премиум</span>
+                    <svg class="w-5 h-5 text-gray-500 group-active:text-[#C6A664]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <h2 class="text-2xl font-serif text-white mb-1">Частные события</h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Свадьбы • Юбилеи • Корпоративы</p>
+                <div class="h-px w-8 bg-[#C6A664] mb-3 opacity-50"></div>
+                <p class="text-sm text-gray-400">Калькулятор цены, видео-отзывы и быстрая бронь даты.</p>
+            </button>
+
+            <!-- ДВЕРЬ 2 -->
+            <button onclick="goToPage('page-concert')" class="app-card w-full text-left p-6 group">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="tag tag-purple">Афиша</span>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <h2 class="text-2xl font-serif text-white mb-1">Шоу «Секрет»</h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Театр • Свидание • Впечатления</p>
+                <div class="h-px w-8 bg-[#d8aaff] mb-3 opacity-50"></div>
+                <p class="text-sm text-gray-400">Выбрать лучшие места и посмотреть трейлер.</p>
+            </button>
+
+            <!-- ДВЕРЬ 3 -->
+            <button onclick="goToPage('page-school')" class="app-card w-full text-left p-6 group">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="tag tag-blue">Дети 7–13 лет</span>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <h2 class="text-2xl font-serif text-white mb-1">Школа Волшебства</h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Развитие • Уверенность</p>
+                <div class="h-px w-8 bg-[#8ecfff] mb-3 opacity-50"></div>
+                <p class="text-sm text-gray-400">Превращаем стеснительность в артистизм. Запись на урок.</p>
+            </button>
+        </div>
+
+        <div class="mt-10 text-center px-4">
+             <button onclick="openContact()" class="w-full py-4 rounded-xl border border-[#333] bg-[#0f0f0f] text-gray-400 text-sm font-medium flex items-center justify-center gap-2 active:bg-[#1a1a1a]">
+                <span>Написать лично Дмитрию</span>
+            </button>
+            <!-- FOOTER ICONS -->
+            <div class="flex justify-center gap-6 mt-8 opacity-60">
+                <a href="https://vk.com/dmitry_kostyuk" target="_blank" class="hover:text-white transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13.162 18.994c.609 0 .858-.406.851-.915-.031-1.918.714-2.949 2.059-1.604 1.488 1.488 1.796 1.627 3.643 1.627 1.085 0 1.596-.53 1.596-1.53 0-1.095-.53-1.649-1.609-2.735-1.474-1.483-1.652-1.743-1.652-2.31 0-.585.579-1.077 1.34-1.99 1.127-1.35 1.565-1.928 1.565-2.784 0-.895-1.123-1.629-2.228-1.629-1.579 0-2.03.116-2.03.882 0 .145.034.331.067.553.058.39.117.784.032.903-.092.13-.537.104-.973-.09-1.356-.606-2.185-1.662-2.185-2.887 0-.613.067-1.156.162-1.654.104-.543.155-.815.155-.815s-2.055.05-3.033.05c-.886 0-1.698-.076-2.527.247-.417.163-.736.636-.736 1.258 0 .59.417 1.349 1.25 3.323 1.517 3.593 1.439 4.312 1.151 4.707-.463.636-1.455.45-1.455-1.968 0-1.673.344-3.52-.375-4.577-.375-.551-.925-.85-1.841-.954-.858-.097-1.562-.113-2.195.03-.667.15-.94.499-.344.82 1.045.565 1.313 1.599 1.313 3.903 0 1.235-.045 2.109-.174 2.583-.162.593-.526 1.006-1.365.882-.249-.036-.502-.124-.764-.265-2.56-1.378-4.484-4.512-4.484-7.85 0-.742-.034-1.493-.034-1.493s-1.874.05-2.617.05c-.83 0-1.281.39-1.281.982 0 .808.579 2.195 2.162 4.607 2.373 3.616 5.862 6.812 9.073 6.812.982 0 1.706-.113 2.172-.34.466-.226.792-.619.792-1.258v-1.488c0-.663.265-.99.792-.99z"/></svg></a>
+                <a href="https://t.me/demonnikko" target="_blank" class="hover:text-white transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================== ЛЕНДИНГ: ЧАСТНЫЕ СОБЫТИЯ ================== -->
+    <div id="page-private" class="page-container inner-page">
+        <div class="sticky-header flex items-center p-4 justify-between">
+            <div class="flex items-center">
+                <button onclick="goBack()" class="p-2 -ml-2 text-gray-400 active:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <h3 class="text-lg font-serif font-bold text-white ml-2">Частные события</h3>
+            </div>
+        </div>
+
+        <div class="p-5 max-w-md mx-auto space-y-8">
+            
+            <!-- 1. ИНТРО -->
+            <div class="text-center reveal">
+                <div class="w-24 h-24 mx-auto rounded-full border-2 border-[#C6A664] overflow-hidden mb-3">
+                    <!-- ФОТО: ПОРТРЕТ -->
+                    <img src="images/portrait.jpg" class="w-full h-full object-cover">
+                </div>
+                <h1 class="text-3xl font-serif text-white mb-1">Дмитрий Костюк</h1>
+                <p class="text-xs text-[#C6A664] uppercase font-bold tracking-widest mb-4">Создаю события, о которых говорят</p>
+                
+                <div class="flex justify-center items-center gap-2 text-sm text-gray-400">
+                    <span class="font-bold text-white"><span id="anim-shows">1838</span>+ шоу</span>
+                    <span class="w-1 h-1 rounded-full bg-gray-500"></span>
+                    <span id="anim-exp">7 лет опыта</span>
+                </div>
+
+                <!-- MARQUEE -->
+                <div class="marquee-container bg-white/5 py-2 border-y border-white/5 mt-4">
+                    <div class="marquee-content text-xs text-gray-400 font-bold uppercase tracking-widest space-x-8">
+                        <span>СБЕРБАНК</span> <span>ГАЗПРОМ</span> <span>РЖД</span> <span>ТЕНЗОР</span> <span>РОСТЕЛЕКОМ</span> <span>ЛУКОЙЛ</span>
+                        <span>СБЕРБАНК</span> <span>ГАЗПРОМ</span> <span>РЖД</span> <span>ТЕНЗОР</span> <span>РОСТЕЛЕКОМ</span> <span>ЛУКОЙЛ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. STORIES (КРУЖОЧКИ: ОТЗЫВЫ + ГАЛЕРЕЯ) -->
+            <div class="reveal">
+                <h4 class="text-white text-sm font-bold mb-3 pl-1">Галерея и Отзывы</h4>
+                <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar px-1 justify-center">
+                    <div class="flex flex-col items-center gap-1" onclick="openStory('reviews')">
+                        <!-- ИКОНКА STORIES 1 -->
+                        <div class="story-ring w-[72px] h-[72px]"><img src="images/story-reviews.jpg"></div>
+                        <span class="text-[10px] text-gray-300">Отзывы</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1" onclick="openLightbox('gallery')">
+                         <!-- ИКОНКА STORIES 2 -->
+                        <div class="story-ring w-[72px] h-[72px]"><img src="images/story-gallery.jpg"></div>
+                        <span class="text-[10px] text-gray-300">Галерея</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1" onclick="openStory('moments')">
+                         <!-- ИКОНКА STORIES 3 -->
+                        <div class="story-ring w-[72px] h-[72px]"><img src="images/story-moments.jpg"></div>
+                        <span class="text-[10px] text-gray-300">Эмоции</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. ПРОМО -->
+            <button onclick="openPromo('private')" class="w-full py-4 bg-gradient-to-r from-[#C6A664] to-[#8A6E36] text-black font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform reveal">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                Смотреть промо-видео
+            </button>
+
+            <!-- 4. ФОРМАТЫ -->
+            <div class="reveal">
+                <h2 class="text-xl font-serif text-white mb-4">Форматы</h2>
+                <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x">
+                    <div class="min-w-[85%] bg-[#15171e] border border-white/10 rounded-2xl p-5 snap-center">
+                        <h3 class="text-lg text-[#F3E5AB] font-serif mb-1">Частные события</h3>
+                        <div class="text-sm text-gray-400 mb-3">от 18 500 ₽</div>
+                        <ul class="text-sm text-gray-300 list-disc list-inside mb-4 space-y-1">
+                            <li>20–40 минут</li>
+                            <li>Персонализация под событие</li>
+                            <li>Интерактив со зрителями</li>
+                        </ul>
+                    </div>
+                    <div class="min-w-[85%] bg-[#15171e] border border-white/10 rounded-2xl p-5 snap-center">
+                        <h3 class="text-lg text-[#F3E5AB] font-serif mb-1">Микромагия</h3>
+                        <div class="text-sm text-gray-400 mb-3">от 13 000 ₽</div>
+                        <ul class="text-sm text-gray-300 list-disc list-inside mb-4 space-y-1">
+                            <li>30–180 минут, welcome</li>
+                            <li>Фокусы в руках гостей</li>
+                            <li>Идеально для банкетов</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. КАЛЬКУЛЯТОР -->
+            <div id="calc" class="bg-[#15171e] border border-white/10 rounded-2xl p-5 shadow-2xl scroll-mt-20 reveal relative">
+                <h2 class="text-xl font-serif text-white mb-4 text-center">Узнать стоимость</h2>
+                <form id="calcForm" class="space-y-4" onsubmit="return false;">
+                    
+                    <div class="space-y-1">
+                        <label class="text-xs text-gray-400 ml-1">Где будет праздник?</label>
+                        <select id="calc-area" class="form-select text-gray-300"><option value="" disabled selected>Область</option></select>
+                        <select id="calc-city" class="form-select text-gray-300 mt-2" disabled><option value="" disabled selected>Город</option></select>
+                    </div>
+                    
+                    <div class="space-y-1">
+                         <label class="text-xs text-gray-400 ml-1">Дата события</label>
+                         <input type="date" id="calc-date" class="form-input text-gray-300">
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <label class="text-xs text-gray-400 ml-1">Гости и Формат</label>
+                        <select id="calc-guests" class="form-select text-gray-300">
+                            <option value="" disabled selected>Кол-во гостей</option>
+                            <option value="0">до 50 гостей (0₽)</option>
+                            <option value="5000">51–100 гостей (+5000₽)</option>
+                            <option value="10000">101–200 гостей (+10000₽)</option>
+                            <option value="custom">свыше 200 гостей</option>
+                        </select>
+                         <div id="guest-slider-block" class="hidden flex-col gap-2 p-3 bg-black/30 rounded-lg mt-2 border border-white/5">
+                            <label class="text-xs text-gray-400 text-center">Точное кол-во: <span id="guest-count" class="text-[#C6A664] font-bold">250</span></label>
+                            <input type="range" id="guest-range" min="201" max="500" value="250" class="w-full accent-[#C6A664]">
+                        </div>
+                        <select id="calc-cat" class="form-select text-gray-300 mt-2"><option value="" disabled selected>Тип мероприятия</option></select>
+                        <select id="calc-svc" class="form-select text-gray-300 mt-2" disabled><option value="" disabled selected>Программа</option></select>
+                    </div>
+
+                    <div id="calc-desc" class="text-xs text-gray-500 text-center min-h-[20px] px-2 leading-tight"></div>
+                    
+                    <button id="calc-btn" onclick="calculatePrice()" class="w-full py-4 bg-white/10 border border-white/20 rounded-xl text-white font-bold hover:bg-[#C6A664] hover:text-black transition-colors mt-2 flex justify-center items-center gap-2">
+                        Рассчитать стоимость
+                    </button>
+                </form>
+
+                <!-- РЕЗУЛЬТАТ -->
+                <div id="calc-result" class="hidden text-center mt-6 border-t border-white/10 pt-4 scroll-mt-40">
+                    <div class="bg-[#C6A664]/10 border border-[#C6A664]/30 rounded-xl p-3 mb-4 inline-block">
+                         <p class="text-[10px] text-[#C6A664] uppercase tracking-widest font-bold mb-1">Дата свободна!</p>
+                         <div id="total-price" class="text-3xl font-serif text-white font-bold"></div>
+                    </div>
+                    
+                    <div id="price-breakdown" class="text-xs text-gray-400 mb-6 bg-black/30 p-3 rounded-lg leading-relaxed text-left border-l-2 border-[#C6A664]"></div>
+                    
+                    <div class="flex flex-col gap-3">
+                        <button id="game-btn" onclick="openGame()" class="w-full py-3 border border-[#C6A664] text-[#C6A664] rounded-lg text-sm font-bold animate-pulse">
+                            🎲 Получить скидку (1 раз в сутки)
+                        </button>
+                        <button onclick="bookViaTelegram()" class="w-full py-4 bg-[#C6A664] text-black rounded-lg text-sm font-bold shadow-[0_4px_14px_rgba(198,166,100,0.4)]">
+                            Забронировать дату
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. ГАРАНТИЯ (НОВОЕ) -->
+            <div class="bg-gradient-to-r from-[#1c202b] to-black p-5 rounded-2xl border border-[#C6A664]/20 text-center reveal">
+                <h2 class="text-lg font-serif text-[#F3E5AB] mb-2">Гарантия результата</h2>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Я работаю официально по договору (ИП). Если шоу вам не понравится — я верну гонорар. За 7 лет ни одного возврата.
+                </p>
+            </div>
+
+            <!-- 7. ПОЛНЫЙ FAQ -->
+            <div class="reveal">
+                <h2 class="text-xl font-serif text-white mb-4">Частые вопросы</h2>
+                <div class="faq-scroll rounded-xl border border-white/5 bg-[#15171e]/50">
+                    <div id="faq-list" class="space-y-1 p-2"></div>
+                </div>
+            </div>
+
+            <div class="h-20"></div>
+        </div>
+    </div>
+
+    <!-- ================== ЛЕНДИНГ: АФИША ================== -->
+    <div id="page-concert" class="page-container inner-page">
+        <div class="sticky-header flex items-center p-4">
+            <button onclick="goBack()" class="p-2 text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+            <h3 class="text-lg font-serif font-bold text-white ml-2">Афиша</h3>
+        </div>
+        <div class="p-5 max-w-md mx-auto space-y-8">
+            
+            <!-- 1. СПАСТИ МАТВЕЯ -->
+            <div class="bg-[#15171e] rounded-2xl p-4 border border-white/10 shadow-lg reveal">
+                <div class="flex gap-4 mb-4">
+                    <!-- Постер -->
+                    <div class="w-[35%] flex-shrink-0">
+                        <div class="aspect-[2/3] rounded-lg bg-blue-900/20 relative overflow-hidden border border-white/10"><span class="absolute top-1 left-1 bg-white text-black text-[9px] font-bold px-1 rounded">6+</span><span class="absolute center text-4xl">🐰</span></div>
+                    </div>
+                    <!-- Видео превью -->
+                    <div class="flex-grow flex flex-col justify-center">
+                         <div class="w-full aspect-video rounded-lg bg-black relative overflow-hidden border border-white/10 cursor-pointer group" onclick="openPromo('matvey')">
+                             <div class="absolute inset-0 flex items-center justify-center"><div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:scale-110 transition border border-white/30"><svg class="w-4 h-4 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                             <p class="absolute bottom-1 right-2 text-[9px] text-gray-400">Трейлер</p>
+                         </div>
+                    </div>
+                </div>
+                <!-- Описание -->
+                <div class="mb-4">
+                    <h3 class="text-xl font-serif text-white mb-1">Спасти Матвея</h3>
+                    <p class="text-xs text-blue-400 mb-2 font-bold uppercase tracking-wider">Интерактивный квест</p>
+                    <p class="text-sm text-gray-300 leading-relaxed border-l-2 border-blue-500/50 pl-3">
+                        Магический дух похитил ребенка. Только зрители могут помочь отцу спасти его, разгадывая загадки и участвуя в магии.
+                    </p>
+                </div>
+                <!-- Кнопка -->
+                <button onclick="openLink('https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk')" class="block w-full py-3 bg-[#222] border border-[#444] text-white text-center rounded-xl font-bold hover:bg-[#333] transition">
+                    Купить билеты
+                </button>
+            </div>
+
+            <!-- 2. ШОУ СЕКРЕТ -->
+            <div class="bg-[#15171e] rounded-2xl p-4 border border-[#d8aaff]/30 shadow-lg relative overflow-hidden reveal">
+                <!-- ХИТ -->
+                <div class="absolute top-0 right-0 bg-[#d8aaff] text-black text-[9px] font-bold px-3 py-1 rounded-bl-lg z-10">ХИТ</div>
+                
+                <div class="flex gap-4 mb-4">
+                    <!-- Постер -->
+                    <div class="w-[35%] flex-shrink-0">
+                        <div class="aspect-[2/3] rounded-lg bg-purple-900/20 relative overflow-hidden border border-white/10"><span class="absolute top-1 left-1 bg-[#d8aaff] text-black text-[9px] font-bold px-1.5 rounded">12+</span><span class="absolute center text-4xl">🎭</span></div>
+                    </div>
+                    <!-- Видео превью -->
+                    <div class="flex-grow flex flex-col justify-center">
+                         <div class="w-full aspect-video rounded-lg bg-black relative overflow-hidden border border-white/10 cursor-pointer group" onclick="openPromo('secret')">
+                             <div class="absolute inset-0 flex items-center justify-center"><div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:scale-110 transition border border-white/30"><svg class="w-4 h-4 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                             <p class="absolute bottom-1 right-2 text-[9px] text-gray-400">Трейлер шоу</p>
+                         </div>
+                    </div>
+                </div>
+                <!-- Описание -->
+                <div class="mb-4">
+                    <h3 class="text-xl font-serif text-white mb-1">Шоу «Секрет»</h3>
+                    <p class="text-xs text-[#d8aaff] mb-2 font-bold uppercase tracking-wider">Философский спектакль</p>
+                    <p class="text-sm text-gray-300 leading-relaxed border-l-2 border-[#d8aaff]/50 pl-3">
+                        Иллюзия со смыслом. Идеально для свиданий и эстетов. Магия, которая заставляет не только удивиться, но и задуматься.
+                    </p>
+                </div>
+                <!-- Кнопка -->
+                <button onclick="openLink('https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk/s2')" class="block w-full py-3 bg-[#d8aaff] text-black text-center rounded-xl font-bold hover:brightness-110 transition shadow-lg shadow-purple-900/20">
+                    Выбрать лучшие места
+                </button>
+            </div>
+
+            <!-- 3. ХУЛИGAN -->
+            <div class="bg-[#15171e] rounded-2xl p-4 border border-red-900/40 shadow-lg reveal">
+                <div class="flex gap-4 mb-4">
+                    <!-- Постер -->
+                    <div class="w-[35%] flex-shrink-0">
+                        <div class="aspect-[2/3] rounded-lg bg-red-900/20 relative overflow-hidden border border-white/10"><span class="absolute top-1 left-1 bg-red-600 text-white text-[9px] font-bold px-1.5 rounded">18+</span><span class="absolute center text-4xl">🔥</span></div>
+                    </div>
+                    <!-- Видео превью -->
+                    <div class="flex-grow flex flex-col justify-center">
+                         <div class="w-full aspect-video rounded-lg bg-black relative overflow-hidden border border-white/10 cursor-pointer group" onclick="openPromo('huli')">
+                             <div class="absolute inset-0 flex items-center justify-center"><div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:scale-110 transition border border-white/30"><svg class="w-4 h-4 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                             <p class="absolute bottom-1 right-2 text-[9px] text-gray-400">Промо без цензуры</p>
+                         </div>
+                    </div>
+                </div>
+                <!-- Описание -->
+                <div class="mb-4">
+                    <h3 class="text-xl font-serif text-white mb-1">Хулиgan</h3>
+                    <p class="text-xs text-red-500 mb-2 font-bold uppercase tracking-wider">Магический стендап</p>
+                    <p class="text-sm text-gray-300 leading-relaxed border-l-2 border-red-900/50 pl-3">
+                        Фокусы без цензуры. Дерзко, смешно и только для взрослых. Шоу, где магия встречается с реальностью.
+                    </p>
+                </div>
+                <!-- Кнопка -->
+                <button onclick="openLink('https://quicktickets.ru/yaroslavl-illyuzionist-dmitrij-kostyuk')" class="block w-full py-3 bg-[#222] border border-[#444] text-white text-center rounded-xl font-bold hover:bg-[#333] transition">
+                    Смотреть расписание
+                </button>
+            </div>
+            <div class="h-20"></div>
+        </div>
+    </div>
+
+    <!-- ================== ЛЕНДИНГ: ШКОЛА ВОЛШЕБСТВА ================== -->
+    <div id="page-school" class="page-container inner-page">
+        <div class="sticky-header flex items-center p-4">
+            <button onclick="goBack()" class="p-2 text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+            <h3 class="text-lg font-serif font-bold text-white ml-2">Школа Волшебства</h3>
+        </div>
+
+        <div class="p-5 max-w-md mx-auto space-y-8">
+            
+            <!-- HERO ШКОЛЫ -->
+            <div class="text-center reveal">
+                <h1 class="text-3xl font-cormorant text-[#C6A664] mb-2 leading-tight">ABRACADABRA</h1>
+                <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+                    Мы не просто учим трюкам. Мы превращаем застенчивость в уверенность, а робкие слова — в аплодисменты зала.
+                </p>
+                <div class="flex justify-center gap-2 mb-4 text-[10px] text-gray-400">
+                    <span class="bg-white/10 px-2 py-1 rounded border border-white/10">👥 Группы до 10 детей</span>
+                    <span class="bg-white/10 px-2 py-1 rounded border border-white/10">🎙️ Сцена и речь</span>
+                    <span class="bg-white/10 px-2 py-1 rounded border border-white/10">📔 AR-дневник</span>
+                </div>
+                <!-- TIMER -->
+                <div class="bg-[#15171e] border border-[#C6A664]/30 rounded-xl p-3 flex justify-between items-center max-w-[300px] mx-auto">
+                    <span class="text-xs text-[#C6A664] font-bold animate-pulse">Осталось 7 мест</span>
+                    <div class="flex gap-2 font-mono text-sm font-bold text-white" id="school-timer">
+                        <div class="bg-black px-2 py-1 rounded">03 дн</div>
+                        <div class="bg-black px-2 py-1 rounded">12:00:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ОБ АВТОРЕ -->
+            <div class="flex items-center gap-4 bg-[#15171e] p-4 rounded-xl border border-white/10 reveal">
+                <div class="w-16 h-16 rounded-full border border-[#C6A664] overflow-hidden flex-shrink-0">
+                    <!-- ФОТО: ПОРТРЕТ 2 -->
+                    <img src="images/portrait.jpg" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white">Дмитрий Костюк</h3>
+                    <p class="text-xs text-gray-400 mt-1">Основатель школы, иллюзионист, автор шоу «Секрет». Участник ТВ-проектов.</p>
+                    <p class="text-[10px] text-gray-500 mt-1 leading-tight">В школе мы используем механику AR-дневника и систему достижений (ачивок), чтобы ребенок сам хотел учиться.</p>
+                </div>
+            </div>
+            
+            <!-- НАШИ УЧЕНИКИ -->
+            <div class="reveal">
+                <h2 class="text-xl font-cormorant text-white mb-4 text-center">Наши ученики на сцене</h2>
+                <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar snap-x">
+                    <div class="min-w-[70%] aspect-video bg-black rounded-xl overflow-hidden border border-white/10 snap-center relative">
+                         <!-- ФОТО: УЧЕНИК 1 -->
+                         <img src="images/school-student-1.jpg" class="w-full h-full object-cover opacity-80">
+                         <div class="absolute bottom-2 left-2 text-xs font-bold text-white">Отчетный концерт 2024</div>
+                    </div>
+                    <div class="min-w-[70%] aspect-video bg-black rounded-xl overflow-hidden border border-white/10 snap-center relative">
+                         <!-- ФОТО: УЧЕНИК 2 -->
+                         <img src="images/school-student-2.jpg" class="w-full h-full object-cover opacity-80">
+                         <div class="absolute bottom-2 left-2 text-xs font-bold text-white">Выпускной</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОЧЕМУ МЫ -->
+            <div class="reveal">
+                <h2 class="text-xl font-cormorant text-white mb-4 text-center">Почему не футбол?</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🧠 Харизма</h3><p class="text-xs text-gray-400 leading-tight">Навык держать паузу и управлять вниманием ценится везде.</p></div>
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🎤 Сцена</h3><p class="text-xs text-gray-400 leading-tight">Ребенок получает реакцию зала и перестает бояться сцены.</p></div>
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🎯 Геймификация</h3><p class="text-xs text-gray-400 leading-tight">Очки, ачивки и AR-дневник. Ребенок сам хочет учиться.</p></div>
+                    <div class="bg-[#15171e] p-4 rounded-xl border border-white/10"><h3 class="text-[#C6A664] font-bold text-sm mb-1">🎩 Шоу</h3><p class="text-xs text-gray-400 leading-tight">Мини-выступление каждый месяц.</p></div>
+                </div>
+            </div>
+
+            <!-- РЕДКИЙ НАВЫК -->
+            <div class="bg-gradient-to-b from-[#1c202b] to-black p-5 rounded-2xl border border-[#C6A664]/20 text-center reveal">
+                <h2 class="text-xl font-cormorant text-[#F3E5AB] mb-2">Редкий элитный навык</h2>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Футболистов — тысячи. Музыкантов — сотни. А ребенок, умеющий увлечь зал и держать внимание — один на миллион. Ваш ребенок — среди них.
+                </p>
+            </div>
+
+            <!-- ПРОГРАММА -->
+            <div class="bg-[#15171e] border border-white/10 rounded-2xl p-5 reveal">
+                <h2 class="text-xl font-cormorant text-white mb-4 text-center">Как это устроено</h2>
+                <ul class="space-y-4 text-sm text-gray-300">
+                    <li class="flex gap-3"><span class="text-[#C6A664] text-lg">🗓️</span> <div><b>1 занятие в неделю</b><br><span class="text-xs text-gray-500">Два академических часа</span></div></li>
+                    <li class="flex gap-3"><span class="text-[#C6A664] text-lg">🎩</span> <div><b>Постановка номеров</b><br><span class="text-xs text-gray-500">Работа над образом и подачей</span></div></li>
+                    <li class="flex gap-3"><span class="text-[#C6A664] text-lg">📔</span> <div><b>Дневник волшебника</b><br><span class="text-xs text-gray-500">С наклейками и достижениями</span></div></li>
+                    <li class="flex gap-3"><span class="text-[#C6A664] text-lg">🎁</span> <div><b>Приз-реквизит</b><br><span class="text-xs text-gray-500">В конце каждого месяца</span></div></li>
+                </ul>
+            </div>
+
+            <!-- ЦЕНЫ -->
+            <div class="space-y-4 reveal" id="school-prices">
+                <!-- Месяц -->
+                <div class="bg-gradient-to-b from-[#15171e] to-black border border-white/10 rounded-2xl p-5 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-[#C6A664] text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">-25%</div>
+                    <h3 class="text-lg font-bold text-white mb-1">Месяц</h3>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span class="text-3xl font-bold text-[#C6A664]">2 990 ₽</span>
+                        <span class="text-sm text-gray-500 line-through">3 990 ₽</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4">4 занятия + Реквизит в подарок</p>
+                    <button onclick="scrollToForm()" class="w-full py-3 border border-[#C6A664] text-[#C6A664] rounded-xl font-bold text-sm hover:bg-[#C6A664] hover:text-black transition">Выбрать тариф</button>
+                </div>
+                <!-- Полгода -->
+                <div class="bg-gradient-to-b from-[#1c202b] to-[#0f1116] border border-[#C6A664]/50 rounded-2xl p-5 relative overflow-hidden shadow-lg shadow-[#C6A664]/10">
+                    <div class="absolute top-0 right-0 bg-[#C6A664] text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">ВЫГОДНО</div>
+                    <h3 class="text-lg font-bold text-white mb-1">Полгода</h3>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span class="text-3xl font-bold text-[#C6A664]">14 950 ₽</span>
+                        <span class="text-sm text-gray-500 line-through">18 690 ₽</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4">Приоритет в группе + Фиксация цены. Экономия 3 740 ₽.</p>
+                    <button onclick="scrollToForm()" class="w-full py-3 bg-[#C6A664] text-black rounded-xl font-bold text-sm shadow-md">Оформить абонемент</button>
+                    <!-- РАССРОЧКА -->
+                    <button onclick="openContact('Интересует рассрочка на обучение')" class="w-full py-3 border border-white/10 text-gray-400 rounded-xl font-bold text-sm hover:text-white mt-2">Есть рассрочка</button>
+                </div>
+                
+                <!-- Видео-карточка (ТВ-Шоу) -->
+                <div class="bg-[#15171e] p-4 rounded-xl border border-white/10 text-center relative overflow-hidden cursor-pointer group" onclick="openPromo('tvshow')">
+                    <div class="w-full h-32 bg-black/50 absolute inset-0 flex items-center justify-center z-10 group-hover:bg-black/30 transition">
+                         <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border border-white/30"><svg class="w-4 h-4 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                    </div>
+                    <!-- ФОТО: ОБЛОЖКА ТВ ШОУ -->
+                    <img src="images/tv-show-cover.jpg" class="absolute inset-0 w-full h-full object-cover opacity-50">
+                    <p class="text-xs text-white relative z-20 font-bold mt-20">Смотрели на «Первом ярославском»? <br>8 выпусков телешоу «Школа волшебства».</p>
+                </div>
+            </div>
+
+            <!-- ФОРМА ЗАПИСИ (TELEGRAM) -->
+            <div id="school-form" class="bg-[#15171e] border border-white/10 rounded-2xl p-6 scroll-mt-24 shadow-2xl reveal">
+                <h2 class="text-xl font-cormorant text-white mb-2 text-center">Забронировать место</h2>
+                <p class="text-xs text-gray-400 text-center mb-6">Пробный урок — бесплатно. Группа ограничена.</p>
+                <form class="space-y-4" onsubmit="return false;">
+                    <div>
+                        <input id="s-parent" class="form-input text-gray-300" placeholder="Имя родителя">
+                    </div>
+                    <div>
+                        <input id="s-phone" class="form-input text-gray-300" placeholder="Телефон (+7...)" type="tel">
+                    </div>
+                    <div>
+                        <input id="s-age" class="form-input text-gray-300" placeholder="Возраст ребенка (7-13)" type="number">
+                    </div>
+                    
+                    <button onclick="submitSchoolForm()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform mt-2 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        Отправить в Telegram
+                    </button>
+                </form>
+            </div>
+
+            <!-- FAQ ШКОЛЫ -->
+            <div class="reveal">
+                <h2 class="text-xl font-cormorant text-white mb-4 text-center">Вопросы родителей</h2>
+                <div class="space-y-2">
+                    <details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden group">
+                        <summary class="p-4 font-bold text-[#8ecfff] cursor-pointer text-sm flex justify-between items-center bg-[#15171e]">
+                            Если ребенок стеснительный?
+                            <span class="text-white transition-transform group-open:rotate-45">+</span>
+                        </summary>
+                        <div class="p-4 pt-2 text-xs text-gray-300 border-t border-white/5 bg-[#0a0a0a] leading-relaxed">
+                            Именно для таких детей мы и запускали школу. Начинаем с простых шагов, без давления. Через месяц — уверенное мини-выступление.
+                        </div>
+                    </details>
+                    <details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden group">
+                        <summary class="p-4 font-bold text-[#8ecfff] cursor-pointer text-sm flex justify-between items-center bg-[#15171e]">
+                            Если не понравится?
+                            <span class="text-white transition-transform group-open:rotate-45">+</span>
+                        </summary>
+                        <div class="p-4 pt-2 text-xs text-gray-300 border-t border-white/5 bg-[#0a0a0a] leading-relaxed">
+                            Есть бесплатный пробный урок. Вы ничего не теряете — ребёнок знакомится с форматом и педагогом.
+                        </div>
+                    </details>
+                    <details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden group">
+                        <summary class="p-4 font-bold text-[#8ecfff] cursor-pointer text-sm flex justify-between items-center bg-[#15171e]">
+                            Сколько детей в группе?
+                            <span class="text-white transition-transform group-open:rotate-45">+</span>
+                        </summary>
+                        <div class="p-4 pt-2 text-xs text-gray-300 border-t border-white/5 bg-[#0a0a0a] leading-relaxed">
+                            До 10 человек. У каждого — время на сцене и внимание педагога.
+                        </div>
+                    </details>
+                    <details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden group">
+                        <summary class="p-4 font-bold text-[#8ecfff] cursor-pointer text-sm flex justify-between items-center bg-[#15171e]">
+                            Будут домашние задания?
+                            <span class="text-white transition-transform group-open:rotate-45">+</span>
+                        </summary>
+                        <div class="p-4 pt-2 text-xs text-gray-300 border-t border-white/5 bg-[#0a0a0a] leading-relaxed">
+                            Нет. Весь прогресс — на занятиях.
+                        </div>
+                    </details>
+                     <details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden group">
+                        <summary class="p-4 font-bold text-[#8ecfff] cursor-pointer text-sm flex justify-between items-center bg-[#15171e]">
+                            Почему не с начала года?
+                            <span class="text-white transition-transform group-open:rotate-45">+</span>
+                        </summary>
+                        <div class="p-4 pt-2 text-xs text-gray-300 border-t border-white/5 bg-[#0a0a0a] leading-relaxed">
+                             Нам не важна сезонность. Важны этапы обучения ребёнка, как он усваивает материал и учится взаимодействовать с публикой.
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <div class="h-20"></div>
+        </div>
+    </div>
+
+    <!-- === МОДАЛКИ (ОБЩИЕ) === -->
+    <div id="modal-story" class="fixed inset-0 bg-black z-[120] hidden flex justify-center items-center"><button onclick="closeModal('modal-story')" class="absolute top-4 right-4 text-white text-3xl z-50">✕</button><iframe id="story-video" class="w-full h-full max-w-md border-0" src=""></iframe></div>
+    <div id="modal-promo" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center p-4"><div class="w-full max-w-4xl aspect-video bg-black rounded-xl border border-white/20 relative"><button onclick="closeModal('modal-promo')" class="absolute top-2 right-2 text-white text-2xl z-10">✕</button><iframe id="promo-video-frame" class="w-full h-full border-0"></iframe></div></div>
+    <div id="modal-game" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center p-4"><div class="bg-[#111] w-full max-w-sm rounded-2xl border border-[#C6A664]/30 p-6 text-center relative"><button onclick="closeModal('modal-game')" class="absolute top-2 right-2 text-gray-500">✕</button><h2 class="text-xl font-serif text-[#C6A664]">Угадай карту</h2><div class="gameWrap mt-4"><div class="card-game" onclick="playGame(this, 0)"><div class="face text-black">A♠</div><div class="back"></div></div><div class="card-game" onclick="playGame(this, 1)"><div class="face text-red-600">K♥</div><div class="back"></div></div><div class="card-game" onclick="playGame(this, 2)"><div class="face text-black">J♣</div><div class="back"></div></div></div><p id="game-msg" class="text-gray-400 mt-4 h-6 text-sm font-bold"></p></div></div>
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[130] hidden flex items-center justify-center p-2" onclick="closeModal('lightbox')"><img id="lightbox-img" class="max-w-full max-h-full rounded shadow-2xl"></div>
+
+    <script>
+        // === ДАННЫЕ ===
+        const TravelData={"Вологодская":{fee:9000,cities:{"Вологда":9000,"Череповец":15000,"Сокол":12000}},"Владимирская":{fee:10000,cities:{"Владимир":10000,"Ковров":10000,"Муром":17000,"Александров":10000,"Гусь-Хрустальный":13500}},"Ивановская":{fee:5000,cities:{"Иваново":2000,"Кинешма":3500,"Шуя":3000,"Тейково":2500,"Кохма":2500,"Вичуга":3000,"Фурманов":2500,"Родники":3000,"Приволжск":2000,"Южа":4000}},"Костромская":{fee:3000,cities:{"Кострома":2000,"Шарья":6000,"Нерехта":2000,"Буй":3000,"Волгореченск":2000,"Мантурово":5500,"Галич":3500}},"Ярославская":{fee:1000,cities:{"Ярославль":0,"Рыбинск":2000,"Тутаев":2000,"Переславль-Залесский":2000,"Углич":2000,"Ростов":2000,"Гаврилов-Ям":2000,"Данилов":2000,"Пошехонье":4000,"Мышкин":2000,"Любим":2000}}};
+        const ServiceData={
+            kids:{name:"Детские шоу",items:{"Детское шоу (30 мин)":{p:11250,d:"Веселая магия"},"Детское шоу (40 мин)":{p:13750,d:"Расширенная"},"Индив. детское шоу":{p:21250,d:"30 мин + фокус имениннику (11-й ребенок +1000₽)"}}},
+            std:{name:"Взрослые шоу",items:{"Шоу (20 мин)":{p:17500,d:"Сет из 3-4 трюков"},"Шоу (30 мин)":{p:23750,d:"Универсальный"},"Шоу (40 мин)":{p:30000,d:"Расширенный вариант"}}},
+            close:{name:"Микромагия",items:{"Микромагия (30 мин)":{p:13000,d:"Фокусы в руках"},"Микромагия (1 ч)":{p:20000,d:"Обход гостей"},"Микромагия (2 ч)":{p:30000,d:"Welcome-зона 80–120 чел."}, "Микромагия (3 ч)":{p:36000,d:"Максимальное покрытие"} }},
+            spec:{name:"Спец-проекты",items:{"Свадебное шоу (20 мин)":{p:26250,d:"Романтичный блок"},"Свадебное шоу (30 мин)":{p:32500,d:"Расширенный свадебный"},"Корпоратив (20 мин)":{p:26250,d:"Юмор"},"Корпоратив (30 мин)":{p:32500,d:"Расширенный"},"Юбилей (20 мин)":{p:23750,d:"Подарок юбиляру"},"Юбилей (30 мин)":{p:30000,d:"Расширенный"},"Выпускной (20 мин)":{p:23750,d:"Современный"},"Выпускной (30 мин)":{p:30000,d:"Расширенный"}}},
+            conc:{name:"Концерты",items:{"Мини-шоу «СЕКРЕТ» (1 ч)":{p:150000,d:"Атмосферный моно-спектакль"},"Спектакль «СЕКРЕТ» (2 ч)":{p:300000,d:"Полноценный концерт с антрактом"}}}
+        };
+        const FAQData=[
+            {q:"За сколько бронировать дату?",a:"Обычно за 1–2 недели; популярные даты — за месяц и раньше."},
+            {q:"Какой размер задатка?",a:"50 % от согласованной суммы. Остальное — в день мероприятия."},
+            {q:"Всё ли входит в стоимость?",a:"Да, цена «под ключ» без скрытых платежей."},
+            {q:"Сколько длится программа?",a:"Частные шоу — 20–40 мин, микромагия — до 3 ч, концерт — 1–2 ч."},
+            {q:"Можно персонализировать трюк?",a:"Да! Подготовим номер под вашего именинника/бренд/событие."},
+            {q:"Нужна ли сцена?",a:"Чаще нет. Для больших залов и концертной программы — по согласованию."},
+            {q:"Что по звуку и аппаратуре?",a:"С ведущим — всё готово. Без ведущего нужна активная колонка/микрофон."},
+            {q:"Сколько занимает подготовка?",a:"Около 30 мин; для концертной программы — до 1 ч."},
+            {q:"Выезжаете в другие регионы?",a:"Да, работаю в нескольких областях и выезжаю по стране."},
+            {q:"Способы оплаты?",a:"Безнал, СБП, наличные. Предусмотрен договор и чек."},
+            {q:"Какой возраст для детских шоу?",a:"Для детей 8+; для младших — по согласованию и с адаптацией интерактива."},
+            {q:"Можно снимать фото/видео?",a:"Да, съёмка приветствуется."},
+            {q:"Есть ли официальное оформление?",a:"Да, работаю по договору (ИП), предоставляю чек."},
+            {q:"Возможна площадка под открытым небом?",a:"Летом при безветренной погоде, с резервным планом на дождь."},
+            {q:"Безопасны ли спецэффекты?",a:"Используются только сертифицированные и безопасные эффекты."},
+            {q:"Можно ли интегрировать бренд компании?",a:"Да, интегрируем лого и смыслы бренда в интерактив и номера."},
+            {q:"Что если дата переносится?",a:"Перенос возможен при наличии свободного слота; условия фиксируем в договоре."},
+            {q:"Какой формат аудитории подходит?",a:"От камерных вечеринок 10–20 гостей до залов на 500+ человек."},
+            {q:"Проводите мастер-классы?",a:"Да: 60 мин обучения + реквизит, участники показывают фокус сразу."}
+        ];
+        
+        let AppState = { discount: 0 };
+
+        // === INIT ===
+        window.addEventListener('load', () => {
+            initCalc(); initFAQ(); checkGameAvailability(); initSchoolTimer();
+            // REVEAL LOGIC
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => { 
+                    if(entry.isIntersecting){ 
+                        entry.target.classList.add('active'); 
+                        if(entry.target.id === 'anim-shows') animateValue("anim-shows", 0, 1838, 2000);
+                        if(entry.target.id === 'anim-exp') animateValue("anim-exp", 0, 7, 1000);
+                        observer.unobserve(entry.target); 
+                    } 
+                });
+            }, {threshold: 0.1});
+            
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            
+            // Observe counters specifically
+            const showsEl = document.getElementById('anim-shows');
+            if(showsEl) observer.observe(showsEl.parentElement.parentElement);
+
+            setTimeout(() => { document.body.classList.add('curtains-open'); document.getElementById('curtain-logo').style.opacity='0'; setTimeout(()=>document.getElementById('intro-overlay').style.display='none',1000); }, 600);
+        });
+
+        // === ANIMATE VALUE ===
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const val = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = val + (id === 'anim-exp' ? ' лет опыта' : '');
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // === NAV ===
+        function goToPage(id) { document.getElementById(id).classList.add('active'); document.getElementById('home-page').style.opacity='0'; document.getElementById('fab-up').classList.add('visible'); }
+        function goBack() { document.querySelectorAll('.inner-page').forEach(p=>p.classList.remove('active')); document.getElementById('home-page').style.opacity='1'; document.getElementById('fab-up').classList.remove('visible'); }
+        function openLink(url) { const a=document.createElement('a'); a.href=url; a.target='_blank'; a.click(); }
+        function openContact(msg='Hi!') { openLink(`https://t.me/demonnikko?text=${encodeURIComponent(msg)}`); }
+        function showToast(msg) { const t=document.getElementById('toast'); t.querySelector('span').textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+        function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+
+        // === MODALS ===
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); if(id==='modal-story') document.getElementById('story-video').src=''; if(id==='modal-promo') document.getElementById('promo-video-frame').src=''; }
+        function openPromo(t) { document.getElementById('modal-promo').classList.remove('hidden'); 
+            const v = document.getElementById('promo-video-frame');
+            
+            // === ВАШЕ_ВИДЕО: Вставьте ссылки на RuTube/YouTube ниже ===
+            if(t === 'tvshow') {
+                // v.src = "https://rutube.ru/play/embed/ВАШ_КОД"; 
+            } else if (t === 'matvey') {
+                 // v.src = "https://rutube.ru/play/embed/ВАШ_КОД";
+            } else if (t === 'secret') {
+                 // v.src = "https://rutube.ru/play/embed/ВАШ_КОД";
+            } else {
+                 // v.src = "https://rutube.ru/play/embed/ВАШ_КОД";
+            }
+        }
+        function openGame() { document.getElementById('modal-game').classList.remove('hidden'); }
+        function openLightbox(src) { document.getElementById('lightbox-img').src=src; document.getElementById('lightbox').classList.remove('hidden'); }
+        function openStory(t) { document.getElementById('modal-story').classList.remove('hidden'); 
+            // === ВАШЕ_ВИДЕО: Вставьте ссылку на YouTube Shorts или обычное видео ===
+            // document.getElementById('story-video').src="https://www.youtube.com/embed/ВАШ_КОД?autoplay=1&controls=0&loop=1"; 
+        }
+
+        // === CALC LOGIC (ADVANCED) ===
+        function hol(d) { 
+            if(!d)return 1; const dt=new Date(d), m=dt.getMonth()+1, day=dt.getDate(); 
+            // Новый год (x2)
+            if((m===12&&day===31)||(m===1&&(day===1||day===2))) return 2; 
+            // Предновогодние (x1.5)
+            if(m===12&&day>=8&&day<=30) return 1.5; 
+            return 1; 
+        }
+        function roadHol(d) {
+            if(!d)return 1; const dt=new Date(d), m=dt.getMonth()+1, day=dt.getDate();
+            // Новый год (x2)
+            if((m===12&&day===31)||(m===1&&(day===1||day===2))) return 2;
+            // Предновогодние (x1.5)
+            if(m===12&&day>=8&&day<=30) return 1.5;
+            // 23 Фев и 8 Марта (x1.5)
+            if(m===2&&(day===22||day===23)) return 1.5;
+            if(m===3&&(day===7||day===8)) return 1.5;
+            return 1;
+        }
+        
+        function initCalc() {
+            const area=document.getElementById('calc-area'), cat=document.getElementById('calc-cat');
+            Object.keys(TravelData).forEach(k=>area.add(new Option(k,k)));
+            Object.keys(ServiceData).forEach(k=>cat.add(new Option(ServiceData[k].name,k)));
+            area.onchange=()=>{ 
+                const c=document.getElementById('calc-city'); c.disabled=false; c.innerHTML='<option disabled selected>Город</option>';
+                Object.keys(TravelData[area.value].cities).forEach(k=>c.add(new Option(k,k))); 
+            };
+            cat.onchange=()=>{ 
+                const s=document.getElementById('calc-svc'); s.disabled=false; s.innerHTML='<option disabled selected>Программа</option>';
+                Object.keys(ServiceData[cat.value].items).forEach(k=>s.add(new Option(k,k))); 
+            };
+            document.getElementById('calc-svc').onchange=(e)=>document.getElementById('calc-desc').innerText=ServiceData[document.getElementById('calc-cat').value].items[e.target.value].d;
+            document.getElementById('calc-guests').onchange=(e)=>document.getElementById('guest-slider-block').style.display=e.target.value==='custom'?'flex':'none';
+            document.getElementById('guest-range').oninput=(e)=>document.getElementById('guest-count').innerText=e.target.value;
+            // Set min date
+            document.getElementById('calc-date').min = new Date().toISOString().split('T')[0];
+        }
+        
+        function calculatePrice() {
+            const a=document.getElementById('calc-area').value, c=document.getElementById('calc-city').value,
+                  ct=document.getElementById('calc-cat').value, s=document.getElementById('calc-svc').value, g=document.getElementById('calc-guests').value,
+                  d=document.getElementById('calc-date').value;
+            if(!a||!c||!ct||!s||!d){ showToast('Заполните все поля!'); return; }
+            
+            // 1. Базовая цена услуги
+            let base=ServiceData[ct].items[s].p; 
+            if(a==='Ярославская'&&c==='Ярославль') base+=1000;
+            
+            // 2. Дорога
+            const roadBase=TravelData[a].cities[c];
+            // Наценка на дорогу в праздники
+            const rCoef = roadHol(d);
+            const roadExtra = Math.round(roadBase * (rCoef - 1));
+            
+            // 3. Гости
+            let gst=0; 
+            if(g==='custom') gst=(document.getElementById('guest-range').value-200)*80; 
+            else gst=parseInt(g);
+            if(g==='5000') gst=5000; // Fix numeric value from select
+            if(g==='10000') gst=10000;
+            
+            // 4. Промежуточная сумма
+            const subTotal = base + roadBase + roadExtra + gst;
+            
+            // 5. Праздничная наценка на всё
+            const hCoef = hol(d);
+            const holUp = Math.round(subTotal * (hCoef - 1));
+            
+            // 6. Итого до скидки
+            let tot = subTotal + holUp;
+            
+            // 7. Скидка
+            if(AppState.discount>0) tot=Math.round(tot*(100-AppState.discount)/100);
+            
+            document.getElementById('total-price').innerText=tot.toLocaleString()+' ₽';
+            
+            let breakdown = `Услуга: ${base} | Дорога: ${roadBase}`;
+            if(roadExtra > 0) breakdown += ` (+${roadExtra} праздн.)`;
+            breakdown += ` | Гости: ${gst}`;
+            if(holUp > 0) breakdown += ` | Праздник (x${hCoef})`;
+            if(AppState.discount > 0) breakdown += ` | Скидка -${AppState.discount}%`;
+            
+            document.getElementById('price-breakdown').innerText = breakdown;
+            
+            const r=document.getElementById('calc-result'); r.classList.remove('hidden'); r.classList.add('fade-in-up');
+            setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'center'}),100);
+        }
+        
+        function bookViaTelegram() {
+            const p=document.getElementById('total-price').innerText; if(!p) return;
+            const a=document.getElementById('calc-area').value, c=document.getElementById('calc-city').value, d=document.getElementById('calc-date').value, s=document.getElementById('calc-svc').value;
+            openContact(`Заявка на дату ${d}.\nГород: ${c} (${a})\nУслуга: ${s}\nРасчетная цена: ${p}`);
+        }
+
+        // === FAQ ===
+        function initFAQ() {
+            document.getElementById('faq-list').innerHTML=FAQData.map(i=>`<details class="bg-white/5 rounded-xl border border-white/5 overflow-hidden"><summary class="p-4 font-bold text-[#C6A664] cursor-pointer text-sm">${i.q}</summary><div class="p-4 pt-0 text-xs text-gray-300 border-t border-white/5">${i.a}</div></details>`).join('');
+        }
+
+        // === GAME ===
+        function checkGameAvailability() {
+            try {
+                const lp=localStorage.getItem('lastPlayed'), td=new Date().toDateString();
+                if(lp===td) {
+                    const w=localStorage.getItem('won')==='true';
+                    const b=document.getElementById('game-btn');
+                    if(w) { AppState.discount=10; b.innerText="✅ Скидка активна"; } 
+                    else { b.innerText="⏳ Попытка использована"; }
+                    b.disabled=true; b.classList.remove('animate-pulse'); b.classList.add('opacity-50');
+                }
+            } catch(e){}
+        }
+        function playGame(el, i) {
+            try {
+                const lp=localStorage.getItem('lastPlayed'), td=new Date().toDateString();
+                if(lp===td) return;
+                const winIdx=Math.floor(Math.random()*3), isWin=(i===winIdx);
+                const faces=document.querySelectorAll('.face');
+                faces[0].innerText=(0===winIdx)?"A♠":"K♥"; faces[1].innerText=(1===winIdx)?"A♠":"J♣"; faces[2].innerText=(2===winIdx)?"A♠":"Q♦";
+                el.classList.add('flipped');
+                localStorage.setItem('lastPlayed',td); localStorage.setItem('won',isWin);
+                setTimeout(()=>{
+                    if(isWin) { document.getElementById('game-msg').innerText='🔥 СКИДКА 10%!'; document.getElementById('game-msg').className='text-green-400 font-bold'; AppState.discount=10; if(!document.getElementById('calc-result').classList.contains('hidden')) calculatePrice(); }
+                    else { document.getElementById('game-msg').innerText='😢 Увы, мимо.'; document.getElementById('game-msg').className='text-red-400 font-bold'; }
+                    checkGameAvailability(); setTimeout(()=>closeModal('modal-game'),2000);
+                },800);
+            } catch(e){}
+        }
+
+        // === SCHOOL LOGIC ===
+        function initSchoolTimer() {
+            const d=3*24*60*60*1000 + Date.now();
+            setInterval(()=>{
+                const diff=d-Date.now();
+                if(diff<=0) return;
+                const days=Math.floor(diff/86400000);
+                const h=Math.floor((diff%86400000)/3600000);
+                const m=Math.floor((diff%3600000)/60000);
+                document.getElementById('school-timer').innerHTML=`<div class="bg-black px-2 py-1 rounded">0${days} дн</div><div class="bg-black px-2 py-1 rounded">${h}:${m}</div>`;
+            }, 60000);
+        }
+        function scrollToForm() { document.getElementById('school-form').scrollIntoView({behavior:'smooth'}); }
+        function submitSchoolForm() {
+            const p=document.getElementById('s-parent').value, ph=document.getElementById('s-phone').value, a=document.getElementById('s-age').value;
+            if(!p||!ph||!a){ showToast('Заполните все поля'); return; }
+            openContact(`Заявка в Школу!\nРодитель: ${p}\nТел: ${ph}\nВозраст: ${a}`);
+        }
+    </script>
+</body>
+</html>
