@@ -33,6 +33,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
 
+    <!-- Font Awesome (Premium Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <!-- Premium Styles -->
     <link rel="stylesheet" href="css/styles.css">
 
@@ -58,7 +61,7 @@
 
     <!-- FAB -->
     <button id="fab-up" class="fab-btn" onclick="scrollToTop()">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+        <i class="fas fa-rocket text-white text-xl transform rotate-[-45deg]"></i>
     </button>
 
     <div class="bg-texture"></div>
@@ -80,48 +83,79 @@
             <!-- ДВЕРЬ 1 -->
             <button onclick="goToPage('page-private')" class="app-card w-full text-left p-6 group">
                 <div class="flex justify-between items-start mb-3">
-                    <span class="tag tag-gold">Премиум</span>
-                    <svg class="w-5 h-5 text-gray-500 group-active:text-[#C6A664]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <span class="tag tag-gold"><i class="fas fa-crown mr-1"></i>Премиум</span>
+                    <i class="fas fa-chevron-right text-xl text-gray-500 group-hover:text-[#C6A664] transition-all group-hover:translate-x-1"></i>
                 </div>
-                <h2 class="text-2xl font-serif text-white mb-1">Частные события</h2>
-                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Свадьбы • Юбилеи • Корпоративы</p>
+                <h2 class="text-2xl font-serif text-white mb-1 flex items-center gap-2">
+                    <i class="fas fa-rings-wedding text-[#C6A664]"></i>
+                    Частные события
+                </h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">
+                    <i class="fas fa-heart text-pink-400"></i> Свадьбы •
+                    <i class="fas fa-birthday-cake text-yellow-400"></i> Юбилеи •
+                    <i class="fas fa-briefcase text-blue-400"></i> Корпоративы
+                </p>
                 <div class="h-px w-8 bg-[#C6A664] mb-3 opacity-50"></div>
-                <p class="text-sm text-gray-400">Калькулятор цены, видео-отзывы и быстрая бронь даты.</p>
+                <p class="text-sm text-gray-400">
+                    <i class="fas fa-video text-[#C6A664] mr-1"></i> Видео-отзывы и быстрая бронь даты.
+                </p>
             </button>
 
             <!-- ДВЕРЬ 2 -->
             <button onclick="goToPage('page-concert')" class="app-card w-full text-left p-6 group">
                 <div class="flex justify-between items-start mb-3">
-                    <span class="tag tag-purple">Афиша</span>
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <span class="tag tag-purple"><i class="fas fa-ticket-alt mr-1"></i>Афиша</span>
+                    <i class="fas fa-chevron-right text-xl text-gray-500 group-hover:text-[#d8aaff] transition-all group-hover:translate-x-1"></i>
                 </div>
-                <h2 class="text-2xl font-serif text-white mb-1">Шоу «Секрет»</h2>
-                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Театр • Свидание • Впечатления</p>
+                <h2 class="text-2xl font-serif text-white mb-1 flex items-center gap-2">
+                    <i class="fas fa-masks-theater text-[#d8aaff]"></i>
+                    Шоу «Секрет»
+                </h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">
+                    <i class="fas fa-theater-masks text-purple-400"></i> Театр •
+                    <i class="fas fa-heart text-red-400"></i> Свидание •
+                    <i class="fas fa-star text-yellow-400"></i> Впечатления
+                </p>
                 <div class="h-px w-8 bg-[#d8aaff] mb-3 opacity-50"></div>
-                <p class="text-sm text-gray-400">Выбрать лучшие места и посмотреть трейлер.</p>
+                <p class="text-sm text-gray-400">
+                    <i class="fas fa-couch text-[#d8aaff] mr-1"></i> Выбрать лучшие места и посмотреть трейлер.
+                </p>
             </button>
 
             <!-- ДВЕРЬ 3 -->
             <button onclick="goToPage('page-school')" class="app-card w-full text-left p-6 group">
                 <div class="flex justify-between items-start mb-3">
-                    <span class="tag tag-blue">Дети 7–13 лет</span>
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <span class="tag tag-blue"><i class="fas fa-child mr-1"></i>Дети 7–13 лет</span>
+                    <i class="fas fa-chevron-right text-xl text-gray-500 group-hover:text-[#8ecfff] transition-all group-hover:translate-x-1"></i>
                 </div>
-                <h2 class="text-2xl font-serif text-white mb-1">Школа Волшебства</h2>
-                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">Развитие • Уверенность</p>
+                <h2 class="text-2xl font-serif text-white mb-1 flex items-center gap-2">
+                    <i class="fas fa-hat-wizard text-[#8ecfff]"></i>
+                    Школа Волшебства
+                </h2>
+                <p class="text-xs text-[#888] uppercase tracking-wide font-bold mb-3">
+                    <i class="fas fa-brain text-cyan-400"></i> Развитие •
+                    <i class="fas fa-shield-alt text-blue-400"></i> Уверенность
+                </p>
                 <div class="h-px w-8 bg-[#8ecfff] mb-3 opacity-50"></div>
-                <p class="text-sm text-gray-400">Превращаем стеснительность в артистизм. Запись на урок.</p>
+                <p class="text-sm text-gray-400">
+                    <i class="fas fa-wand-magic-sparkles text-[#8ecfff] mr-1"></i> Превращаем стеснительность в артистизм. Запись на урок.
+                </p>
             </button>
         </div>
 
         <div class="mt-10 text-center px-4">
-             <button onclick="openContact()" class="w-full py-4 rounded-xl border border-[#333] bg-[#0f0f0f] text-gray-400 text-sm font-medium flex items-center justify-center gap-2 active:bg-[#1a1a1a]">
+             <button onclick="openContact()" class="w-full py-4 rounded-xl border border-[#333] bg-[#0f0f0f] text-gray-400 text-sm font-medium flex items-center justify-center gap-3 active:bg-[#1a1a1a] hover:border-[#C6A664] hover:text-white transition-all group">
+                <i class="fas fa-paper-plane text-[#C6A664] group-hover:scale-110 transition-transform"></i>
                 <span>Написать лично Дмитрию</span>
             </button>
             <!-- FOOTER ICONS -->
-            <div class="flex justify-center gap-6 mt-8 opacity-60">
-                <a href="https://vk.com/dmitry_kostyuk" target="_blank" class="hover:text-white transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13.162 18.994c.609 0 .858-.406.851-.915-.031-1.918.714-2.949 2.059-1.604 1.488 1.488 1.796 1.627 3.643 1.627 1.085 0 1.596-.53 1.596-1.53 0-1.095-.53-1.649-1.609-2.735-1.474-1.483-1.652-1.743-1.652-2.31 0-.585.579-1.077 1.34-1.99 1.127-1.35 1.565-1.928 1.565-2.784 0-.895-1.123-1.629-2.228-1.629-1.579 0-2.03.116-2.03.882 0 .145.034.331.067.553.058.39.117.784.032.903-.092.13-.537.104-.973-.09-1.356-.606-2.185-1.662-2.185-2.887 0-.613.067-1.156.162-1.654.104-.543.155-.815.155-.815s-2.055.05-3.033.05c-.886 0-1.698-.076-2.527.247-.417.163-.736.636-.736 1.258 0 .59.417 1.349 1.25 3.323 1.517 3.593 1.439 4.312 1.151 4.707-.463.636-1.455.45-1.455-1.968 0-1.673.344-3.52-.375-4.577-.375-.551-.925-.85-1.841-.954-.858-.097-1.562-.113-2.195.03-.667.15-.94.499-.344.82 1.045.565 1.313 1.599 1.313 3.903 0 1.235-.045 2.109-.174 2.583-.162.593-.526 1.006-1.365.882-.249-.036-.502-.124-.764-.265-2.56-1.378-4.484-4.512-4.484-7.85 0-.742-.034-1.493-.034-1.493s-1.874.05-2.617.05c-.83 0-1.281.39-1.281.982 0 .808.579 2.195 2.162 4.607 2.373 3.616 5.862 6.812 9.073 6.812.982 0 1.706-.113 2.172-.34.466-.226.792-.619.792-1.258v-1.488c0-.663.265-.99.792-.99z"/></svg></a>
-                <a href="https://t.me/demonnikko" target="_blank" class="hover:text-white transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+            <div class="flex justify-center gap-6 mt-8">
+                <a href="https://vk.com/dmitry_kostyuk" target="_blank" class="text-gray-500 hover:text-[#0077FF] transition-all hover:scale-125 transform">
+                    <i class="fab fa-vk text-3xl"></i>
+                </a>
+                <a href="https://t.me/demonnikko" target="_blank" class="text-gray-500 hover:text-[#0088cc] transition-all hover:scale-125 transform">
+                    <i class="fab fa-telegram text-3xl"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -131,8 +165,8 @@
     <div id="page-private" class="page-container inner-page">
         <div class="sticky-header flex items-center p-4 justify-between">
             <div class="flex items-center">
-                <button onclick="goBack()" class="p-2 -ml-2 text-gray-400 active:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <button onclick="goBack()" class="p-2 -ml-2 text-gray-400 hover:text-[#C6A664] active:text-white transition-all hover:scale-110">
+                    <i class="fas fa-arrow-left text-xl"></i>
                 </button>
                 <h3 class="text-lg font-serif font-bold text-white ml-2">Частные события</h3>
             </div>
@@ -240,7 +274,7 @@
     <!-- ================== ЛЕНДИНГ: АФИША ================== -->
     <div id="page-concert" class="page-container inner-page">
         <div class="sticky-header flex items-center p-4">
-            <button onclick="goBack()" class="p-2 text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+            <button onclick="goBack()" class="p-2 text-gray-400 hover:text-white transition-all hover:scale-110"><i class="fas fa-arrow-left text-xl"></i></button>
             <h3 class="text-lg font-serif font-bold text-white ml-2">Афиша</h3>
         </div>
         <div class="p-5 max-w-md mx-auto space-y-8">
@@ -341,7 +375,7 @@
     <!-- ================== ЛЕНДИНГ: ШКОЛА ВОЛШЕБСТВА ================== -->
     <div id="page-school" class="page-container inner-page">
         <div class="sticky-header flex items-center p-4">
-            <button onclick="goBack()" class="p-2 text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+            <button onclick="goBack()" class="p-2 text-gray-400 hover:text-white transition-all hover:scale-110"><i class="fas fa-arrow-left text-xl"></i></button>
             <h3 class="text-lg font-serif font-bold text-white ml-2">Школа Волшебства</h3>
         </div>
 
