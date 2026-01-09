@@ -149,6 +149,8 @@ h1, h2, h3, h4, .font-serif {
     backdrop-filter: blur(20px);
     box-shadow: var(--shadow-premium);
     overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 1000px;
 }
 
 .app-card::before {
@@ -167,13 +169,16 @@ h1, h2, h3, h4, .font-serif {
 }
 
 .app-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(198, 166, 100, 0.3);
-    box-shadow: var(--shadow-gold-lg);
+    transform: translateY(-8px) rotateX(2deg);
+    border-color: rgba(198, 166, 100, 0.5);
+    box-shadow:
+        var(--shadow-gold-lg),
+        0 0 40px rgba(198, 166, 100, 0.2),
+        0 10px 60px rgba(0, 0, 0, 0.6);
 }
 
 .app-card:active {
-    transform: translateY(-2px) scale(0.98);
+    transform: translateY(-4px) scale(0.98) rotateX(0deg);
     border-color: var(--gold-main);
 }
 
@@ -736,6 +741,35 @@ details > summary::-webkit-details-marker {
 /* Smooth Scroll */
 html {
     scroll-behavior: smooth;
+}
+
+/* ===== PREMIUM CURSOR ===== */
+body {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="%23C6A664" opacity="0.3"/><circle cx="12" cy="12" r="3" fill="%23F3E5AB"/></svg>') 12 12, auto;
+}
+
+a, button, .app-card {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%23C6A664" opacity="0.5"/><circle cx="12" cy="12" r="4" fill="%23FFD700"/></svg>') 12 12, pointer;
+}
+
+/* ===== MAGIC GLOW ON HOVER ===== */
+@keyframes magic-glow {
+    0%, 100% {
+        box-shadow:
+            0 0 20px rgba(198, 166, 100, 0.3),
+            0 0 40px rgba(198, 166, 100, 0.2),
+            0 0 60px rgba(198, 166, 100, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 0 30px rgba(198, 166, 100, 0.5),
+            0 0 60px rgba(198, 166, 100, 0.3),
+            0 0 90px rgba(198, 166, 100, 0.2);
+    }
+}
+
+.app-card:hover::before {
+    animation: magic-glow 2s ease-in-out infinite;
 }
 
 /* Loading Animation */
