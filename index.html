@@ -217,67 +217,7 @@
                 </div>
             </div>
 
-            <!-- 5. КАЛЬКУЛЯТОР -->
-            <div id="calc" class="bg-[#15171e] border border-white/10 rounded-2xl p-5 shadow-2xl scroll-mt-20 reveal relative">
-                <h2 class="text-xl font-serif text-white mb-4 text-center">Узнать стоимость</h2>
-                <form id="calcForm" class="space-y-4" onsubmit="return false;">
-                    
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 ml-1">Где будет праздник?</label>
-                        <select id="calc-area" class="form-select text-gray-300"><option value="" disabled selected>Область</option></select>
-                        <select id="calc-city" class="form-select text-gray-300 mt-2" disabled><option value="" disabled selected>Город</option></select>
-                    </div>
-                    
-                    <div class="space-y-1">
-                         <label class="text-xs text-gray-400 ml-1">Дата события</label>
-                         <input type="date" id="calc-date" class="form-input text-gray-300">
-                    </div>
-                    
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 ml-1">Гости и Формат</label>
-                        <select id="calc-guests" class="form-select text-gray-300">
-                            <option value="" disabled selected>Кол-во гостей</option>
-                            <option value="0">до 50 гостей (0₽)</option>
-                            <option value="5000">51–100 гостей (+5000₽)</option>
-                            <option value="10000">101–200 гостей (+10000₽)</option>
-                            <option value="custom">свыше 200 гостей</option>
-                        </select>
-                         <div id="guest-slider-block" class="hidden flex-col gap-2 p-3 bg-black/30 rounded-lg mt-2 border border-white/5">
-                            <label class="text-xs text-gray-400 text-center">Точное кол-во: <span id="guest-count" class="text-[#C6A664] font-bold">250</span></label>
-                            <input type="range" id="guest-range" min="201" max="500" value="250" class="w-full accent-[#C6A664]">
-                        </div>
-                        <select id="calc-cat" class="form-select text-gray-300 mt-2"><option value="" disabled selected>Тип мероприятия</option></select>
-                        <select id="calc-svc" class="form-select text-gray-300 mt-2" disabled><option value="" disabled selected>Программа</option></select>
-                    </div>
-
-                    <div id="calc-desc" class="text-xs text-gray-500 text-center min-h-[20px] px-2 leading-tight"></div>
-                    
-                    <button id="calc-btn" onclick="calculatePrice()" class="w-full py-4 bg-white/10 border border-white/20 rounded-xl text-white font-bold hover:bg-[#C6A664] hover:text-black transition-colors mt-2 flex justify-center items-center gap-2">
-                        Рассчитать стоимость
-                    </button>
-                </form>
-
-                <!-- РЕЗУЛЬТАТ -->
-                <div id="calc-result" class="hidden text-center mt-6 border-t border-white/10 pt-4 scroll-mt-40">
-                    <div class="bg-[#C6A664]/10 border border-[#C6A664]/30 rounded-xl p-3 mb-4 inline-block">
-                         <p class="text-[10px] text-[#C6A664] uppercase tracking-widest font-bold mb-1">Дата свободна!</p>
-                         <div id="total-price" class="text-3xl font-serif text-white font-bold"></div>
-                    </div>
-                    
-                    <div id="price-breakdown" class="text-xs text-gray-400 mb-6 bg-black/30 p-3 rounded-lg leading-relaxed text-left border-l-2 border-[#C6A664]"></div>
-                    
-                    <div class="flex flex-col gap-3">
-                        <button id="game-btn" onclick="openGame()" class="w-full py-3 border border-[#C6A664] text-[#C6A664] rounded-lg text-sm font-bold animate-pulse">
-                            🎲 Получить скидку (1 раз в сутки)
-                        </button>
-                        <button onclick="bookViaTelegram()" class="w-full py-4 bg-[#C6A664] text-black rounded-lg text-sm font-bold shadow-[0_4px_14px_rgba(198,166,100,0.4)]">
-                            Забронировать дату
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 6. ГАРАНТИЯ (НОВОЕ) -->
+            <!-- 5. ГАРАНТИЯ -->
             <div class="bg-gradient-to-r from-[#1c202b] to-black p-5 rounded-2xl border border-[#C6A664]/20 text-center reveal">
                 <h2 class="text-lg font-serif text-[#F3E5AB] mb-2">Гарантия результата</h2>
                 <p class="text-sm text-gray-400 leading-relaxed">
@@ -285,7 +225,7 @@
                 </p>
             </div>
 
-            <!-- 7. ПОЛНЫЙ FAQ -->
+            <!-- 6. ПОЛНЫЙ FAQ -->
             <div class="reveal">
                 <h2 class="text-xl font-serif text-white mb-4">Частые вопросы</h2>
                 <div class="faq-scroll rounded-xl border border-white/5 bg-[#15171e]/50">
