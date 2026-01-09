@@ -1,0 +1,85 @@
+# ==========================================
+# KOSTYUK PROJECT - .gitignore
+# ==========================================
+
+# === OS Files ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# === IDE / Editors ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# === Node.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# === Logs ===
+logs/
+*.log
+
+# === Temporary Files ===
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# === Build Output ===
+dist/
+build/
+*.min.js
+*.min.css
+
+# === Environment Variables ===
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# === Backups ===
+*.bak
+*.backup
+*-backup/
+backup/
+
+# === Archives ===
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# === Testing ===
+coverage/
+.nyc_output/
+test-results/
+
+# === Optional: Large Media Files ===
+# (Раскомментируйте если не хотите коммитить большие файлы)
+# *.mp4
+# *.mov
+# *.avi
+# *.psd
+# *.ai
+
+# === Keep Empty Directories ===
+!.gitkeep
