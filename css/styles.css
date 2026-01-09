@@ -744,12 +744,20 @@ html {
 }
 
 /* ===== PREMIUM CURSOR ===== */
-body {
-    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="%23C6A664" opacity="0.3"/><circle cx="12" cy="12" r="3" fill="%23F3E5AB"/></svg>') 12 12, auto;
+@media (min-width: 769px) {
+    body, body * {
+        cursor: none !important;
+    }
 }
 
-a, button, .app-card {
-    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%23C6A664" opacity="0.5"/><circle cx="12" cy="12" r="4" fill="%23FFD700"/></svg>') 12 12, pointer;
+@media (max-width: 768px) {
+    body {
+        cursor: auto;
+    }
+
+    a, button, .app-card {
+        cursor: pointer;
+    }
 }
 
 /* ===== MAGIC GLOW ON HOVER ===== */

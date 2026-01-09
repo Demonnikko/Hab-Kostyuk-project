@@ -164,6 +164,7 @@ window.addEventListener('load', () => {
     initCurtainAnimation();
     initParticles();
     initFABScroll();
+    initParallax();
 });
 
 // ===== CURTAIN ANIMATION =====
@@ -716,6 +717,117 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ===== PARALLAX SCROLLING =====
+function initParallax() {
+    const pages = document.querySelectorAll('.page-container');
+
+    pages.forEach(page => {
+        page.addEventListener('scroll', () => {
+            const scrolled = page.scrollTop;
+
+            // Parallax для карточек
+            const cards = page.querySelectorAll('.app-card, .reveal');
+            cards.forEach((card, index) => {
+                const speed = (index % 3 + 1) * 0.1; // Разная скорость для разных карточек
+                const yPos = -(scrolled * speed);
+                card.style.transform = `translateY(${yPos}px)`;
+            });
+
+            // Parallax для заголовков
+            const headers = page.querySelectorAll('h1, h2.font-serif');
+            headers.forEach(header => {
+                const yPos = -(scrolled * 0.15);
+                header.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+    });
+}
+
+// ===== SMOOTH CURSOR FOLLOW =====
+let cursorDot, cursorOutline;
+
+function initCustomCursor() {
+    // Создаем кастомный курсор
+    cursorDot = document.createElement('div');
+    cursorDot.className = 'cursor-dot';
+    cursorDot.style.cssText = `
+        width: 8px;
+        height: 8px;
+        background: #C6A664;
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s, height 0.3s, background 0.3s;
+    `;
+
+    cursorOutline = document.createElement('div');
+    cursorOutline.className = 'cursor-outline';
+    cursorOutline.style.cssText = `
+        width: 40px;
+        height: 40px;
+        border: 2px solid rgba(198, 166, 100, 0.5);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s, height 0.3s, border-color 0.3s;
+    `;
+
+    document.body.appendChild(cursorDot);
+    document.body.appendChild(cursorOutline);
+
+    // Следование за мышкой
+    let mouseX = 0, mouseY = 0;
+    let outlineX = 0, outlineY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+    });
+
+    // Плавное следование outline
+    function animateOutline() {
+        outlineX += (mouseX - outlineX) * 0.1;
+        outlineY += (mouseY - outlineY) * 0.1;
+        cursorOutline.style.left = outlineX + 'px';
+        cursorOutline.style.top = outlineY + 'px';
+        requestAnimationFrame(animateOutline);
+    }
+    animateOutline();
+
+    // Эффекты при наведении
+    const interactiveElements = document.querySelectorAll('a, button, .app-card');
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorDot.style.width = '16px';
+            cursorDot.style.height = '16px';
+            cursorDot.style.background = '#FFD700';
+            cursorOutline.style.width = '60px';
+            cursorOutline.style.height = '60px';
+            cursorOutline.style.borderColor = 'rgba(255, 215, 0, 0.8)';
+        });
+
+        el.addEventListener('mouseleave', () => {
+            cursorDot.style.width = '8px';
+            cursorDot.style.height = '8px';
+            cursorDot.style.background = '#C6A664';
+            cursorOutline.style.width = '40px';
+            cursorOutline.style.height = '40px';
+            cursorOutline.style.borderColor = 'rgba(198, 166, 100, 0.5)';
+        });
+    });
+}
+
+// Запускаем курсор на десктопе
+if (window.innerWidth > 768) {
+    window.addEventListener('load', initCustomCursor);
+}
 
 // ===== EXPORT FOR GLOBAL ACCESS =====
 window.goToPage = goToPage;
