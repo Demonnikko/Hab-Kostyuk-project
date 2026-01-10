@@ -657,48 +657,6 @@ input[type=range]::-webkit-slider-runnable-track {
     }
 }
 
-/* ===== FAB BUTTON - PREMIUM ===== */
-.fab-btn {
-    position: fixed;
-    right: 20px;
-    bottom: 90px;
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, rgba(198, 166, 100, 0.2), rgba(138, 110, 54, 0.2));
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(198, 166, 100, 0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 40;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    pointer-events: none;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.fab-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.fab-btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 30px rgba(198, 166, 100, 0.4);
-    background: linear-gradient(135deg, rgba(198, 166, 100, 0.3), rgba(138, 110, 54, 0.3));
-}
-
-.fab-btn:active {
-    transform: translateY(-2px) scale(0.95);
-    background: linear-gradient(135deg, var(--gold-main), var(--gold-dark));
-}
-
-.fab-btn:active svg {
-    color: black;
-}
-
 /* ===== UTILITY CLASSES ===== */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
