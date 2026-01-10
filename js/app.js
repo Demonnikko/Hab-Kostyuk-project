@@ -158,7 +158,6 @@ let AppState = {
 window.addEventListener('load', () => {
     initCalc();
     initFAQ();
-    checkGameAvailability();
     initSchoolTimer();
     initRevealAnimations();
     initCurtainAnimation();
@@ -361,10 +360,6 @@ function openPromo(type) {
     };
 
     video.src = videoUrls[type] || '';
-}
-
-function openGame() {
-    document.getElementById('modal-game').classList.remove('hidden');
 }
 
 function openLightbox(type) {
@@ -602,78 +597,6 @@ function initFAQ() {
             </div>
         </details>
     `).join('');
-}
-
-// ===== GAME LOGIC =====
-function checkGameAvailability() {
-    try {
-        const lastPlayed = localStorage.getItem('lastPlayed');
-        const today = new Date().toDateString();
-
-        if (lastPlayed === today) {
-            const won = localStorage.getItem('won') === 'true';
-            const btn = document.getElementById('game-btn');
-
-            if (btn) {
-                if (won) {
-                    AppState.discount = 10;
-                    btn.innerText = "✅ Скидка активна";
-                } else {
-                    btn.innerText = "⏳ Попытка использована";
-                }
-                btn.disabled = true;
-                btn.classList.remove('animate-pulse');
-                btn.classList.add('opacity-50');
-            }
-        }
-    } catch (e) {
-        console.error('Game availability check failed:', e);
-    }
-}
-
-function playGame(el, cardIndex) {
-    try {
-        const lastPlayed = localStorage.getItem('lastPlayed');
-        const today = new Date().toDateString();
-
-        if (lastPlayed === today) return;
-
-        const winIdx = Math.floor(Math.random() * 3);
-        const isWin = cardIndex === winIdx;
-
-        // Set card faces
-        const faces = document.querySelectorAll('.face');
-        faces[0].innerText = (0 === winIdx) ? "A♠" : "K♥";
-        faces[1].innerText = (1 === winIdx) ? "A♠" : "J♣";
-        faces[2].innerText = (2 === winIdx) ? "A♠" : "Q♦";
-
-        el.classList.add('flipped');
-
-        localStorage.setItem('lastPlayed', today);
-        localStorage.setItem('won', isWin);
-
-        setTimeout(() => {
-            const msg = document.getElementById('game-msg');
-            if (isWin) {
-                msg.innerText = '🔥 СКИДКА 10%!';
-                msg.className = 'text-green-400 font-bold text-lg';
-                AppState.discount = 10;
-
-                // Recalculate if price already shown
-                if (!document.getElementById('calc-result').classList.contains('hidden')) {
-                    calculatePrice();
-                }
-            } else {
-                msg.innerText = '😢 Увы, мимо.';
-                msg.className = 'text-red-400 font-bold text-lg';
-            }
-
-            checkGameAvailability();
-            setTimeout(() => closeModal('modal-game'), 2500);
-        }, 800);
-    } catch (e) {
-        console.error('Game play failed:', e);
-    }
 }
 
 // ===== SCHOOL LOGIC =====
@@ -945,12 +868,10 @@ window.openContact = openContact;
 window.scrollToTop = scrollToTop;
 window.closeModal = closeModal;
 window.openPromo = openPromo;
-window.openGame = openGame;
 window.openLightbox = openLightbox;
 window.openStory = openStory;
 window.calculatePrice = calculatePrice;
 window.bookViaTelegram = bookViaTelegram;
-window.playGame = playGame;
 window.scrollToForm = scrollToForm;
 window.submitSchoolForm = submitSchoolForm;
 window.closeGallery = closeGallery;
