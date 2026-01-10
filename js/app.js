@@ -165,6 +165,7 @@ window.addEventListener('load', () => {
     initParticles();
     initFABScroll();
     initParallax();
+    initCardMorphing();
 });
 
 // ===== CURTAIN ANIMATION =====
@@ -231,20 +232,57 @@ function goToPage(id) {
     const page = document.getElementById(id);
     if (!page) return;
 
-    page.classList.add('active');
-    document.getElementById('home-page').style.opacity = '0';
-    document.getElementById('fab-up').classList.add('visible');
-    AppState.currentPage = id;
+    const homePage = document.getElementById('home-page');
 
-    // Scroll to top
-    page.scrollTop = 0;
+    // Морфинг анимация: домашняя страница уменьшается и исчезает
+    homePage.style.transform = 'scale(0.95)';
+    homePage.style.opacity = '0';
+
+    // Задержка перед показом новой страницы
+    setTimeout(() => {
+        page.classList.add('active');
+        document.getElementById('fab-up').classList.add('visible');
+        AppState.currentPage = id;
+        page.scrollTop = 0;
+
+        // Морфинг анимация: новая страница появляется с увеличением
+        page.style.transform = 'scale(0.95)';
+        page.style.opacity = '0';
+
+        requestAnimationFrame(() => {
+            page.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease';
+            page.style.transform = 'scale(1)';
+            page.style.opacity = '1';
+        });
+    }, 300);
 }
 
 function goBack() {
-    document.querySelectorAll('.inner-page').forEach(p => p.classList.remove('active'));
-    document.getElementById('home-page').style.opacity = '1';
-    document.getElementById('fab-up').classList.remove('visible');
-    AppState.currentPage = 'home';
+    const activePage = document.querySelector('.inner-page.active');
+    const homePage = document.getElementById('home-page');
+
+    if (activePage) {
+        // Морфинг анимация: текущая страница уменьшается и исчезает
+        activePage.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease';
+        activePage.style.transform = 'scale(0.95)';
+        activePage.style.opacity = '0';
+
+        setTimeout(() => {
+            document.querySelectorAll('.inner-page').forEach(p => {
+                p.classList.remove('active');
+                p.style.transform = '';
+                p.style.opacity = '';
+            });
+
+            // Морфинг анимация: домашняя страница появляется с увеличением
+            homePage.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease';
+            homePage.style.transform = 'scale(1)';
+            homePage.style.opacity = '1';
+
+            document.getElementById('fab-up').classList.remove('visible');
+            AppState.currentPage = 'home';
+        }, 400);
+    }
 }
 
 function openLink(url) {
@@ -744,23 +782,108 @@ function initParallax() {
     });
 }
 
+// ===== CARD MORPHING ANIMATIONS =====
+function initCardMorphing() {
+    const cards = document.querySelectorAll('.app-card');
+
+    // Инициализируем карточки с начальным состоянием
+    cards.forEach((card, index) => {
+        // Начальная позиция для морфинга
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.9) translateY(20px)';
+        card.style.filter = 'blur(10px)';
+
+        // Плавный морфинг с задержкой
+        setTimeout(() => {
+            card.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1) translateY(0)';
+            card.style.filter = 'blur(0px)';
+        }, 100 + index * 100);
+    });
+
+    // Морфинг эффект при hover
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', (e) => {
+            // Создаем волновой эффект
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const ripple = document.createElement('div');
+            ripple.style.cssText = `
+                position: absolute;
+                left: ${x}px;
+                top: ${y}px;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(212, 175, 55, 0.3), transparent);
+                pointer-events: none;
+                transform: translate(-50%, -50%);
+                animation: morphRipple 0.8s ease-out;
+            `;
+            card.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 800);
+        });
+
+        // Морфинг при клике
+        card.addEventListener('click', function(e) {
+            if (this.tagName === 'BUTTON' || this.closest('button')) {
+                // Пульсация при клике
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            }
+        });
+    });
+
+    // Добавляем CSS анимацию для ripple
+    if (!document.getElementById('morphing-styles')) {
+        const style = document.createElement('style');
+        style.id = 'morphing-styles';
+        style.textContent = `
+            @keyframes morphRipple {
+                0% {
+                    width: 0;
+                    height: 0;
+                    opacity: 1;
+                }
+                100% {
+                    width: 300px;
+                    height: 300px;
+                    opacity: 0;
+                }
+            }
+
+            .app-card {
+                will-change: transform;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
 // ===== SMOOTH CURSOR FOLLOW =====
 let cursorDot, cursorOutline;
 
 function initCustomCursor() {
-    // Создаем кастомный курсор
+    // Создаем кастомный курсор с новыми цветами
     cursorDot = document.createElement('div');
     cursorDot.className = 'cursor-dot';
     cursorDot.style.cssText = `
         width: 8px;
         height: 8px;
-        background: #C6A664;
+        background: linear-gradient(135deg, #D4AF37, #8B5CF6);
         border-radius: 50%;
         position: fixed;
         pointer-events: none;
         z-index: 10000;
         transform: translate(-50%, -50%);
         transition: width 0.3s, height 0.3s, background 0.3s;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(139, 92, 246, 0.4);
     `;
 
     cursorOutline = document.createElement('div');
@@ -768,7 +891,7 @@ function initCustomCursor() {
     cursorOutline.style.cssText = `
         width: 40px;
         height: 40px;
-        border: 2px solid rgba(198, 166, 100, 0.5);
+        border: 2px solid rgba(212, 175, 55, 0.6);
         border-radius: 50%;
         position: fixed;
         pointer-events: none;
@@ -801,25 +924,29 @@ function initCustomCursor() {
     }
     animateOutline();
 
-    // Эффекты при наведении
+    // Эффекты при наведении с новыми цветами
     const interactiveElements = document.querySelectorAll('a, button, .app-card');
     interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => {
             cursorDot.style.width = '16px';
             cursorDot.style.height = '16px';
-            cursorDot.style.background = '#FFD700';
+            cursorDot.style.background = 'linear-gradient(135deg, #8B5CF6, #9D174D)';
+            cursorDot.style.boxShadow = '0 0 30px rgba(139, 92, 246, 0.8), 0 0 60px rgba(157, 23, 77, 0.6)';
             cursorOutline.style.width = '60px';
             cursorOutline.style.height = '60px';
-            cursorOutline.style.borderColor = 'rgba(255, 215, 0, 0.8)';
+            cursorOutline.style.borderColor = 'rgba(139, 92, 246, 0.8)';
+            cursorOutline.style.boxShadow = '0 0 20px rgba(139, 92, 246, 0.4)';
         });
 
         el.addEventListener('mouseleave', () => {
             cursorDot.style.width = '8px';
             cursorDot.style.height = '8px';
-            cursorDot.style.background = '#C6A664';
+            cursorDot.style.background = 'linear-gradient(135deg, #D4AF37, #8B5CF6)';
+            cursorDot.style.boxShadow = '0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(139, 92, 246, 0.4)';
             cursorOutline.style.width = '40px';
             cursorOutline.style.height = '40px';
-            cursorOutline.style.borderColor = 'rgba(198, 166, 100, 0.5)';
+            cursorOutline.style.borderColor = 'rgba(212, 175, 55, 0.6)';
+            cursorOutline.style.boxShadow = '';
         });
     });
 }
