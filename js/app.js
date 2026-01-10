@@ -758,28 +758,9 @@ document.head.appendChild(style);
 
 // ===== PARALLAX SCROLLING =====
 function initParallax() {
-    const pages = document.querySelectorAll('.page-container');
-
-    pages.forEach(page => {
-        page.addEventListener('scroll', () => {
-            const scrolled = page.scrollTop;
-
-            // Parallax для карточек
-            const cards = page.querySelectorAll('.app-card, .reveal');
-            cards.forEach((card, index) => {
-                const speed = (index % 3 + 1) * 0.1; // Разная скорость для разных карточек
-                const yPos = -(scrolled * speed);
-                card.style.transform = `translateY(${yPos}px)`;
-            });
-
-            // Parallax для заголовков
-            const headers = page.querySelectorAll('h1, h2.font-serif');
-            headers.forEach(header => {
-                const yPos = -(scrolled * 0.15);
-                header.style.transform = `translateY(${yPos}px)`;
-            });
-        });
-    });
+    // Параллакс отключен для премиум эффекта
+    // Элементы остаются статичными при скролле
+    return;
 }
 
 // ===== CARD MORPHING ANIMATIONS =====
