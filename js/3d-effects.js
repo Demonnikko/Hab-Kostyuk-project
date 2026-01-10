@@ -54,10 +54,12 @@ function createParticles() {
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
-    // Цвета для частиц (золотой спектр)
-    const color1 = new THREE.Color(0xC6A664); // золотой
-    const color2 = new THREE.Color(0xF3E5AB); // светло-золотой
-    const color3 = new THREE.Color(0x8A6E36); // темно-золотой
+    // Цвета для частиц (премиум мультиколор)
+    const color1 = new THREE.Color(0xD4AF37); // золотой
+    const color2 = new THREE.Color(0x8B5CF6); // электрический фиолетовый
+    const color3 = new THREE.Color(0x9D174D); // глубокий пурпурный
+    const color4 = new THREE.Color(0xF97316); // закатный оранжевый
+    const color5 = new THREE.Color(0x6B46C1); // королевский фиолетовый
 
     for (let i = 0; i < particleCount; i++) {
         const i3 = i * 3;
@@ -67,15 +69,19 @@ function createParticles() {
         positions[i3 + 1] = (Math.random() - 0.5) * 1000;
         positions[i3 + 2] = (Math.random() - 0.5) * 1000;
 
-        // Цвета (случайный выбор из палитры)
+        // Цвета (случайный выбор из расширенной палитры)
         const colorChoice = Math.random();
         let color;
-        if (colorChoice < 0.33) {
+        if (colorChoice < 0.2) {
             color = color1;
-        } else if (colorChoice < 0.66) {
+        } else if (colorChoice < 0.4) {
             color = color2;
-        } else {
+        } else if (colorChoice < 0.6) {
             color = color3;
+        } else if (colorChoice < 0.8) {
+            color = color4;
+        } else {
+            color = color5;
         }
 
         colors[i3] = color.r;
